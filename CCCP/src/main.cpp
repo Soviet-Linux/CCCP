@@ -5,7 +5,6 @@
 #include <algorithm>
 
 std::string CURRENT_DIR = "/home/paulk/Desktop/Soviet/CCCP/";
-std::string BUILD_ROOT = CURRENT_DIR + "build-root/";
 
 int install_package (std::string PName);
 int install_binary ();
@@ -17,20 +16,18 @@ std::vector<std::string> installed_packages = init_pkg_list ();
 
 int main () {
 
-  install_package("lolcat");
+  install_package("lolcat.spm");
 
   return 0;
 }
 
 //Getting package data from file
-std::vector<std::string> open_spm (std::string PName)
+std::vector<std::string> open_spm (std::string PPath)
 {
     std::streampos size;
     char * memblock;
 
-    std::string PPath = CURRENT_DIR + "testing/" + PName + "/";
-    std::cout << PPath + PName + ".spm \n";
-    std::ifstream file_spm (PPath + PName + ".spm", std::ios::in);
+    std::ifstream file_spm (PPath, std::ios::in);
     std::string line;
     std::vector<std::string> pkg_info;
     if (file_spm.is_open())
@@ -85,7 +82,7 @@ std::vector<std::string> init_pkg_list ()
 int install_package (std::string PName)
 {
     std::cout << "processing package" << "\n";
-    std::vector<std::string> pkg_info = open_spm("lolcat");
+    std::vector<std::string> pkg_info = open_spm(PName);
     std::vector<std::string> pkg_deps = split(pkg_info[0], " ");
     std::cout << "package info parsed" << "\n";
     if ( pkg_info[0] != "")
@@ -106,21 +103,12 @@ int install_package (std::string PName)
 
     //END OF DEPENDENCIES CHECK
     
-    if ( pkg_info[1] == "source") 
-    {
-        std::cout << "building from source" << "\n";
-        if (pkg_info[2] == "make")
-        {
-            std::cout << "Making pkg" << "\n";
-            std::string cmd_make = "( cd " + CURRENT_DIR + "testing/" + PName + "/" + PName + " && make && make DESTDIR=" + BUILD_ROOT + " install )  ";
-            std::cout << cmd_make << std::endl;
-            system(cmd_make.c_str());
-        }
-    }
-    else if ( pkg_info[1] == "binary")
-    {
-        install_binary();
-    }
+    std::string download_pkg = "( cd " + CURRENT_DIR + "sources/ && " + pkg_info[1] + " )";
+
+    system(download_pkg.c_str());
+
+    std::string build_cmd = "BUILD_ROOT=" + CURRENT_DIR + "/build \n ( cd " + CURRENT_DIR + "sources/ && " + pkg_info[1] + " )";
+
     
 }
 

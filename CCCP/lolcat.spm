@@ -1,0 +1,3 @@
+bash
+git clone https://github.com/jaseg/lolcat
+make && make DESTDIR=$BUILD_ROOT/bin/ install
