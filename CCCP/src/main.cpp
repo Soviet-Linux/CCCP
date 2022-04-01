@@ -11,6 +11,7 @@ int install_package (std::string PName);
 int install_binary ();
 std::vector<std::string> open_spm (std::string PName);
 std::vector<std::string> init_pkg_list ();
+std::vector<std::string> split(std::string str, std::string token);
 
 std::vector<std::string> installed_packages = init_pkg_list ();
 
@@ -85,33 +86,42 @@ int install_package (std::string PName)
 {
     std::cout << "processing package" << "\n";
     std::vector<std::string> pkg_info = open_spm("lolcat");
+    std::vector<std::string> pkg_deps = split(pkg_info[0], " ");
     std::cout << "package info parsed" << "\n";
     if ( pkg_info[0] != "")
     {
-        for (int i = 1; i < pkg_info[0];i++)
+        for (int i = 1; i < pkg_deps.size(); i++)
         {
-            if(std::find(installed_packages.begin(), installed_packages.end(), ) != installed_packages.end())   
+            if (std::find(installed_packages.begin(), installed_packages.end(), pkg_deps[i]) != installed_packages.end()) std::cout << "deps all good !!!" << std::endl;
+            else
+            {
+                std::cout << "NOT GOOD STOP RN !!!" << std::endl;
+                
+                // Dependencies stuff to complicated  
+            }
         }
         
     }
-    else {
-        std::cout << "No dependencies" << "\n";
-        if ( pkg_info[1] == "source") 
+    else std::cout << "No dependencies" << "\n";      
+
+    //END OF DEPENDENCIES CHECK
+    
+    if ( pkg_info[1] == "source") 
+    {
+        std::cout << "building from source" << "\n";
+        if (pkg_info[2] == "make")
         {
-            std::cout << "building from source" << "\n";
-            if (pkg_info[2] == "make")
-            {
-                std::cout << "Making pkg" << "\n";
-                std::string cmd_make = "( cd " + CURRENT_DIR + "testing/" + PName + "/" + PName + " && make && make DESTDIR=" + BUILD_ROOT + " install )  ";
-                std::cout << cmd_make << std::endl;
-                system(cmd_make.c_str());
-            }
-        }
-        else if ( pkg_info[1] == "binary")
-        {
-            install_binary();
+            std::cout << "Making pkg" << "\n";
+            std::string cmd_make = "( cd " + CURRENT_DIR + "testing/" + PName + "/" + PName + " && make && make DESTDIR=" + BUILD_ROOT + " install )  ";
+            std::cout << cmd_make << std::endl;
+            system(cmd_make.c_str());
         }
     }
+    else if ( pkg_info[1] == "binary")
+    {
+        install_binary();
+    }
+    
 }
 
 std::vector<std::string> split(std::string str, std::string token){
