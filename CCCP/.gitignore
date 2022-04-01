@@ -1,3 +1,5 @@
 testing/*
 bin/*
 run.sh
+build-root/bin/*
+
