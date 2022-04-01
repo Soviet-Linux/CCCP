@@ -1,5 +1,6 @@
 # <p align="center">Soviet - A completely communist linux distribution</p>
-<p align="center"><img src="https://images-ext-2.discordapp.net/external/cBlQT6xfWeg0Z-is30wBbel_iD0FtsD5xmiqLPBm1Aw/https/i.imgur.com/tjVd8Vy.png?width=285&height=268"></p>
+<p align="center"><img width="285" height="268" alt="soviet" src="https://i.imgur.com/tjVd8Vy.png"></p>
+
 
 ## <p align="center">Powered by CCCP (CCCP Crafter of Controlled Packages)</p>
 
