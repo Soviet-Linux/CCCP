@@ -47,7 +47,7 @@ int install_package (std::vector<std::string> PName)
         {
             if (pkg_info[2] == "make")
             {
-            
+            system((CURRENT_DIR + "/src/" + "make_script.sh").c_str());
             }
         }
         else if ( pkg_info[1] == "binary")
