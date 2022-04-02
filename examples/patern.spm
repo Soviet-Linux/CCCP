@@ -1,0 +1,6 @@
+[dependencies]
+[Download Command]
+[Command to install in build]
+[(name of the file in build ) (where to install the file)|(other file in build ) (where to install the file ) ]
+
+// go see lolcat.spm
