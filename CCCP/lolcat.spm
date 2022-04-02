@@ -1,3 +1,4 @@
 bash
 git clone https://github.com/jaseg/lolcat
-make && make DESTDIR=$BUILD_ROOT/bin/ install
+make && make DESTDIR=$BUILD_ROOT/ install
+lolcat /bin/lolcat|censor /bin/censor

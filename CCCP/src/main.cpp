@@ -1,8 +1,10 @@
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <filesystem>
 
 std::string CURRENT_DIR = "/home/paulk/Desktop/Soviet/CCCP/";
 
@@ -16,7 +18,7 @@ std::vector<std::string> installed_packages = init_pkg_list ();
 
 int main () {
 
-  install_package("lolcat.spm");
+  install_package("lolcat");
 
   return 0;
 }
@@ -82,7 +84,7 @@ std::vector<std::string> init_pkg_list ()
 int install_package (std::string PName)
 {
     std::cout << "processing package" << "\n";
-    std::vector<std::string> pkg_info = open_spm(PName);
+    std::vector<std::string> pkg_info = open_spm(PName + ".spm");
     std::vector<std::string> pkg_deps = split(pkg_info[0], " ");
     std::cout << "package info parsed" << "\n";
     if ( pkg_info[0] != "")
@@ -107,7 +109,21 @@ int install_package (std::string PName)
 
     system(download_pkg.c_str());
 
-    std::string build_cmd = "BUILD_ROOT=" + CURRENT_DIR + "/build \n ( cd " + CURRENT_DIR + "sources/ && " + pkg_info[1] + " )";
+    std::string build_cmd = "BUILD_ROOT=" + CURRENT_DIR + "build \n ( cd " + CURRENT_DIR + "sources/" + PName +" && " + pkg_info[2] + " )";
+    std::cout << build_cmd << std::endl;
+    
+    system(build_cmd.c_str());
+    system(("rm -rf " + CURRENT_DIR + "sources/" + PName).c_str());
+
+    std::vector<std::string> install_info = split(pkg_info[3],"|");
+    for (int i = 0; i < install_info.size(); i++)
+    {
+        std::string install_cmd = "mv " + CURRENT_DIR + "build/" + split(install_info[i], " ")[0] + " " + split(install_info[i], " ")[1]; 
+        std::cout << install_cmd << std::endl;
+        system(install_cmd.c_str());
+        system(("rm -rf " + CURRENT_DIR + "build/*").c_str());
+    }
+
 
     
 }
