@@ -7,6 +7,7 @@
 #include <filesystem>
 
 std::string CURRENT_DIR = "/home/paulk/Desktop/Soviet/CCCP/";
+std::string DATA_DIR = CURRENT_DIR;
 
 int install_package (std::string PName);
 int install_binary ();
@@ -64,7 +65,7 @@ std::vector<std::string> init_pkg_list ()
 
     std::vector<std::string> pkg_list;
 
-    std::ifstream list_file ( CURRENT_DIR + "pkg.list", std::ios::in);
+    std::ifstream list_file ( DATA_DIR + "pkg.list", std::ios::in);
     std::string line;
     if (list_file.is_open())
     {
