@@ -1,4 +1,3 @@
-source
 bash git make 
 git clone https://github.com/jaseg/lolcat
 make && make DESTDIR=$BUILD_ROOT/ install
