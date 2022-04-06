@@ -1,8 +1,9 @@
+#include <cstdio>
 #include <ios>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <type_traits>
+#include <random>
 #include <vector>
 #include <algorithm>
 #include <filesystem>
@@ -61,29 +62,30 @@ int main (int argc, char *argv[])
 int install_package (std::string PName,int use)
 {
 
-    std::cout << "processing package " << PName << "\n";
-    
-    std::cout << "package info parsed" << "\n";
+    std::cout << "processing package " << PName << "\n"; 
     
     if (use == 1)
     {
         std::vector<std::string> pkg_info = open_spm(PName + ".spm",PKG_DIR);
+        std::cout << "package info parsed" << "\n";
         if (check_dependencies(pkg_info[0],DATA_DIR) )
         {
             std::cout << "dependencies are ok" << "\n";
             make_pkg(PName,pkg_info[1],pkg_info[2],CURRENT_DIR);
             std::cout << "package built" << "\n";
         }
-        else std::cout << "dependencies are not ok" << "\n";
+        else {
+            std::cout << "dependencies are not ok" << "\n";
+        }
 
-        std::vector<std::string> install_info = split(pkg_info[3],"|");
-        for (int i = 0; i < install_info.size(); i++)
-        {
-            std::string install_cmd = "mv " + CURRENT_DIR + "build/" + split(install_info[i], " ")[0] + " " + split(install_info[i], " ")[1]; 
-            std::cout << install_cmd << std::endl;
-            system(install_cmd.c_str());
-            system(("rm -rf " + CURRENT_DIR + "build/*").c_str());
-        }   
+        move_binaries(split(pkg_info[3],"|"));
+
+        system(("rm -rf " + CURRENT_DIR + "build/*").c_str());
+
+        //Writing to pkg list
+        std::ofstream pkg_list;
+        pkg_list.open(DATA_DIR + "pkg.list");
+        pkg_list << pkg_info[3] <<  "\n";  
     }
     else if (use == 2) {
         
@@ -100,7 +102,7 @@ int install_package (std::string PName,int use)
         
     }
     else if (use == 3){
-        system(("tar -xf " + PName + ".tar.gz").c_str());
+        install_binary(PName);
         // NOT FINISHED AT ALL DONT CHANGE THINGS HERE
     }
     else std::cout << "ERROR" << std::endl;
@@ -108,21 +110,42 @@ int install_package (std::string PName,int use)
     return 0;
 
 }
-int install_binary()
+int install_binary(std::string PName)
 {
-    system("tar -xf " + std::filesystem::current_path().string() +"/"+ )
+    std::string TMP_DIR = "/tmp/" + std::to_string((rand() % 100000 + 1 )) + "/";
+    system("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz " + TMP_DIR );
+    std::vector<std::string> bin_info = open_spm(TMP_DIR + PName + "-bin.spm",PKG_DIR);
+    if (check_dependencies(bin_info[0],DATA_DIR)) 
+    {
+        std::cout << "dependencies are ok" << "\n";
+        move_binaries(split(bin_info[1],"|"));
+    }
+    else {
+        std::cout << "dependencies are not ok" << "\n";
+        //DO SOMETHING HERE like with dependencies
+    }
 }
 
 int create_binary (std::string PName,std::string built_binaries,std::string dependencies)
 {
     std::ofstream buildfile;
     buildfile.open((CURRENT_DIR + "build" + "/" + PName + "-bin.spm").c_str());
-    buildfile << built_binaries << "\n" << dependencies;
+    buildfile << dependencies << built_binaries << "\n" ;
     buildfile.close();
     std::string cmd_archive = "(cd " + CURRENT_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + "-bin.tar.gz *)" ;
     std::cout << cmd_archive << std::endl;
     system((cmd_archive).c_str());
     system(("rm -rf " + CURRENT_DIR + "build/*").c_str());
     return 1;
+}
+int move_binaries (std::vector<std::string> install_info)
+{
+    for (int i = 0; i < install_info.size(); i++)
+    {
+        std::string install_cmd = "mv " + CURRENT_DIR + "build/" + split(install_info[i], " ")[0] + " " + split(install_info[i], " ")[1]; 
+        std::cout << install_cmd << std::endl;
+        system(install_cmd.c_str());
+    } 
+    return 0;
 }
 
