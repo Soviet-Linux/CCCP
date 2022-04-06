@@ -4,8 +4,8 @@
 #include <vector>
 #include <algorithm>
 
-#include "make.h"
-#include "misc.h"
+#include "../include/misc.h"
+#include "../include/make.h"
 
 int make_pkg (std::string PName,std::string download_info,std::string build_info,std::string CURRENT_DIR,std::string DATA_DIR)
 {

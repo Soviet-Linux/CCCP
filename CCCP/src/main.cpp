@@ -7,10 +7,13 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "main.h"
+#include "../include/main.h"
+#include "../include/misc.h"
+#include "../include/make.h"
 
 
-std::string CURRENT_DIR = "/home/paulk/Desktop/SovietRepo/Soviet/CCCP/";
+
+std::string CURRENT_DIR = "/home/paulk/Desktop/CCCP/CCCP/";
 std::string PKG_DIR = CURRENT_DIR;
 std::string DATA_DIR = CURRENT_DIR;
 
@@ -86,13 +89,7 @@ int install_package (std::string PName,int use)
     std::vector<std::string> pkg_info = open_spm(PName + ".spm");
     std::vector<std::string> pkg_deps = split(pkg_info[0], " ");
     std::cout << "package info parsed" << "\n";
-    if ( pkg_info[0] != "") check_dependencies(pkg_info[0]);
-
-    else std::cout << "No dependencies" << "\n";      
-
-    //END OF DEPENDENCIES CHECK
     
-
     if (use == 1)
     {
         make_pkg(PName, pkg_info[1],pkg_info[2],CURRENT_DIR,DATA_DIR);
@@ -106,7 +103,14 @@ int install_package (std::string PName,int use)
         }   
     }
     else if (use == 2) {
-        create_binary(PName,pkg_info[3]);
+        if ( create_binary(PName,pkg_info[3]))
+        {
+            std::cout << "binary created" << "\n";
+        }
+        else {
+            std::cout << "binary not created , weird error" << "\n";
+        }
+        
     }
     else std::cout << "ERROR" << std::endl;
 
@@ -118,14 +122,16 @@ int install_package (std::string PName,int use)
     
 }
 
-std::string create_binary (std::string PName,std::string built_binaries)
+int create_binary (std::string PName,std::string built_binaries)
 {
     std::ofstream buildfile;
     buildfile.open((CURRENT_DIR + "build" + "/" + PName + "-bin.spm").c_str());
     buildfile << built_binaries;
     buildfile.close();
-    std::string cmd_archive = "tar -cvf " + CURRENT_DIR + "build/" + PName + "-bin.tar " + CURRENT_DIR + "build/" + PName + "-bin.spm";
-    system(("tar -cvf " + PName + ".tar.gz " + CURRENT_DIR + "build/*").c_str());
-    return 0;
+    std::string cmd_archive = "(cd " + CURRENT_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + "-bin.tar *)" ;
+    std::cout << cmd_archive << std::endl;
+    system((cmd_archive).c_str());
+    system(("rm -rf " + CURRENT_DIR + "build/*").c_str());
+    return 1;
 }
 

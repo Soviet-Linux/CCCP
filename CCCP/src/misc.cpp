@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 
-#include "misc.h"
+
+#include "../include/misc.h"
+#include "../include/make.h"
 
 std::vector<std::string> split(std::string str, std::string token){
     std::vector<std::string>result;
