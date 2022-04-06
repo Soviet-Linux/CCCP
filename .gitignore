@@ -2,3 +2,6 @@ CCCP/lolcat*
 CCCP/bin/*
 CCCP/build/*
 CCCP/sources/*
+.git
+.vs
+.vscode

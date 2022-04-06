@@ -7,46 +7,47 @@
 #include "../include/misc.h"
 #include "../include/make.h"
 
-int make_pkg (std::string PName,std::string download_info,std::string build_info,std::string CURRENT_DIR)
+void make_pkg (const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& CURRENT_DIR)
 {
-    std::string download_cmd = "( cd " + CURRENT_DIR + "sources/ && " + download_info + " )";
+    const std::string& download_cmd = string_format("( cd %ssources/ && %s )", CURRENT_DIR, download_info);
 
     std::cout << download_cmd << "\n";
     system(download_cmd.c_str());
 
-    std::string build_cmd = "BUILD_ROOT=" + CURRENT_DIR + "build \n ( cd " + CURRENT_DIR + "sources/" + PName +" && " + build_info + " )";
+    const std::string& build_cmd = string_format("BUILD_ROOT=%s build\n( cd %ssources/%s && %s )", CURRENT_DIR, CURRENT_DIR, PName, build_cmd);
     std::cout << build_cmd << std::endl;
     
     system(build_cmd.c_str());
     system(("rm -rf " + CURRENT_DIR + "sources/" + PName).c_str());
-    return 0; //
 }
-int check_dependencies (std::string dependencies,std::string DATA_DIR) 
+
+bool check_dependencies (std::string& dependencies, const std::string& DATA_DIR) 
 {
-    std::vector<std::string> pkg_list = init_pkg_list(DATA_DIR);
-    std::vector<std::string> pkg_deps = split(dependencies, " ");
-    for (int i = 0; i < pkg_deps.size(); i++)
+    const std::vector<std::string>& pkg_list = init_pkg_list(DATA_DIR);
+    const std::vector<std::string>& pkg_deps = split(dependencies, " ");
+    for(const auto& pkg : pkg_deps)
     {
-        if (std::find(pkg_list.begin(), pkg_list.end(), pkg_deps[i]) != pkg_list.end()) std::cout << "deps all good !!!" << std::endl;
+        if (std::find(pkg_list.begin(), pkg_list.end(), pkg) != pkg_list.end()) 
+            std::cout << "deps all good !!!\n";
         else
         {
-            std::cout << "NOT GOOD STOP RN !!!" << std::endl;
-            return 0;
+            std::cout << "NOT GOOD STOP RN !!!\n";
+            return false;
         }
     }
-    return 1;
+    return true;
 }
-std::vector<std::string> init_pkg_list (std::string DATA_DIR)
+std::vector<std::string> init_pkg_list (const std::string& DATA_DIR)
 {
-
     std::streampos size;
-    char * memblock;
+    char* memblock;
 
     std::vector<std::string> pkg_list;
     std::string pkg_list_file = DATA_DIR + "pkg.list";
 
     std::ifstream list_file((pkg_list_file).c_str(), std::ios::in);
     std::string line;
+
     if (list_file.is_open())
     {
         std::cout << "file opened " << "\n";
