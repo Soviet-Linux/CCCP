@@ -65,9 +65,14 @@ int install_package (std::string PName,int use)
     
     if (use == 1)
     {
-        check_dependencies(pkg_info[0],DATA_DIR);
+        if (check_dependencies(pkg_info[0],DATA_DIR) )
+        {
+            std::cout << "dependencies are ok" << "\n";
+            make_pkg(PName,pkg_info[1],pkg_info[2],CURRENT_DIR);
+            std::cout << "package built" << "\n";
+        }
+        else std::cout << "dependencies are not ok" << "\n";
 
-        make_pkg(PName, pkg_info[1],pkg_info[2],CURRENT_DIR);
         std::vector<std::string> install_info = split(pkg_info[3],"|");
         for (int i = 0; i < install_info.size(); i++)
         {
