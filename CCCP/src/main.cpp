@@ -52,47 +52,22 @@ int main (int argc, char *argv[])
 }
 
 //Getting package data from file
-std::vector<std::string> open_spm (std::string PPath)
-{
-    std::streampos size;
-    char * memblock;
-    PPath = PKG_DIR + PPath;
-    std::cout << PPath << "\n";
-    std::ifstream file_spm(PPath.c_str(), std::ios::in);
-    std::string line;
-    std::vector<std::string> pkg_info;
-    if (file_spm.is_open())
-    {
-        std::cout << "file opened " << "\n";
-        while ( getline (file_spm,line) )
-        {
-        pkg_info.push_back(line);
-        }
-        file_spm.close();
-        return pkg_info;
-    }
 
-    else {
-        std::cout << "Unable to open file \n";
-        return std::vector<std::string> () ;
-    }
-
-    
-
-}
 
 //parsing data and installing package
 int install_package (std::string PName,int use)
 {
 
     std::cout << "processing package " << PName << "\n";
-    std::vector<std::string> pkg_info = open_spm(PName + ".spm");
+    std::vector<std::string> pkg_info = open_spm(PName + ".spm",PKG_DIR);
     std::vector<std::string> pkg_deps = split(pkg_info[0], " ");
     std::cout << "package info parsed" << "\n";
     
     if (use == 1)
     {
-        make_pkg(PName, pkg_info[1],pkg_info[2],CURRENT_DIR,DATA_DIR);
+        check_dependencies(pkg_info[0],DATA_DIR);
+
+        make_pkg(PName, pkg_info[1],pkg_info[2],CURRENT_DIR);
         std::vector<std::string> install_info = split(pkg_info[3],"|");
         for (int i = 0; i < install_info.size(); i++)
         {
@@ -103,7 +78,10 @@ int install_package (std::string PName,int use)
         }   
     }
     else if (use == 2) {
-        if ( create_binary(PName,pkg_info[3]))
+
+        make_pkg(PName, pkg_info[1],pkg_info[2],CURRENT_DIR);
+
+        if ( create_binary(PName,pkg_info[3],pkg_info[0]) )
         {
             std::cout << "binary created" << "\n";
         }
@@ -122,11 +100,11 @@ int install_package (std::string PName,int use)
     
 }
 
-int create_binary (std::string PName,std::string built_binaries)
+int create_binary (std::string PName,std::string built_binaries,std::string dependencies)
 {
     std::ofstream buildfile;
     buildfile.open((CURRENT_DIR + "build" + "/" + PName + "-bin.spm").c_str());
-    buildfile << built_binaries;
+    buildfile << built_binaries << "\n" << dependencies;
     buildfile.close();
     std::string cmd_archive = "(cd " + CURRENT_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + "-bin.tar *)" ;
     std::cout << cmd_archive << std::endl;

@@ -7,7 +7,7 @@
 #include "../include/misc.h"
 #include "../include/make.h"
 
-int make_pkg (std::string PName,std::string download_info,std::string build_info,std::string CURRENT_DIR,std::string DATA_DIR)
+int make_pkg (std::string PName,std::string download_info,std::string build_info,std::string CURRENT_DIR)
 {
     std::string download_cmd = "( cd " + CURRENT_DIR + "sources/ && " + download_info + " )";
 
@@ -31,10 +31,10 @@ int check_dependencies (std::string dependencies,std::string DATA_DIR)
         else
         {
             std::cout << "NOT GOOD STOP RN !!!" << std::endl;
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 std::vector<std::string> init_pkg_list (std::string DATA_DIR)
 {
