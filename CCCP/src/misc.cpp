@@ -1,12 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-
+#include <memory>
+#include <string>
+#include <stdexcept>
 
 #include "../include/misc.h"
 #include "../include/make.h"
 
-std::vector<std::string> split(std::string str, std::string token){
+std::vector<std::string> split(std::string str, const std::string token) { // TODO: either rewrite this in a better way or use builtin functions
     std::vector<std::string>result;
     while(str.size()){
         int index = str.find(token);
@@ -21,21 +23,24 @@ std::vector<std::string> split(std::string str, std::string token){
     }
     return result;
 }
-std::vector<std::string> open_spm (std::string PPath,std::string PKG_DIR)
+
+const std::vector<std::string> open_spm (const std::string& PPath, const std::string& PKG_DIR)
 {
     std::streampos size;
     char * memblock;
-    PPath = PKG_DIR + PPath;
-    std::cout << PPath << "\n";
-    std::ifstream file_spm(PPath.c_str(), std::ios::in);
+    std::ifstream file_spm(string_format("%s%s", PKG_DIR, PPath).c_str(), std::ios::in);
     std::string line;
     std::vector<std::string> pkg_info;
+    pkg_info.reserve(100); // TODO: or the max number of elements, this improves the performance by reducing the number of memory allocation calls
+
+    std::cout << PPath << "\n";
+
     if (file_spm.is_open())
     {
         std::cout << "file opened " << "\n";
-        while ( getline (file_spm,line) )
+        while (getline (file_spm, line))
         {
-        pkg_info.push_back(line);
+            pkg_info.push_back(line);
         }
         file_spm.close();
         return pkg_info;
@@ -45,8 +50,15 @@ std::vector<std::string> open_spm (std::string PPath,std::string PKG_DIR)
         std::cout << "Unable to open file \n";
         return std::vector<std::string> () ;
     }
-
-    
-
 }
 
+template<typename ... Args>
+std::string string_format( const std::string& format, Args ... args )
+{
+    int size_s = std::snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
+    if( size_s <= 0 ){ throw std::runtime_error( "Error during formatting." ); }
+    auto size = static_cast<size_t>( size_s );
+    std::unique_ptr<char[]> buf( new char[ size ] );
+    std::snprintf( buf.get(), size, format.c_str(), args ... );
+    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+}

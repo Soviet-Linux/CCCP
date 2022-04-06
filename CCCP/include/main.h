@@ -1,16 +1,10 @@
-#include <string>
-#include <vector>
+#pragma once
 
+enum UseCase {
+    INSTALL, CREATE, BINARY
+};
 
-
-
-int install_package (std::string PName,int use);
-std::vector<std::string> open_spm (std::string PName);
-int create_binary (std::string PName,std::string built_binaries,std::string dependencies);
 int install_binary (std::string PName);
 int move_binaries (std::vector<std::string> install_info);
-
-
-
-
-
+void install_package(const std::string& PName, UseCase use);
+void create_binary(std::string PName, std::string built_binaries, std::string dependencies);
