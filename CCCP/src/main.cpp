@@ -108,7 +108,7 @@ int install_package (std::string PName,int use)
             std::cout << "binary created" << "\n";
         }
         else {
-            std::cout << "binary not created , weird error" << "\n";
+            std::cout << "binary not created , weird error , if you see this error, please report it to me , it should never happend ( maybe if there is some cosmic ray bit flip its possible but its really unlikely)" << "\n";
         }
         
     }
