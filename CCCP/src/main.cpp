@@ -12,8 +12,7 @@
 #include "../include/misc.h"
 #include "../include/make.h"
 
-const std::string USER = "paulk"; // TODO: change this
-const std::string CURRENT_DIR = string_format("/home/%s/Desktop/CCCP/CCCP/", USER);
+const std::string CURRENT_DIR = "/home/paulk/Desktop/CCCP/CCCP/";
 const std::string PKG_DIR = CURRENT_DIR;
 const std::string DATA_DIR = CURRENT_DIR;
 
@@ -104,14 +103,11 @@ void install_package (const std::string& PName, UseCase use)
     else std::cout << "ERROR" << "\n";
 }
 
-void install_binary()
-{
-    std::system(string_format("tar -xf %s/", std::filesystem::current_path().string().c_str()).c_str());
-=======
+
 int install_binary(std::string PName)
 {
     std::string TMP_DIR = "/tmp/" + std::to_string((rand() % 100000 + 1 )) + "/";
-    system("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz " + TMP_DIR );
+    system(("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz " + TMP_DIR ).c_str());
     std::vector<std::string> bin_info = open_spm(TMP_DIR + PName + "-bin.spm",PKG_DIR);
     if (check_dependencies(bin_info[0],DATA_DIR)) 
     {
@@ -122,6 +118,7 @@ int install_binary(std::string PName)
         std::cout << "dependencies are not ok" << "\n";
         //DO SOMETHING HERE like with dependencies
     }
+    return 1;
 }
 
 void create_binary (std::string PName,std::string built_binaries,std::string dependencies)

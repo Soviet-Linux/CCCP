@@ -5,6 +5,10 @@
 #include <string>
 #include <stdexcept>
 
+#include "../include/nlohmann/json.hpp"
+
+using nlohmann::json;
+
 #include "../include/misc.h"
 #include "../include/make.h"
 
@@ -28,28 +32,12 @@ const std::vector<std::string> open_spm (const std::string& PPath, const std::st
 {
     std::streampos size;
     char * memblock;
-    std::ifstream file_spm(string_format("%s%s", PKG_DIR, PPath).c_str(), std::ios::in);
-    std::string line;
-    std::vector<std::string> pkg_info;
-    pkg_info.reserve(100); // TODO: or the max number of elements, this improves the performance by reducing the number of memory allocation calls
+    std::ifstream file_spm((PKG_DIR + PPath).c_str(), std::ios::in);
+    std::stringstream buffer;
+    buffer << file_spm.rdbuf();
+    auto pkg_info = json::parse(buffer.str());
+    std::cout << pkg_info.dump(4) << "\n";
 
-    std::cout << PPath << "\n";
-
-    if (file_spm.is_open())
-    {
-        std::cout << "file opened " << "\n";
-        while (getline (file_spm, line))
-        {
-            pkg_info.push_back(line);
-        }
-        file_spm.close();
-        return pkg_info;
-    }
-
-    else {
-        std::cout << "Unable to open file \n";
-        return std::vector<std::string> () ;
-    }
 }
 
 template<typename ... Args>

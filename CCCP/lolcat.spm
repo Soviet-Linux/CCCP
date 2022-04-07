@@ -1,4 +1,15 @@
-bash git make 
-git clone https://github.com/jaseg/lolcat
-make && make DESTDIR=$BUILD_ROOT/ install
-lolcat /bin/lolcat|censor /bin/censor
+{
+"build_deps" : ["make","git"],
+"download_info" : "git clone https://github.com/jaseg/lolcat",
+"build_info" : "make && make DESTDIR=$BUILD_ROOT install",
+"install" : [
+    {
+        "file" : "lolcat" ,
+        "destination" : "/bin/lolcat" 
+    },
+    {
+        "file" : "censor",
+        "destination" : "/bin/censor" 
+    }
+]
+}

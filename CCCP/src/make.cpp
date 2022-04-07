@@ -9,12 +9,12 @@
 
 void make_pkg (const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& CURRENT_DIR)
 {
-    const std::string& download_cmd = string_format("( cd %ssources/ && %s )", CURRENT_DIR, download_info);
+    const std::string& download_cmd = "( cd "+ CURRENT_DIR +"sources/ && "+download_info+" )";
 
     std::cout << download_cmd << "\n";
     system(download_cmd.c_str());
 
-    const std::string& build_cmd = string_format("BUILD_ROOT=%s build\n( cd %ssources/%s && %s )", CURRENT_DIR, CURRENT_DIR, PName, build_cmd);
+    const std::string& build_cmd = "BUILD_ROOT="+ CURRENT_DIR +"build\n( cd "+ CURRENT_DIR +"sources/"+ PName +" && "+ build_info +" )";
     std::cout << build_cmd << std::endl;
     
     system(build_cmd.c_str());
