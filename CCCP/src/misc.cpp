@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include <memory>
+#include <sqlite3.h> 
 #include <string>
 #include <stdexcept>
 
@@ -28,15 +28,15 @@ std::vector<std::string> split(std::string str, const std::string token) { // TO
     return result;
 }
 
-const std::vector<std::string> open_spm (const std::string& PPath, const std::string& PKG_DIR)
+nlohmann::basic_json<> open_spm (const std::string& PPath)
 {
     std::streampos size;
     char * memblock;
-    std::ifstream file_spm((PKG_DIR + PPath).c_str(), std::ios::in);
+    std::ifstream file_spm((PPath).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     auto pkg_info = json::parse(buffer.str());
-    std::cout << pkg_info.dump(4) << "\n";
+    return pkg_info;
 
 }
 
@@ -50,3 +50,4 @@ std::string string_format( const std::string& format, Args ... args )
     std::snprintf( buf.get(), size, format.c_str(), args ... );
     return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
 }
+

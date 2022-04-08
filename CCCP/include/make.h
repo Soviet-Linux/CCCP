@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sys/types.h>
+#include "../include/nlohmann/json.hpp"
 
-std::vector<std::string> init_pkg_list(const std::string& DATA_DIR);
 void make_pkg(const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& CURRENT_DIR);
-bool check_dependencies(std::string& dependencies, const std::string& DATA_DIR);
+int check_dependencies(const nlohmann::basic_json<>&, const std::string& DATA_DIR);

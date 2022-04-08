@@ -5,3 +5,4 @@ CCCP/sources/*
 .git
 .vs
 .vscode
+CCCP/run.sh

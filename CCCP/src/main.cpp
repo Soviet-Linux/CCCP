@@ -16,6 +16,7 @@ const std::string CURRENT_DIR = "/home/paulk/Desktop/CCCP/CCCP/";
 const std::string PKG_DIR = CURRENT_DIR;
 const std::string DATA_DIR = CURRENT_DIR;
 
+
 int main (int argc, char *argv[]) 
 {
     if (argc < 2) {
@@ -44,10 +45,13 @@ int main (int argc, char *argv[])
             PName = argv[2];
             use = BINARY;
         }
+        if (option == "--debug") {
+            std::cout << "Debug mode\n";
+        }
         
     }
 
-    std::cout << "PName is " << PName << "\n";
+    
     install_package(PName,use);
     
     return 0;
@@ -62,8 +66,9 @@ void install_package (const std::string& PName, UseCase use)
     
     if (use == INSTALL)
     {
-        const std::vector<std::string>& pkg_info = open_spm(PName + ".spm", PKG_DIR);
-        if (check_dependencies(const_cast<std::string&>(pkg_info[0]), DATA_DIR))
+        auto pkg_info = open_spm(PKG_DIR + PName + ".spm");
+        std::cout << "Package info is " << pkg_info << "\n";
+        if (check_dependencies(pkg_info["build_deps"], DATA_DIR))
         {
             std::cout << "dependencies are ok" << "\n";
             make_pkg(PName, pkg_info[1], pkg_info[2], CURRENT_DIR);
@@ -88,7 +93,7 @@ void install_package (const std::string& PName, UseCase use)
     }
     else if (use == CREATE) {
         
-        std::vector<std::string> pkg_info = open_spm(PName + ".spm",PKG_DIR);
+        std::vector<std::string> pkg_info = open_spm(PKG_DIR + PName + ".spm");
         make_pkg(PName, pkg_info[1],pkg_info[2],CURRENT_DIR);
 
         create_binary(PName, pkg_info[3], pkg_info[0]);
@@ -98,9 +103,8 @@ void install_package (const std::string& PName, UseCase use)
     }
     else if (use == BINARY){
         install_binary(PName);
-        // NOT FINISHED AT ALL DONT CHANGE THINGS HERE
     }
-    else std::cout << "ERROR" << "\n";
+    else std::cout << "the use is not defined" << "\n";
 }
 
 
@@ -108,7 +112,7 @@ int install_binary(std::string PName)
 {
     std::string TMP_DIR = "/tmp/" + std::to_string((rand() % 100000 + 1 )) + "/";
     system(("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz " + TMP_DIR ).c_str());
-    std::vector<std::string> bin_info = open_spm(TMP_DIR + PName + "-bin.spm",PKG_DIR);
+    std::vector<std::string> bin_info = open_spm(TMP_DIR + PName + "-bin.spm");
     if (check_dependencies(bin_info[0],DATA_DIR)) 
     {
         std::cout << "dependencies are ok" << "\n";
