@@ -43,6 +43,13 @@ int check_dependencies (const std::vector<std::string>& dependencies, const std:
 {
     //TODO : check if the dependencies are installed
     //
+    //Print the dependencies
+    std::cout << "Dependencies : ";
+    for (int i = 0; i < dependencies.size(); i++)
+    {
+        std::cout << dependencies[i] << " ";
+    }
+    std::cout << std::endl;
     return 1;
 }
 // This function will open the spm file , parse the json and return the data
