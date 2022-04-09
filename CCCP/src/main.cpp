@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <ios>
 #include <iostream>
 #include <fstream>
@@ -97,7 +98,7 @@ int install_binary(const std::string& PName)
     //Creating a random temporay dir name
     std::string TMP_DIR = "/tmp/" + std::to_string((rand() % 100000 + 1 )) + "/";
     //Uncompressing the binary package into the temorary dir
-    system(("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz " + TMP_DIR ).c_str());
+    system(("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz -C" + TMP_DIR ).c_str());
     //Reading package data from .spm file
     const pkg_data& pkg_info = open_spm(TMP_DIR + PName + ".spm");
 
@@ -107,6 +108,9 @@ int install_binary(const std::string& PName)
         std::cout << "dependencies are ok" << "\n";
         //installing  package with install_info command from the .spm file
         move_binaries(TMP_DIR,pkg_info.install_info);
+        std::cout << "package installed" << "\n";
+        //cleaning 
+        system(("rm -rf " + TMP_DIR).c_str());
 
 
     }
@@ -128,7 +132,7 @@ void create_binary (const std::string& PName)
     //copy the .spm file to the build directory
     system(("cp " + PKG_DIR + PName + ".spm " + CURRENT_DIR + "build/").c_str());
     //Creating the tar.gz package archive
-    std::string cmd_archive = "(cd " + CURRENT_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + "-bin.tar.gz *)" ; // TODO fix these lines
+    std::string cmd_archive = "(cd " + CURRENT_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz *)" ; // TODO fix these lines
     std::cout << cmd_archive << std::endl;
     system((cmd_archive).c_str());
     //cleaning build directory
