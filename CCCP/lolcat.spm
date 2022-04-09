@@ -1,7 +1,12 @@
 {
-"build_deps" : ["make","git"],
-"download_info" : "git clone https://github.com/jaseg/lolcat",
-"build_info" : "make && make DESTDIR=$BUILD_ROOT install",
+"name" : "lolcat",
+"type" : "src",
+"version" : "1.0.0",
+"dependencies" : ["make","git"],
+"info" : {
+    "download" : "git clone https://github.com/jaseg/lolcat",
+    "build" : "make && make DESTDIR=$BUILD_ROOT install"
+}, 
 "install" : [
     {
         "file" : "lolcat" ,

@@ -8,9 +8,10 @@
 #include <algorithm>
 #include <filesystem>
 
+
 #include "../include/main.h"
-#include "../include/misc.h"
 #include "../include/make.h"
+
 
 const std::string CURRENT_DIR = "/home/paulk/Desktop/CCCP/CCCP/";
 const std::string PKG_DIR = CURRENT_DIR;
@@ -20,18 +21,16 @@ const std::string DATA_DIR = CURRENT_DIR;
 int main (int argc, char *argv[]) 
 {
     if (argc < 2) {
-        std::cout << "No arguments given.It will run buts its not ok !\n";
-    }
-    else { 
-        std::cout << "Arguments given " << argc << "\n"; 
+        std::cout << "No arguments given. Terminating.\n";
+        exit(1);
     }
 
     UseCase use;
     std::string PName = "";
     std::string option = argv[1];
 
-    std::cout << "Option is " << option << "\n";
-
+    //parsing argument 
+    // TODO : use a switch statement here
     if (option.substr(0,2) == "--") {
         if (option == "--install") {
             PName = argv[2];
@@ -45,14 +44,19 @@ int main (int argc, char *argv[])
             PName = argv[2];
             use = BINARY;
         }
-        if (option == "--debug") {
-            std::cout << "Debug mode\n";
-        }
         
     }
-
+    else {
+        std::cout << "No option given\n";
+        std::cout << "To install a source package : \n";
+        std ::cout << "Usage: cccp --install <package_name>\n\n";
+        std::cout << "To create a binary package from source package package : \n";
+        std ::cout << "Usage: cccp --create <package_name>\n\n";
+        std::cout << "To install a binary package : \n";
+        std ::cout << "Usage: cccp --binary <package_name>\n\n";
+        exit(1);
+    }  
     
-    install_package(PName,use);
     
     return 0;
 }
@@ -66,34 +70,46 @@ void install_package (const std::string& PName, UseCase use)
     
     if (use == INSTALL)
     {
-        auto pkg_info = open_spm(PKG_DIR + PName + ".spm");
-        std::cout << "Package info is " << pkg_info << "\n";
+        //Reading package data from .spm file
+        std::ifstream file_spm((PKG_DIR + PName + ".spm").c_str(), std::ios::in);
+        std::stringstream buffer;
+        buffer << file_spm.rdbuf();
+        //parsing json data
+        auto pkg_info = json::parse(buffer.str());
+        std::cout  << pkg_info << "\n";
+
+        //Checking dependencies
         if (check_dependencies(pkg_info["build_deps"], DATA_DIR))
         {
             std::cout << "dependencies are ok" << "\n";
+            //making package with the download_info command from the .spm file
             make_pkg(PName, pkg_info[1], pkg_info[2], CURRENT_DIR);
             std::cout << "package built" << "\n";
         }
         else {
             std::cout << "dependencies are not ok" << "\n";
         }
-
-        std::vector<std::string> install_info = split(pkg_info[3], "|"); // TODO: use yaml/json for pkg formats instead of a custom one
-        for (int i = 0; i < install_info.size(); i++)
+        
+        //Moving built binaries to their install location on the system
+        for (int i = 0; i < pkg_info["install"].size(); i++)
         {
-            std::string install_cmd = "mv " + CURRENT_DIR + "build/" + split(install_info[i], " ")[0] + " " + split(install_info[i], " ")[1]; 
+            std::string install_cmd = "mv " + CURRENT_DIR + "build/" + pkg_info["install"][i]["file"].dump() + " " + pkg_info["install"][i]["destination"].dump(); 
             std::cout << install_cmd << std::endl;
             system(install_cmd.c_str());
             system(("rm -rf " + CURRENT_DIR + "build/*").c_str());
         }   
         //Writing to pkg list
-        std::ofstream pkg_list;
-        pkg_list.open(DATA_DIR + "pkg.list");
-        pkg_list << pkg_info[3] <<  "\n";  
+        // TODO: write pkg infos to a packages database
     }
     else if (use == CREATE) {
         
-        std::vector<std::string> pkg_info = open_spm(PKG_DIR + PName + ".spm");
+        //Reading package data from .spm file
+        std::ifstream file_spm((PKG_DIR + PName + ".spm").c_str(), std::ios::in);
+        std::stringstream buffer;
+        buffer << file_spm.rdbuf();
+        //parsing json data
+        auto pkg_info = json::parse(buffer.str());
+
         make_pkg(PName, pkg_info[1],pkg_info[2],CURRENT_DIR);
 
         create_binary(PName, pkg_info[3], pkg_info[0]);
@@ -112,11 +128,17 @@ int install_binary(std::string PName)
 {
     std::string TMP_DIR = "/tmp/" + std::to_string((rand() % 100000 + 1 )) + "/";
     system(("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz " + TMP_DIR ).c_str());
-    std::vector<std::string> bin_info = open_spm(TMP_DIR + PName + "-bin.spm");
+    //Reading package data from .spm file
+    std::ifstream file_spm((TMP_DIR + PName + "-bin.spm").c_str(), std::ios::in);
+    std::stringstream buffer;
+    buffer << file_spm.rdbuf();
+    //parsing json data
+    auto bin_info = json::parse(buffer.str());
+
     if (check_dependencies(bin_info[0],DATA_DIR)) 
     {
         std::cout << "dependencies are ok" << "\n";
-        move_binaries(split(bin_info[1],"|"));
+
     }
     else {
         std::cout << "dependencies are not ok" << "\n";
@@ -140,9 +162,8 @@ int move_binaries (std::vector<std::string> install_info)
 {
     for (int i = 0; i < install_info.size(); i++)
     {
-        std::string install_cmd = "mv " + CURRENT_DIR + "build/" + split(install_info[i], " ")[0] + " " + split(install_info[i], " ")[1]; 
-        std::cout << install_cmd << std::endl;
-        system(install_cmd.c_str());
+
+
     } 
     return 0;
 }

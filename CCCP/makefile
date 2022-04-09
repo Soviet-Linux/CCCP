@@ -7,12 +7,10 @@ OUTPUT = bin
 FLAGS = -g -std=c++20 -pedantic
 
 default:
-	${CC} -c src/misc.cpp ${FLAGS} -o ${OUTPUT}/misc.o
 	${CC} -c src/make.cpp ${FLAGS} -o ${OUTPUT}/make.o
 	${CC} src/${MAIN}.cpp ${FLAGS} ${OUTPUT}/make.o  ${OUTPUT}/misc.o -o ${OUTPUT}/${MAIN} && ./${OUTPUT}/${MAIN}
 
 build:
-	${CC} -c src/misc.cpp ${FLAGS} -o ${OUTPUT}/misc.o
 	${CC} -c src/make.cpp ${FLAGS} -o ${OUTPUT}/make.o
 	${CC} src/${MAIN}.cpp ${FLAGS} ${OUTPUT}/make.o  ${OUTPUT}/misc.o -o ${OUTPUT}/${MAIN}
 

@@ -4,7 +4,10 @@
 #include <vector>
 #include <algorithm>
 
-#include "../include/misc.h"
+#include "../include/nlohmann/json.hpp"
+
+using nlohmann::json;
+
 #include "../include/make.h"
 
 void make_pkg (const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& CURRENT_DIR)
@@ -21,13 +24,32 @@ void make_pkg (const std::string& PName, const std::string& download_info, const
     system(("rm -rf " + CURRENT_DIR + "sources/" + PName).c_str());
 }
 
-int check_dependencies (const nlohmann::basic_json<>&, const std::string& DATA_DIR) 
+int check_dependencies (const nlohmann::basic_json<>& dependencies, const std::string& DATA_DIR) 
 {
-
+    std::cout << dependencies.dump() << "\n";
     return 1;
 }
-
-std::vector<std::string> init_pkg_list(const std::string& DATA_DIR)
+pkg_data open_spm (const std::string& PPath)
 {
-    
+    std::ifstream file_spm((PPath).c_str(), std::ios::in);
+    std::stringstream buffer;
+    buffer << file_spm.rdbuf();
+    //parsing json data
+    auto pkg_info = json::parse(buffer.str());
+    std::cout  << pkg_info << "\n";
+    pkg_data data;
+    data.name = pkg_info["name"];
+    data.type = pkg_info["type"];
+    data.version = pkg_info["version"];
+    for (int i = 0; i < pkg_info["dependencies"].size(); i++)
+    {
+        data.dependencies.push_back(pkg_info["dependencies"][i]);
+    }
+    data.download_info = pkg_info["info"]["download"];
+    data.build_info = pkg_info["info"]["build"];
+    for (int i = 0; i < pkg_info["install"].size(); i++)
+    {
+        data.install_info.push_back({pkg_info["install"][i]["file"], pkg_info["install"][i]["destination"]});
+    }
+    return data;
 }
