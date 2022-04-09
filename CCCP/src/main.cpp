@@ -14,14 +14,17 @@
 #include "../include/main.h"
 #include "../include/make.h"
 
-
-const std::string WORK_DIR = "/var/cccp/work";
+//the dir where we will be building the packages and downoading the sources
+const std::string WORK_DIR = "/var/cccp/work/";
+//the dir where the package file are stored
 const std::string PKG_DIR = "/var/cccp/pkg/";
+//the dir where the data is stored
 const std::string DATA_DIR = "/var/cccp/data/";
 
-
+//Main function
 int main (int argc, char *argv[]) 
 {
+    //verifying if the user has entered arguments
     if (argc < 2) {
         std::cout << "No arguments given. Terminating.\n";
         exit(1);
@@ -67,6 +70,7 @@ int main (int argc, char *argv[])
 void install_package (const std::string& PName)
 {
     std::cout << "processing package " << PName << "\n"; 
+    //Getting the package data from the spm file
     const pkg_data& pkg_info = open_spm(PKG_DIR + PName + ".spm"); 
 
     //Checking dependencies

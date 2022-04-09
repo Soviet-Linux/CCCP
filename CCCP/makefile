@@ -1,6 +1,7 @@
 CC = g++
 MAIN = main
 
+CHROOT = /home/paulk/Desktop/soviet-chroot/
 
 OUTPUT = bin
 
@@ -16,4 +17,5 @@ run:
 
 clean:
 	rm -rf ${OUTPUT}
-
+install:
+	cp -r ${OUTPUT}/${MAIN} /home/paulk/Desktop/soviet-chroot/bin/cccp
