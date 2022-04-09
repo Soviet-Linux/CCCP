@@ -6,3 +6,5 @@ CCCP/sources/*
 .vs
 .vscode
 CCCP/run.sh
+CCCP/DATA_DIR
+CCCP/PKG_DIR

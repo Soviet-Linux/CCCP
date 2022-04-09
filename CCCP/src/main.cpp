@@ -15,9 +15,9 @@
 #include "../include/make.h"
 
 
-const std::string CURRENT_DIR = "/home/paulk/Desktop/CCCP/CCCP/";
-const std::string PKG_DIR = CURRENT_DIR;
-const std::string DATA_DIR = CURRENT_DIR;
+const std::string WORK_DIR = "/var/cccp/work";
+const std::string PKG_DIR = "/var/cccp/pkg/";
+const std::string DATA_DIR = "/var/cccp/data/";
 
 
 int main (int argc, char *argv[]) 
@@ -74,7 +74,7 @@ void install_package (const std::string& PName)
     {
         std::cout << "dependencies are ok" << "\n";
         //making package with the download_info command from the .spm file
-        make_pkg(PName, pkg_info.download_info, pkg_info.build_info, CURRENT_DIR);
+        make_pkg(PName, pkg_info.download_info, pkg_info.build_info, WORK_DIR);
         std::cout << "package built" << "\n";
     }
     else {
@@ -85,7 +85,7 @@ void install_package (const std::string& PName)
      
     //Moving built binaries to their install location on the system
     //TDOD : for the release we should change a BUILD_DIR
-    move_binaries(CURRENT_DIR + "build/",pkg_info.install_info);
+    move_binaries(WORK_DIR + "build/",pkg_info.install_info);
 
     // TODO: write pkg infos to a packages database
     //
@@ -128,13 +128,13 @@ void create_binary (const std::string& PName)
     //Getting package data from .spm file
     const pkg_data& pkg_info = open_spm(PKG_DIR + PName + ".spm"); 
     //Building package
-    make_pkg(PName,  pkg_info.download_info,pkg_info.build_info, CURRENT_DIR);
+    make_pkg(PName,  pkg_info.download_info,pkg_info.build_info, WORK_DIR);
     //copy the .spm file to the build directory
-    system(("cp " + PKG_DIR + PName + ".spm " + CURRENT_DIR + "build/").c_str());
+    system(("cp " + PKG_DIR + PName + ".spm " + WORK_DIR + "build/").c_str());
     //Creating the tar.gz package archive
-    std::string cmd_archive = "(cd " + CURRENT_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz *)" ; // TODO fix these lines
+    std::string cmd_archive = "(cd " + WORK_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz *)" ; // TODO fix these lines
     std::cout << cmd_archive << std::endl;
     system((cmd_archive).c_str());
     //cleaning build directory
-    system(("rm -rf " + CURRENT_DIR + "build/*").c_str());
+    system(("rm -rf " + WORK_DIR + "build/*").c_str());
 }

@@ -2,6 +2,7 @@
 
 // I had to include this but I don't know why
 #include <sys/types.h>
+
 #include "../include/nlohmann/json.hpp"
 
 //A struct to hold the installation data
@@ -35,7 +36,7 @@ struct pkg_data
 };
 
 //Prototypes
-void make_pkg(const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& CURRENT_DIR);
+void make_pkg(const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& WORK_DIR);
 pkg_data open_spm (const std::string& PPath);
 void move_binaries(const std::string& BUILD_DIR ,const std::vector<location>& install_info);
 int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR); 

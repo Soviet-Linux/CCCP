@@ -14,18 +14,18 @@ using nlohmann::json;
 #include "../include/make.h"
 
 // This function is downloading and building the packages
-void make_pkg (const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& CURRENT_DIR)
+void make_pkg (const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& WORK_DIR)
 {
-    const std::string& download_cmd = "( cd "+ CURRENT_DIR +"sources/ && "+download_info+" )";
+    const std::string& download_cmd = "( cd "+ WORK_DIR +"sources/ && "+download_info+" )";
 
     std::cout << download_cmd << "\n";
     system(download_cmd.c_str());
 
-    const std::string& build_cmd = "BUILD_ROOT="+ CURRENT_DIR +"build\n( cd "+ CURRENT_DIR +"sources/"+ PName +" && "+ build_info +" )";
+    const std::string& build_cmd = "BUILD_ROOT="+ WORK_DIR +"build\n( cd "+ WORK_DIR +"sources/"+ PName +" && "+ build_info +" )";
     std::cout << build_cmd << std::endl;
     
     system(build_cmd.c_str());
-    system(("rm -rf " + CURRENT_DIR + "sources/" + PName).c_str());
+    system(("rm -rf " + WORK_DIR + "sources/" + PName).c_str());
 }
 // This function is moving the binaries to the correct locations
 void move_binaries(const std::string& BUILD_DIR ,const std::vector<location>& install_info)
