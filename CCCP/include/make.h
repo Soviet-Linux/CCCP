@@ -1,5 +1,6 @@
 #pragma once
 
+// I had to include this but I don't know why
 #include <sys/types.h>
 #include "../include/nlohmann/json.hpp"
 
@@ -7,7 +8,9 @@
 //TODO : explain this better
 struct location
 {
+    //The file to be installed
     std::string file;
+    // Where to install it
     std::string destination;
     
 };
@@ -33,4 +36,6 @@ struct pkg_data
 
 //Prototypes
 void make_pkg(const std::string& PName, const std::string& download_info, const std::string& build_info, const std::string& CURRENT_DIR);
-int check_dependencies(const nlohmann::basic_json<>&, const std::string& DATA_DIR);
+pkg_data open_spm (const std::string& PPath);
+void move_binaries(const std::string& BUILD_DIR ,const std::vector<location>& install_info);
+int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR); 
