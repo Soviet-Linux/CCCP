@@ -11,7 +11,7 @@
 
 ### <p align="center">It doesn't work very well, but it's worth the try. Help is welcome!</p>
 
-### <p align="center">If you are interested join [OUR server](https://discord.gg/UcJaRvRt) </p>
+### <p align="center">If you are interested join [OUR server](https://discord.gg/CpkN3kAm3t) </p>
 
 ### <p align="center">Created by [PKD667](https://github.com/PKD667) </p>
 
