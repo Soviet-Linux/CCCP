@@ -1,0 +1,12 @@
+{
+    "name" : "<package name>",
+    "type" : "<src,bin,local>",
+    "version" : "<version>",
+    "dependencies" : ["<a dependencie>","<other dependencie>"],
+    "info" : 
+    {
+        "download" : "<download command>",
+        "build" : "<build command>"
+        "special" : "<special command>"
+    }
+}

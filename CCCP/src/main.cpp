@@ -14,13 +14,18 @@
 #include "../include/main.h"
 #include "../include/make.h"
 
-//the dir where we will be building the packages and downoading the sources
-const std::string WORK_DIR = "/var/cccp/work/";
-//the dir where the package file are stored
-const std::string PKG_DIR = "/var/cccp/pkg/";
-//the dir where the data is stored
-const std::string DATA_DIR = "/var/cccp/data/";
+//The filesystem root
+const std::string ROOT = "/home/paulk/Desktop/soviet-lfs-rebuild/";
+//For real use it must be set to "/"
 
+//the dir where we will be building the packages and downoading the sources
+const std::string WORK_DIR = ROOT + "/var/cccp/work/";
+//the dir where the package file are storedds
+const std::string PKG_DIR = ROOT + "/var/cccp/pkg/";
+//the dir where the data is stored
+const std::string DATA_DIR = ROOT + "/var/cccp/data/";
+//where the sources are stored for local packages
+const std::string SRC_DIR = ROOT + "/var/cccp/src/";
 //Main function
 int main (int argc, char *argv[]) 
 {
@@ -87,7 +92,8 @@ void install_package (const std::string& PName)
             download_pkg(pkg_info.download_info, WORK_DIR);
         }
         else if (pkg_info.type == "local") {
-            std::string cmd_archive = "tar -xf " + pkg_info.archive + " -C " + WORK_DIR + "build/";
+            std::string cmd_archive = "tar -xf " + SRC_DIR + PName + "*" + " -C " + WORK_DIR + "sources/";
+            std::cout << cmd_archive << "\n";
             system(cmd_archive.c_str());
         
         }
@@ -104,7 +110,7 @@ void install_package (const std::string& PName)
      
     //Moving built binaries to their install location on the system
     //TDOD : for the release we should change a BUILD_DIR
-    move_binaries(WORK_DIR + "build/",pkg_info.install_info);
+    move_binaries(WORK_DIR + "build/",ROOT);
 
     // TODO: write pkg infos to a packages database
     //
@@ -126,7 +132,7 @@ int install_binary(const std::string& PName)
     {
         std::cout << "dependencies are ok" << "\n";
         //installing  package with install_info command from the .spm file
-        move_binaries(TMP_DIR,pkg_info.install_info);
+        move_binaries(TMP_DIR,ROOT);
         std::cout << "package installed" << "\n";
         //cleaning 
         system(("rm -rf " + TMP_DIR).c_str());

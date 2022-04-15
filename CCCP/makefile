@@ -1,7 +1,7 @@
 CC = g++
 MAIN = main
 
-CHROOT = /home/paulk/Desktop/soviet-chroot/
+SOVIET = /home/paulk/Desktop/soviet-lfs-rebuild
 
 OUTPUT = bin
 
@@ -18,4 +18,5 @@ run:
 clean:
 	rm -rf ${OUTPUT}
 install:
-	cp -r ${OUTPUT}/${MAIN} /home/paulk/Desktop/soviet-chroot/bin/cccp
+	cp -r ${OUTPUT}/${MAIN} ${SOVIET}/bin/cccp
+	mkdir -p ${SOVIET}/var/cccp ${SOVIET}/var/cccp/work ${SOVIET}/var/cccp/work/build ${SOVIET}/var/cccp/work/sources ${SOVIET}/var/cccp/src ${SOVIET}/var/cccp/pkg 

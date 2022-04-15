@@ -31,15 +31,10 @@ void download_pkg (const std::string& download_info, const std::string& WORK_DIR
     system(download_cmd.c_str());
 }
 // This function is moving the binaries to the correct locations
-void move_binaries(const std::string& BUILD_DIR ,const std::vector<location>& install_info)
+void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
 {
     //moving binaries to their install location on the system
-    for (int i = 0; i < install_info.size(); i++)
-    {
-        std::string install_cmd = "mv " + BUILD_DIR + install_info[i].file + " " + install_info[i].destination; 
-        std::cout << install_cmd << std::endl;
-        system(install_cmd.c_str());
-    }
+    std::string move_cmd = "rsync -r " + BUILD_DIR + "* " + ROOT;
 }
 // This function will check if all dependencies of a package are installed
 int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR) 
@@ -67,16 +62,19 @@ pkg_data open_spm (const std::string& PPath)
     data.name = pkg_info["name"];
     data.type = pkg_info["type"];
     data.version = pkg_info["version"];
+    data.special_info = pkg_info["info"]["special"];
     for (int i = 0; i < pkg_info["dependencies"].size(); i++)
     {
         data.dependencies.push_back(pkg_info["dependencies"][i]);
     }
-    data.download_info = pkg_info["info"]["download"];
-    data.build_info = pkg_info["info"]["build"];
-    data.archive = pkg_info["info"]["archive"];
-    for (int i = 0; i < pkg_info["install"].size(); i++)
+    if (data.type == "src")
     {
-        data.install_info.push_back({pkg_info["install"][i]["file"], pkg_info["install"][i]["destination"]});
+        data.download_info = pkg_info["info"]["download"];
+        data.build_info = pkg_info["info"]["build"];
+    }
+    else if (data.type == "local")
+    {
+        data.build_info = pkg_info["info"]["build"];
     }
     return data;
 }
