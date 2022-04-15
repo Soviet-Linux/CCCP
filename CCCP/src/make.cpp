@@ -17,11 +17,11 @@ using nlohmann::json;
 void make_pkg (const std::string& PName, const std::string& build_info, const std::string& WORK_DIR)
 {
 
-    const std::string& build_cmd = "BUILD_ROOT="+ WORK_DIR +"build\n( cd "+ WORK_DIR +"sources/"+ PName +" && "+ build_info +" )";
+    const std::string& build_cmd = "BUILD_ROOT="+ WORK_DIR +"build\n( cd "+ WORK_DIR +"sources/"+ PName +"* && "+ build_info +" )";
     std::cout << build_cmd << std::endl;
     
     system(build_cmd.c_str());
-    system(("rm -rf " + WORK_DIR + "sources/" + PName).c_str());
+    system(("rm -rf " + WORK_DIR + "sources/" + PName + "*").c_str());
 }
 void download_pkg (const std::string& download_info, const std::string& WORK_DIR)
 {

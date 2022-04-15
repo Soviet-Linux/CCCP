@@ -15,17 +15,20 @@
 #include "../include/make.h"
 
 //The filesystem root
-const std::string ROOT = "/home/paulk/Desktop/soviet-lfs-rebuild/";
+const std::string ROOT = "/";
 //For real use it must be set to "/"
 
 //the dir where we will be building the packages and downoading the sources
 const std::string WORK_DIR = ROOT + "/var/cccp/work/";
-//the dir where the package file are storedds
+//the dir where the package file are storeds
 const std::string PKG_DIR = ROOT + "/var/cccp/pkg/";
 //the dir where the data is stored
 const std::string DATA_DIR = ROOT + "/var/cccp/data/";
 //where the sources are stored for local packages
 const std::string SRC_DIR = ROOT + "/var/cccp/src/";
+
+bool DEBUG = false; //set to true to see the debug messages
+
 //Main function
 int main (int argc, char *argv[]) 
 {
@@ -36,23 +39,35 @@ int main (int argc, char *argv[])
     }
 
     std::string option = argv[1];
-
+    if (option == "--debug" || option == "-d")
+    {
+        DEBUG = true;
+        std::cout << "Debug mode enabled.\n";
+        option = argv[2];
+    }
     //parsing argument 
     // TODO: use a switch statement here
+    std::cout << "option : " << option << std::endl;
     if (option.substr(0,2) == "--") {
         if (option == "--install") {
-            install_package(argv[2]);
+            install_package(argv[argc-1]);
         }
         else if (option == "--create") {
 
-            create_binary(argv[2]);
+            create_binary(argv[argc-1]);
         }
         else if (option == "--binary") {
-            install_binary(argv[2]);
+            install_binary(argv[argc-1]);
         }
         else if (option == "--test")
         {
             std::cout << "Testing\n";
+        }
+        //Check if debug is enabled
+        else
+        {
+            std::cout << "Invalid option. Terminating.\n";
+            exit(1);
         }
         
     }
@@ -79,8 +94,16 @@ int main (int argc, char *argv[])
 void install_package (const std::string& PName)
 {
     std::cout << "processing package " << PName << "\n"; 
+    //initialising package path
+    std::string PPath = PKG_DIR + PName + ".spm";
+    //debug message
+    if (DEBUG) {
+        std::cout << "PPath : " << PPath << "\n";
+    }
     //Getting the package data from the spm file
-    const pkg_data& pkg_info = open_spm(PKG_DIR + PName + ".spm"); 
+    const pkg_data& pkg_info = open_spm(PPath); 
+    //Debug message
+    if (DEBUG) std::cout << pkg_info.name << " " << pkg_info.type << " " << pkg_info.version << "\n"; 
 
     //Checking dependencies
     if (check_dependencies(pkg_info.dependencies, DATA_DIR))

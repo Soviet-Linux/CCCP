@@ -19,4 +19,3 @@ clean:
 	rm -rf ${OUTPUT}
 install:
 	cp -r ${OUTPUT}/${MAIN} ${SOVIET}/bin/cccp
-	mkdir -p ${SOVIET}/var/cccp ${SOVIET}/var/cccp/work ${SOVIET}/var/cccp/work/build ${SOVIET}/var/cccp/work/sources ${SOVIET}/var/cccp/src ${SOVIET}/var/cccp/pkg 
