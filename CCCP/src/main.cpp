@@ -26,6 +26,8 @@ const std::string PKG_DIR = ROOT + "/var/cccp/pkg/";
 const std::string DATA_DIR = ROOT + "/var/cccp/data/";
 //where the sources are stored for local packages
 const std::string SRC_DIR = ROOT + "/var/cccp/src/";
+//where the binaries are stored
+const std::string BIN_DIR = ROOT + "/var/cccp/bin/";
 
 bool DEBUG = false; //set to true to see the debug messages
 
@@ -145,17 +147,25 @@ int install_binary(const std::string& PName)
 {
     //Creating a random temporay dir name
     std::string TMP_DIR = "/tmp/" + std::to_string((rand() % 100000 + 1 )) + "/";
+    system(("mkdir " + TMP_DIR).c_str());
     //Uncompressing the binary package into the temorary dir
-    system(("tar -xf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz -C" + TMP_DIR ).c_str());
+    std::string cmd_uncompress = "tar -xvf " + BIN_DIR + PName + ".tar.gz -C " + TMP_DIR;
+    //Debug log of the command
+    if (DEBUG) std::cout << cmd_uncompress << "\n";
+    //executing the command
+    system((cmd_uncompress).c_str());
     //Reading package data from .spm file
     const pkg_data& pkg_info = open_spm(TMP_DIR + PName + ".spm");
-
+    //add the spm to the datas
+    // TODO: add a real database in db.cpp
+    std::string cmd_clean = "mv -f " + TMP_DIR + PName + ".spm " + DATA_DIR;
+    system(cmd_clean.c_str());
     //Checking dependencies
     if (check_dependencies(pkg_info.dependencies,DATA_DIR)) 
     {
         std::cout << "dependencies are ok" << "\n";
         //installing  package with install_info command from the .spm file
-        move_binaries(TMP_DIR,ROOT);
+        move_binaries(TMP_DIR ,ROOT);
         std::cout << "package installed" << "\n";
         //cleaning 
         system(("rm -rf " + TMP_DIR).c_str());
@@ -177,14 +187,26 @@ void create_binary (const std::string& PName)
     //Getting package data from .spm file
     const pkg_data& pkg_info = open_spm(PKG_DIR + PName + ".spm"); 
     bin_spm(PKG_DIR + PName + ".spm", WORK_DIR + "build/"+ PName + ".spm");
-    //downloading package source into the work directory
-    download_pkg(pkg_info.download_info, WORK_DIR);
+    if (pkg_info.type == "src")
+    {
+        //downloading package source into the work directory
+        download_pkg(pkg_info.download_info, WORK_DIR);
+    }
+    else if (pkg_info.type == "local") {
+        std::string cmd_source = "tar -xf " + SRC_DIR + PName + "*" + " -C " + WORK_DIR + "sources/";
+        std::cout << cmd_source << "\n";
+        system(cmd_source.c_str());
+        
+    }
+   
+
     //making the package from source
     make_pkg(PName, pkg_info.build_info, WORK_DIR);
+    std::cout << "package built" << "\n";
     //Creating the tar.gz package archive
-    std::string cmd_archive = "(cd " + WORK_DIR + "build && tar -cvf " + std::filesystem::current_path().string() +"/"+ PName + ".tar.gz *)" ; // TODO fix these lines
-    std::cout << cmd_archive << std::endl;
-    system((cmd_archive).c_str());
+    std::string cmd_archive = "( cd " + WORK_DIR + "build/ && tar -cvf " + BIN_DIR + PName + ".tar.gz * )";
+    std::cout << cmd_archive << "\n";
+    system(cmd_archive.c_str());
     //cleaning build directory
     system(("rm -rf " + WORK_DIR + "build/*").c_str());
 }

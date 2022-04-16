@@ -34,7 +34,10 @@ void download_pkg (const std::string& download_info, const std::string& WORK_DIR
 void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
 {
     //moving binaries to their install location on the system
-    std::string move_cmd = "rsync -r " + BUILD_DIR + "* " + ROOT;
+    std::string move_cmd = "cp -rvl " + BUILD_DIR + "* " + ROOT + "\n ";
+    std::cout << move_cmd << "\n";
+    system(move_cmd.c_str());
+    system(("rm -rf " + BUILD_DIR + "*").c_str());
 }
 // This function will check if all dependencies of a package are installed
 int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR) 
