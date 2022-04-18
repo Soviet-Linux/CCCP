@@ -28,7 +28,7 @@ Follow this example to create a package:
 ```
 Name :
 The name of the package
-Types : 
+Types : \
 "src" is for source packages that need to download the source files.
 "bin" is for binary packages created using --create option.
 "local" is for sources packages that have their sources in the SRC_DIR "/var/cccp/src"
