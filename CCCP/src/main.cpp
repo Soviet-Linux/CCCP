@@ -142,6 +142,9 @@ void install_package (const std::string& PName)
         //making the package from source
         make_pkg(PName, pkg_info.build_info, MAKE_DIR,BUILD_DIR);
         std::cout << "package built" << "\n";
+        //Storing package data
+        //Adding the locations to the package files , and the packages files to DATA_DIR
+        store_spm(PPath,BUILD_DIR, DATA_DIR + PName + ".spm");
     }
     else {
         std::cout << "dependencies are not ok" << "\n";
@@ -151,10 +154,6 @@ void install_package (const std::string& PName)
      
     //Moving built binaries to their install location on the system
     move_binaries(BUILD_DIR,ROOT);
-
-
-    //Adding the locations to the package files , and the packages files to DATA_DIR
-    store_spm(PPath,BUILD_DIR, DATA_DIR + PName + ".spm");
 
 }
 
