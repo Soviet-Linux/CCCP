@@ -39,9 +39,10 @@ struct pkg_data
 };
 
 //Prototypes
-void make_pkg(const std::string& PName, const std::string& build_info, const std::string& WORK_DIR);
-void download_pkg( const std::string& download_info, const std::string& WORK_DIR);
-pkg_data open_spm (const std::string& PPath);
+void make_pkg (const std::string& PName, const std::string& build_info, const std::string& MAKE_DIR,const std::string& BUILD_DIR);
+void download_pkg (const std::string& download_info, const std::string& MAKE_DIR);
 void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT);
+pkg_data open_spm (const std::string& PPath);
 int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR); 
 void bin_spm (const std::string& in_path, const std::string& out_path);
+void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std::string& out_path);

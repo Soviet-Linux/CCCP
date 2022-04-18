@@ -18,16 +18,24 @@
 const std::string ROOT = "/";
 //For real use it must be set to "/"
 
+
+//main dir where all the files and packages will be stored and where we will work
+const std::string MAIN_DIR = ROOT + "var/cccp/";
 //the dir where we will be building the packages and downoading the sources
-const std::string WORK_DIR = ROOT + "/var/cccp/work/";
+// TODO: proper dir names , but i dont have time to do it
+const std::string WORK_DIR = MAIN_DIR + "work/";
 //the dir where the package file are storeds
-const std::string PKG_DIR = ROOT + "/var/cccp/pkg/";
+const std::string PKG_DIR = MAIN_DIR + "pkg/";
 //the dir where the data is stored
-const std::string DATA_DIR = ROOT + "/var/cccp/data/";
+const std::string DATA_DIR = MAIN_DIR + "data/";
 //where the sources are stored for local packages
-const std::string SRC_DIR = ROOT + "/var/cccp/src/";
+const std::string SRC_DIR = MAIN_DIR + "src/";
 //where the binaries are stored
-const std::string BIN_DIR = ROOT + "/var/cccp/bin/";
+const std::string BIN_DIR = MAIN_DIR + "bin/";
+//Dir where built binaries are stored after making or after uncompressing
+const std::string BUILD_DIR = WORK_DIR + "build/";
+//Dir where the package sources are downloaded and built
+const std::string MAKE_DIR = WORK_DIR + "sources/";
 
 bool DEBUG = false; //set to true to see the debug messages
 
@@ -97,7 +105,7 @@ void install_package (const std::string& PName)
 {
     std::cout << "processing package " << PName << "\n"; 
     //initialising package path
-    std::string PPath = PKG_DIR + PName + ".spm";
+    const std::string PPath = PKG_DIR + PName + ".spm";
     //debug message
     if (DEBUG) {
         std::cout << "PPath : " << PPath << "\n";
@@ -117,14 +125,14 @@ void install_package (const std::string& PName)
             download_pkg(pkg_info.download_info, WORK_DIR);
         }
         else if (pkg_info.type == "local") {
-            std::string cmd_archive = "tar -xf " + SRC_DIR + PName + "*" + " -C " + WORK_DIR + "sources/";
+            std::string cmd_archive = "tar -xf " + SRC_DIR + PName + "*" + " -C " + MAKE_DIR;
             std::cout << cmd_archive << "\n";
             system(cmd_archive.c_str());
         
         }
         
         //making the package from source
-        make_pkg(PName, pkg_info.build_info, WORK_DIR);
+        make_pkg(PName, pkg_info.build_info, MAKE_DIR,BUILD_DIR);
         std::cout << "package built" << "\n";
     }
     else {
@@ -134,41 +142,36 @@ void install_package (const std::string& PName)
     }
      
     //Moving built binaries to their install location on the system
-    //TDOD : for the release we should change a BUILD_DIR
-    move_binaries(WORK_DIR + "build/",ROOT);
+    move_binaries(BUILD_DIR,ROOT);
 
-    // TODO: write pkg infos to a packages database
-    //
+
+    //Adding the locations to the package files , and the packages files to DATA_DIR
+    store_spm(PPath,BUILD_DIR, DATA_DIR + PName + ".spm");
 
 }
 
 //this function installs a binary package
 int install_binary(const std::string& PName)
 {
-    //Creating a random temporay dir name
-    std::string TMP_DIR = "/tmp/" + std::to_string((rand() % 100000 + 1 )) + "/";
-    system(("mkdir " + TMP_DIR).c_str());
     //Uncompressing the binary package into the temorary dir
-    std::string cmd_uncompress = "tar -xvf " + BIN_DIR + PName + ".tar.gz -C " + TMP_DIR;
+    std::string cmd_uncompress = "tar -xvf " + BIN_DIR + PName + ".tar.gz -C " + BUILD_DIR;
     //Debug log of the command
     if (DEBUG) std::cout << cmd_uncompress << "\n";
     //executing the command
     system((cmd_uncompress).c_str());
     //Reading package data from .spm file
-    const pkg_data& pkg_info = open_spm(TMP_DIR + PName + ".spm");
+    const pkg_data& pkg_info = open_spm(BUILD_DIR + PName + ".spm");
     //add the spm to the datas
-    // TODO: add a real database in db.cpp
-    std::string cmd_clean = "mv -f " + TMP_DIR + PName + ".spm " + DATA_DIR;
-    system(cmd_clean.c_str());
+    system(("mv " + BUILD_DIR + PName + ".spm " + DATA_DIR).c_str());
     //Checking dependencies
     if (check_dependencies(pkg_info.dependencies,DATA_DIR)) 
     {
         std::cout << "dependencies are ok" << "\n";
         //installing  package with install_info command from the .spm file
-        move_binaries(TMP_DIR ,ROOT);
+        move_binaries(BUILD_DIR ,ROOT);
         std::cout << "package installed" << "\n";
         //cleaning 
-        system(("rm -rf " + TMP_DIR).c_str());
+        system(("rm -rf " + BUILD_DIR).c_str());
 
 
     }
@@ -183,30 +186,39 @@ int install_binary(const std::string& PName)
 //Creating a binary package from a .spm file
 void create_binary (const std::string& PName)
 {
+    //PKG file location
+    std::string PPath = PKG_DIR + PName + ".spm";
+    //temp spm file location ( I know , this is not very good , if you are very intelligent maybe you could change it :) 
+    // TODO: change this to a better location
+    std::string temp_path = "/tmp/temp.spm";
+
     std::cout << "processing package " << PName << "\n"; 
     //Getting package data from .spm file
-    const pkg_data& pkg_info = open_spm(PKG_DIR + PName + ".spm"); 
-    bin_spm(PKG_DIR + PName + ".spm", WORK_DIR + "build/"+ PName + ".spm");
+    const pkg_data& pkg_info = open_spm(PPath); 
     if (pkg_info.type == "src")
     {
         //downloading package source into the work directory
-        download_pkg(pkg_info.download_info, WORK_DIR);
+        download_pkg(pkg_info.download_info, MAKE_DIR);
     }
     else if (pkg_info.type == "local") {
+        //unpacking the sources archive
         std::string cmd_source = "tar -xf " + SRC_DIR + PName + "*" + " -C " + WORK_DIR + "sources/";
-        std::cout << cmd_source << "\n";
+        if (DEBUG) std::cout << cmd_source << "\n";
         system(cmd_source.c_str());
         
     }
    
 
     //making the package from source
-    make_pkg(PName, pkg_info.build_info, WORK_DIR);
+    make_pkg(PName, pkg_info.build_info, MAKE_DIR,BUILD_DIR);
     std::cout << "package built" << "\n";
+    //adding locations and other thing to spm file
+    bin_spm(PPath, temp_path);
+    store_spm(temp_path,BUILD_DIR,BUILD_DIR + PName + ".spm");
     //Creating the tar.gz package archive
-    std::string cmd_archive = "( cd " + WORK_DIR + "build/ && tar -cvf " + BIN_DIR + PName + ".tar.gz * )";
+    std::string cmd_archive = "( cd " + BUILD_DIR + " && tar -cf " + BIN_DIR + PName + ".tar.gz * )";
     std::cout << cmd_archive << "\n";
     system(cmd_archive.c_str());
     //cleaning build directory
-    system(("rm -rf " + WORK_DIR + "build/*").c_str());
+    system(("rm -rf " + BUILD_DIR + "*").c_str());
 }

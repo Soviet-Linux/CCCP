@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sys/types.h>
 #include <vector>
 #include <algorithm>
 
@@ -14,18 +15,18 @@ using nlohmann::json;
 #include "../include/make.h"
 
 // This function is downloading and building the packages
-void make_pkg (const std::string& PName, const std::string& build_info, const std::string& WORK_DIR)
+void make_pkg (const std::string& PName, const std::string& build_info, const std::string& MAKE_DIR,const std::string& BUILD_DIR)
 {
 
-    const std::string& build_cmd = "BUILD_ROOT="+ WORK_DIR +"build\n( cd "+ WORK_DIR +"sources/"+ PName +"* && "+ build_info +" )";
+    const std::string& build_cmd = "BUILD_ROOT="+ BUILD_DIR +"\n( cd "+ MAKE_DIR + PName +"* && "+ build_info +" )";
     std::cout << build_cmd << std::endl;
     
     system(build_cmd.c_str());
-    system(("rm -rf " + WORK_DIR + "sources/" + PName + "*").c_str());
+    system(("rm -rf " + MAKE_DIR + PName + "*").c_str());
 }
-void download_pkg (const std::string& download_info, const std::string& WORK_DIR)
+void download_pkg (const std::string& download_info, const std::string& MAKE_DIR)
 {
-    const std::string& download_cmd = "( cd "+ WORK_DIR +"sources/ && "+download_info+" )";
+    const std::string& download_cmd = "( cd "+ MAKE_DIR +" && "+download_info+" )";
 
     std::cout << download_cmd << "\n";
     system(download_cmd.c_str());
@@ -84,6 +85,7 @@ pkg_data open_spm (const std::string& PPath)
 // changing source spm file to bin spm file
 void bin_spm (const std::string& in_path , const std::string& out_path)
 {
+
     std::ifstream file_spm((in_path).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
@@ -93,29 +95,38 @@ void bin_spm (const std::string& in_path , const std::string& out_path)
     pkg_info["type"] = "bin";
     pkg_info["info"]["build"] = "";
     pkg_info["info"]["download"] = "";
-    std::ofstream file_spm_bin((out_path).c_str(), std::ios::out);
+    std::ofstream file_spm_bin(out_path, std::ios::out);
     file_spm_bin << pkg_info.dump(4);
     file_spm_bin.close();
+    std::cout << "Bin spm file created" << std::endl;
+
+    
     
 }
 //This fucntion is very important , it will store the install location data to the "DB"
-void store_spm (const std::string& PPath, const std::string& out_path,const std::string& data_file_path)
+void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std::string& out_path)
 {
+    std::cout << "Storing location in spm file" << std::endl;
     std::ifstream file_spm((PPath).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     file_spm.close();
     //parsing json data
     auto pkg_info = json::parse(buffer.str());
-    //Get package file loaction
+    //Get package file location
     //this work is a little outside the scope of this function , but its ok
-    // TODO: change this // This is changing rn
-    //also the /tmp file is alittle hacky i think
+    // TODO: change this
+    std::string location_cmd = "( cd " + BUILD_DIR + " && find . -type f | cut -c2- > temp.txt )";
+    std::cout << location_cmd << std::endl;
+    system(location_cmd.c_str());
+    //also the temp.txt file is a little hacky i think
     //Add the package locations
     std::string line;
-    std::ifstream data_file (data_file_path.c_str());
+    std::ifstream data_file ((BUILD_DIR + "temp.txt").c_str());
+    //adding the location the the location list
     if (data_file.is_open())
     {
+        //reading the command output from a file
         while ( getline (data_file,line) )
         {
             std::cout << line << '\n';
@@ -123,7 +134,10 @@ void store_spm (const std::string& PPath, const std::string& out_path,const std:
         }
         data_file.close();
     }
-    
+    //removing temp file 
+    // TODO: comment this better
+    system(("rm "+ BUILD_DIR + "temp.txt").c_str());
+    //Writing the data to a file 
     std::ofstream file_spm_out((out_path).c_str(), std::ios::out);
     file_spm_out << pkg_info.dump(4);
     file_spm_out.close();

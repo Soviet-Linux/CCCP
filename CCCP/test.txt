@@ -1,0 +1,13 @@
+/src/main.cpp
+/src/db.cpp
+/src/make.cpp
+/include/make.h
+/include/main.h
+/include/nlohmann/json.hpp
+/include/db.h
+/makefile
+/test.txt
+/patern.spm
+/bin/make.o
+/bin/main
+/bin/misc.o

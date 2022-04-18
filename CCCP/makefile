@@ -14,7 +14,6 @@ default:
 
 run:
 	./${OUTPUT}/${MAIN}
-
 clean:
 	rm -rf ${OUTPUT}
 install:

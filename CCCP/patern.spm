@@ -6,7 +6,8 @@
     "info" : 
     {
         "download" : "<download command>",
-        "build" : "<build command>"
+        "build" : "<build command>",
         "special" : "<special command>"
-    }
+    },
+    "locations" : ["<location>","<other location>"]
 }
