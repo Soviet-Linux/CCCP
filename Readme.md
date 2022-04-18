@@ -26,8 +26,8 @@ Follow this example to create a package:
     "locations" : []
 }
 ```
-Name :
-The name of the package
+Name :\
+<space>The name of the package\
 Types : \
 "src" is for source packages that need to download the source files.
 "bin" is for binary packages created using --create option.
