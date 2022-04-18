@@ -1,18 +1,31 @@
-# <p align="center">Soviet - A completely communist linux distribution</p>
-<p align="center"><img width="285" height="268" alt="soviet" src="https://i.imgur.com/tjVd8Vy.png"></p>
+# <p align="center">CCCP(CCCP Crafter of Controlled Packages)</p>
 
-[<p align="center"><img width="150" height="50" alt="soviet" src="https://i.imgur.com/b1n7D0R.png"></p>](https://drive.google.com/file/d/1-jQcLdOwEA-Fzbn1r6LPaY4E5O0TGIwj/view?usp=sharing)
-
+the [CCCP](https://github.com/Soviet-Linux/CCCP) package manager (CCCP Crafter of Controlled Packages), uses either installer binaries produced with the —create argument or sources from a .spm (soviet package manager) file. 
 
 
-## <p align="center">Powered by CCCP (CCCP Crafter of Controlled Packages)</p>
+Here is a list of the parameters that may be used with the CCCP.:
+1. --install (installs a .spm files)
+1. --binary (installs a binary package in .tar.gz format)
+1. --create(creates a installer binary)
 
-### <p align="center">Now you can say "Im a communist, BTW"</p>
 
-### <p align="center">It doesn't work very well, but it's worth the try. Help is welcome!</p>
+Follow this example to create a package:
+```
+{
+    "name" : "<package name>",
+    "type" : "<src,bin,local>",
+    "version" : "<version>",
+    "dependencies" : ["<a dependencie>","<other dependencie>"],
+    "info" : 
+    {
+        "download" : "<download command>",
+        "build" : "<build command>",
+        "special" : "<special command>"
+    },
+    "locations" : ["<location>","<other location>"]
+}
+```
+if its a source package leave the location empty
 
-### <p align="center">If you are interested join [OUR server](https://discord.gg/CpkN3kAm3t) </p>
-
-### <p align="center">Created by [PKD667](https://github.com/PKD667) </p>
 
 
