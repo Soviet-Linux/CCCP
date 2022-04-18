@@ -1,20 +1,10 @@
 #pragma once
 
 // I had to include this but I don't know why
+#include <string>
 #include <sys/types.h>
 
 #include "../include/nlohmann/json.hpp"
-
-//A struct to hold the installation data
-//TODO : explain this better
-struct location
-{
-    //The file to be installed
-    std::string file;
-    // Where to install it
-    std::string destination;
-    
-};
 
 // struct defining all infomation needed to install a package
 struct pkg_data
@@ -32,10 +22,8 @@ struct pkg_data
     std::string build_info;
     std::string download_info;
     std::string special_info;
-    //just for local packages , the location of the source archive
-    std::string archive;
     //Installation locations data
-    std::vector<location> install_info;
+    std::vector<std::string> locations;
 };
 
 //Prototypes
@@ -46,3 +34,4 @@ pkg_data open_spm (const std::string& PPath);
 int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR); 
 void bin_spm (const std::string& in_path, const std::string& out_path);
 void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std::string& out_path);
+void rm_pkg (const std::string& PPath);

@@ -71,6 +71,10 @@ pkg_data open_spm (const std::string& PPath)
     {
         data.dependencies.push_back(pkg_info["dependencies"][i]);
     }
+    for (int i = 0; i < pkg_info["locations"].size(); i++)
+    {
+        data.locations.push_back(pkg_info["locations"][i]);
+    }
     if (data.type == "src")
     {
         data.download_info = pkg_info["info"]["download"];
@@ -80,6 +84,7 @@ pkg_data open_spm (const std::string& PPath)
     {
         data.build_info = pkg_info["info"]["build"];
     }
+    
     return data;
 }
 // changing source spm file to bin spm file
@@ -106,6 +111,7 @@ void bin_spm (const std::string& in_path , const std::string& out_path)
 //This fucntion is very important , it will store the install location data to the "DB"
 void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std::string& out_path)
 {
+    std::string temp_file = "/tmp/temp_loc.txt";
     std::cout << "Storing location in spm file" << std::endl;
     std::ifstream file_spm((PPath).c_str(), std::ios::in);
     std::stringstream buffer;
@@ -116,13 +122,13 @@ void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std:
     //Get package file location
     //this work is a little outside the scope of this function , but its ok
     // TODO: change this
-    std::string location_cmd = "( cd " + BUILD_DIR + " && find . -type f | cut -c2- > temp.txt )";
+    std::string location_cmd = "( cd " + BUILD_DIR + " && find . -type f | cut -c2- > " + temp_file + " )";
     std::cout << location_cmd << std::endl;
     system(location_cmd.c_str());
     //also the temp.txt file is a little hacky i think
     //Add the package locations
     std::string line;
-    std::ifstream data_file ((BUILD_DIR + "temp.txt").c_str());
+    std::ifstream data_file ((temp_file).c_str());
     //adding the location the the location list
     if (data_file.is_open())
     {
@@ -136,10 +142,21 @@ void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std:
     }
     //removing temp file 
     // TODO: comment this better
-    system(("rm "+ BUILD_DIR + "temp.txt").c_str());
+    system(("rm "+ temp_file).c_str());
     //Writing the data to a file 
     std::ofstream file_spm_out((out_path).c_str(), std::ios::out);
     file_spm_out << pkg_info.dump(4);
     file_spm_out.close();
 }
-
+// this function is for uninstaling packages
+void rm_pkg (const std::string& PPath)
+{
+   pkg_data data = open_spm(PPath);
+   //remove all the files in the data["locations"]
+    for (int i = 0; i < data.locations.size(); i++)
+    {
+         std::string rm_cmd = "rm -rf " + data.locations[i];
+         std::cout << rm_cmd << std::endl;
+         system(rm_cmd.c_str());
+    }
+}

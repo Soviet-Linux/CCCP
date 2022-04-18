@@ -69,6 +69,13 @@ int main (int argc, char *argv[])
         else if (option == "--binary") {
             install_binary(argv[argc-1]);
         }
+        // the remove option , calling rm_pkg
+        else if (option == "--remove")
+        {
+            std::cout << "removing package " << argv[argc-1] << std::endl;
+            if (DEBUG) std::cout << DATA_DIR + argv[argc-1] + ".spm" << std::endl;
+            rm_pkg(DATA_DIR + argv[argc-1] + ".spm");           
+        }
         else if (option == "--test")
         {
             std::cout << "Testing\n";
@@ -171,7 +178,7 @@ int install_binary(const std::string& PName)
         move_binaries(BUILD_DIR ,ROOT);
         std::cout << "package installed" << "\n";
         //cleaning 
-        system(("rm -rf " + BUILD_DIR).c_str());
+        system(("rm -rf " + BUILD_DIR + "*").c_str());
 
 
     }
