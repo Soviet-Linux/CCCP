@@ -14,6 +14,7 @@
 #include "../include/main.h"
 #include "../include/make.h"
 
+
 //The filesystem root
 const std::string ROOT = "/";
 //For real use it must be set to "/"
@@ -74,7 +75,7 @@ int main (int argc, char *argv[])
         {
             std::cout << "removing package " << argv[argc-1] << std::endl;
             if (DEBUG) std::cout << DATA_DIR + argv[argc-1] + ".spm" << std::endl;
-            rm_pkg(DATA_DIR + argv[argc-1] + ".spm");           
+            rm_pkg(DATA_DIR + argv[argc-1] + ".spm",DATA_DIR);           
         }
         else if (option == "--test")
         {

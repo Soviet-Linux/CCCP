@@ -149,14 +149,22 @@ void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std:
     file_spm_out.close();
 }
 // this function is for uninstaling packages
-void rm_pkg (const std::string& PPath)
+void rm_pkg (const std::string& PPath,const std::string& DATA_DIR)
 {
-   pkg_data data = open_spm(PPath);
-   //remove all the files in the data["locations"]
+    std::cout << "Uninstalling package" << std::endl;
+    std::cout << PPath << std::endl;
+    pkg_data data = open_spm(PPath);
+    //remove all the files in the data["locations"]
     for (int i = 0; i < data.locations.size(); i++)
     {
+        //Fuuuck it leaves the folders
+        // TODO: find someone intelligent enough to fix this
+        //
          std::string rm_cmd = "rm -rf " + data.locations[i];
          std::cout << rm_cmd << std::endl;
          system(rm_cmd.c_str());
     }
+    //remove the spm file from DATA
+    std::string rm_spm_cmd = "rm -rf " + DATA_DIR + data.name + ".spm";
+    system((rm_spm_cmd).c_str());
 }
