@@ -6,8 +6,13 @@
     "info" : 
     {
         "download" : "<download command>",
-        "build" : "<build command>",
+        "prepare" : "<prepare command>",
+        "configure" : "<configure command>",
+        "make" : "<build command>",
+        "test" : "<commend to test the package>",
+        "install" : "<install command>",
         "special" : "<special command>"
+        
     },
     "locations" : ["<location>","<other location>"]
 }

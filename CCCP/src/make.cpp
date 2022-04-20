@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <vector>
 #include <algorithm>
+#include <filesystem>
 
 // Json parsing library
 #include "../include/nlohmann/json.hpp"
@@ -15,27 +16,36 @@ using nlohmann::json;
 #include "../include/make.h"
 
 // This function is downloading and building the packages
-void make_pkg (const std::string& PName, const std::string& build_info, const std::string& MAKE_DIR,const std::string& BUILD_DIR)
+void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string& BUILD_DIR)
 {
+    // this solution with the '*' is very bad i think
+    std::string package_dir = MAKE_DIR + pkg.name + "*";
 
-    const std::string& build_cmd = "BUILD_ROOT="+ BUILD_DIR +"\n( cd "+ MAKE_DIR + PName +"* && "+ build_info +" )";
-    std::cout << build_cmd << std::endl;
+    std::string prepare_cmd = "( cd "+ package_dir + " && " + pkg.prepare_info + " )";
+    std::string make_cmd = "( cd " + package_dir + " && " + pkg.configure_info + " && " + pkg.make_info + " )";
+    std::string test_cmd = "( cd "+ package_dir + " && " + pkg.test_info + " )";
+    std::string install_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd "+ package_dir + " && " + pkg.install_info + " )";
+    std::string special_cmd = "( cd "+ package_dir + " && " + pkg.special_info + " )";
+
+    std::cout << make_cmd << std::endl;
+    std::cout << test_cmd << std::endl;
+    std::cout << install_cmd << std::endl;
+    std::cout << special_cmd << std::endl;
+
     
-    system(build_cmd.c_str());
-    system(("rm -rf " + MAKE_DIR + PName + "*").c_str());
-}
-void download_pkg (const std::string& download_info, const std::string& MAKE_DIR)
-{
-    const std::string& download_cmd = "( cd "+ MAKE_DIR +" && "+download_info+" )";
+    system(make_cmd.c_str());
+    system(test_cmd.c_str());
+    system(install_cmd.c_str());
+    system(special_cmd.c_str());
 
-    std::cout << download_cmd << "\n";
-    system(download_cmd.c_str());
+    // cleaning up the build directory
+    system(("rm -rf " + MAKE_DIR + pkg.name + "*").c_str());
 }
 // This function is moving the binaries to the correct locations
 void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
 {
     //moving binaries to their install location on the system
-    std::string move_cmd = "cp -rvl " + BUILD_DIR + "* " + ROOT + "\n ";
+    std::string move_cmd = "cp -rfvl " + BUILD_DIR + "* " + ROOT + "\n ";
     std::cout << move_cmd << "\n";
     system(move_cmd.c_str());
     system(("rm -rf " + BUILD_DIR + "*").c_str());
@@ -78,11 +88,18 @@ pkg_data open_spm (const std::string& PPath)
     if (data.type == "src")
     {
         data.download_info = pkg_info["info"]["download"];
-        data.build_info = pkg_info["info"]["build"];
+        data.configure_info = pkg_info["info"]["configure"];
+        data.make_info = pkg_info["info"]["make"];
+        data.test_info = pkg_info["info"]["test"];
+        data.install_info = pkg_info["info"]["install"];
+        data.special_info = pkg_info["info"]["special"];
     }
     else if (data.type == "local")
     {
-        data.build_info = pkg_info["info"]["build"];
+        data.configure_info = pkg_info["info"]["configure"];
+        data.make_info = pkg_info["info"]["make"];
+        data.install_info = pkg_info["info"]["install"];
+        data.test_info = pkg_info["info"]["test"];
     }
     
     return data;
@@ -167,4 +184,26 @@ void rm_pkg (const std::string& PPath,const std::string& DATA_DIR)
     //remove the spm file from DATA
     std::string rm_spm_cmd = "rm -rf " + DATA_DIR + data.name + ".spm";
     system((rm_spm_cmd).c_str());
+}
+bool check_pkg (const std::string& PPath,const std::string& DATA_DIR)
+{
+    std::cout << "checking package" << std::endl;
+    std::cout << PPath << std::endl;
+    pkg_data data = open_spm(PPath);
+    //remove all the files in the data["locations"]
+    for (int i = 0; i < data.locations.size(); i++)
+    {
+        //Fuuuck it leaves the folders
+        // TODO: find someone intelligent enough to fix this
+        //
+         if (std::filesystem::exists(data.locations[i])) 
+         {
+             std::cout << data.locations[i] << " exists !" << std::endl;
+         }
+         else {
+                std::cout << data.locations[i] << " does not exist !" << std::endl;
+                return false;
+         }
+    }
+    return true;
 }

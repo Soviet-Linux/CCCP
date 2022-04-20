@@ -1,3 +1,10 @@
+/*
+Guys , this is the cccp , a communist package manager.
+My function and variables names are awful , I know.
+Good luck to everyone that will try to understand this shit.
+Thank you for your help :)
+*/
+
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -43,6 +50,7 @@ bool DEBUG = false; //set to true to see the debug messages
 //Main function
 int main (int argc, char *argv[]) 
 {
+    
     //verifying if the user has entered arguments
     if (argc < 2) {
         std::cout << "No arguments given. Terminating.\n";
@@ -56,6 +64,8 @@ int main (int argc, char *argv[])
         std::cout << "Debug mode enabled.\n";
         option = argv[2];
     }
+    //preparing dirs
+    prepare_dirs(); // create the directories if they dont exist
     //parsing argument 
     // TODO: use a switch statement here
     std::cout << "option : " << option << std::endl;
@@ -77,9 +87,16 @@ int main (int argc, char *argv[])
             if (DEBUG) std::cout << DATA_DIR + argv[argc-1] + ".spm" << std::endl;
             rm_pkg(DATA_DIR + argv[argc-1] + ".spm",DATA_DIR);           
         }
-        else if (option == "--test")
+        else if (option == "--check")
         {
-            std::cout << "Testing\n";
+            if (check_pkg(DATA_DIR + argv[argc-1] + ".spm", DATA_DIR))
+            {
+                std::cout << "Package " << argv[argc-1] << " is installed. Everything is okay !\n";
+            }
+            else
+            {
+                std::cout << "Package " << argv[argc-1] << " is not installed. Or something may be wrong (we dont know).\n";
+            }
         }
         //Check if debug is enabled
         else
@@ -130,17 +147,20 @@ void install_package (const std::string& PName)
         if (pkg_info.type == "src")
         {
             //downloading package source into the work directory
-            download_pkg(pkg_info.download_info, WORK_DIR);
+            const std::string& download_cmd = "( cd "+ MAKE_DIR +" && " + pkg_info.download_info + " )";
+
+            std::cout << download_cmd << "\n";
+            system(download_cmd.c_str());
         }
         else if (pkg_info.type == "local") {
-            std::string cmd_archive = "tar -xf " + SRC_DIR + PName + "*" + " -C " + MAKE_DIR;
+            std::string cmd_archive = "tar -xf " + SRC_DIR + PName + "*tar*" + " -C " + MAKE_DIR;
             std::cout << cmd_archive << "\n";
             system(cmd_archive.c_str());
         
         }
         
         //making the package from source
-        make_pkg(PName, pkg_info.build_info, MAKE_DIR,BUILD_DIR);
+        make_pkg(pkg_info, MAKE_DIR,BUILD_DIR);
         std::cout << "package built" << "\n";
         //Storing package data
         //Adding the locations to the package files , and the packages files to DATA_DIR
@@ -205,7 +225,10 @@ void create_binary (const std::string& PName)
     if (pkg_info.type == "src")
     {
         //downloading package source into the work directory
-        download_pkg(pkg_info.download_info, MAKE_DIR);
+        const std::string& download_cmd = "( cd "+ MAKE_DIR +" && " + pkg_info.download_info + " )";
+
+        std::cout << download_cmd << "\n";
+        system(download_cmd.c_str());
     }
     else if (pkg_info.type == "local") {
         //unpacking the sources archive
@@ -217,7 +240,7 @@ void create_binary (const std::string& PName)
    
 
     //making the package from source
-    make_pkg(PName, pkg_info.build_info, MAKE_DIR,BUILD_DIR);
+    make_pkg(pkg_info, MAKE_DIR,BUILD_DIR);
     std::cout << "package built" << "\n";
     //adding locations and other thing to spm file
     bin_spm(PPath, temp_path);
@@ -228,4 +251,17 @@ void create_binary (const std::string& PName)
     system(cmd_archive.c_str());
     //cleaning build directory
     system(("rm -rf " + BUILD_DIR + "*").c_str());
+}
+void prepare_dirs () 
+{
+    //Creating the directories if they don't exist
+    system(("mkdir -pv " + PKG_DIR).c_str());
+    system(("mkdir -pv " + SRC_DIR).c_str());
+    system(("mkdir -pv " + BIN_DIR).c_str());
+    system(("mkdir -pv " + WORK_DIR).c_str());
+    system(("mkdir -pv " + MAKE_DIR).c_str());
+    system(("mkdir -pv " + BUILD_DIR).c_str());
+    system(("mkdir -pv " + DATA_DIR).c_str());
+    system(("mkdir -pv " + ROOT).c_str());
+    if (DEBUG) std::cout << "Dirs are here , the problems is in another place ." << "\n";
 }
