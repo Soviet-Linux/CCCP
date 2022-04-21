@@ -5,12 +5,13 @@ SOVIET = /home/paulk/Desktop/soviet-lfs-rebuild
 
 OUTPUT = bin
 
-FLAGS = -g -std=c++20 -pedantic
+FLAGS = -g -std=c++2a -pedantic
 
 
 default:
 	${CC} -c src/make.cpp ${FLAGS} -o ${OUTPUT}/make.o
-	${CC} src/${MAIN}.cpp ${FLAGS} ${OUTPUT}/make.o  ${OUTPUT}/misc.o -o ${OUTPUT}/${MAIN}
+	${CC} -c src/db.cpp ${FLAGS} -o ${OUTPUT}/db.o
+	${CC} src/${MAIN}.cpp ${FLAGS} ${OUTPUT}/make.o  ${OUTPUT}/db.o -o ${OUTPUT}/${MAIN}
 
 run:
 	./${OUTPUT}/${MAIN}

@@ -17,8 +17,7 @@ Thank you for your help :)
 #include <algorithm>
 #include <filesystem>
 
-#include "../include/main.h"
-#include "../include/make.h"
+#include "../include/cccp.h"
 
 // The filesystem root
 const std::string ROOT = "/";
@@ -43,30 +42,31 @@ const std::string BUILD_DIR = WORK_DIR + "build/";
 const std::string MAKE_DIR = WORK_DIR + "sources/";
 
 bool DEBUG = false; // set to true to see the debug messages
+Soviet::LogConfig logConfig = { true, true };
+Soviet::Log logger(logConfig);
 
 // Main function
 int main(int argc, char *argv[])
 {
-
     // verifying if the user has entered arguments
     if (argc < 2)
     {
-        std::cout << "No arguments given. Terminating.\n";
+        logger.Print<Soviet::INFO>("No arguments given. Terminating.\n");
         exit(1);
     }
 
     std::string option = argv[1];
     if (option == "--debug" || option == "-d")
     {
-        DEBUG = true;
-        std::cout << "Debug mode enabled.\n";
+        DEBUG = true; // TODO: use a preprocessor instead
+        logger.Print<Soviet::DEBUG>("Debug mode enabled.\n");
         option = argv[2];
     }
     // preparing dirs
     prepare_dirs(); // create the directories if they dont exist
     // parsing argument
     //  TODO: use a switch statement here
-    std::cout << "Option : " << option << std::endl;
+    logger.Print<Soviet::INFO>("Option: %s\n", option);
     if (option.substr(0, 2) == "--")
     {
         if (option == "--install")
@@ -85,39 +85,32 @@ int main(int argc, char *argv[])
         // the remove option , calling rm_pkg
         else if (option == "--remove")
         {
-            std::cout << "Removing package " << argv[argc - 1] << std::endl;
-            if (DEBUG)
-                std::cout << DATA_DIR + argv[argc - 1] + ".spm" << std::endl;
+            logger.Print<Soviet::INFO>("Removing package %s\n", argv[argc - 1]);
+            if (DEBUG) // use a macro instead...
+                logger.Print<Soviet::INFO>("%s%s.spm\n", DATA_DIR, argv[argc - 1]);
             rm_pkg(DATA_DIR + argv[argc - 1] + ".spm", DATA_DIR);
         }
         else if (option == "--check")
         {
             if (check_pkg(DATA_DIR + argv[argc - 1] + ".spm", DATA_DIR))
-            {
-                std::cout << "Package " << argv[argc - 1] << " is installed. Everything is okay !\n";
-            }
+                logger.Print<Soviet::INFO>("Package %s is installed. Everything is okay!\n", argv[argc - 1]);
             else
-            {
-                std::cout << "Package " << argv[argc - 1] << " is not installed. Or something went wrong.\n";
-            }
+                logger.Print<Soviet::INFO>("Package %s is not installed. Or something went wrong.\n", argv[argc - 1]);
         }
         // Check if debug is enabled
         else
         {
-            std::cout << "Invalid option. Terminating.\n";
+            logger.Print<Soviet::ERROR>("Invalid option. Terminating.\n");
             exit(1);
         }
     }
     else
     {
         // Print the correct usage
-        std::cout << "No option given\n";
-        std::cout << "To install a source package : \n";
-        std ::cout << "Usage: cccp --install <package_name>\n\n";
-        std::cout << "To create a binary package from source package package : \n";
-        std ::cout << "Usage: cccp --create <package_name>\n\n";
-        std::cout << "To install a binary package : \n";
-        std ::cout << "Usage: cccp --binary <package_name>\n\n";
+        // ✝
+        logger.Print<Soviet::INFO>(
+         "No option given\nTo install a source package : \nUsage: cccp --install <package_name>\n\nTo create a binary package from source package package: \nUsage: cccp --create <package_name>\n\nTo install a binary package : \nUsage: cccp --binary <package_name>\n\n"
+        );
         exit(1);
     }
 
@@ -129,19 +122,21 @@ int main(int argc, char *argv[])
 // parsing data and installing package
 void install_package(const std::string &PName)
 {
-    std::cout << "Processing package " << PName << "\n";
+    logger.Print<Soviet::INFO>("Processing package %s\n", PName);
     // initialising package path
     const std::string PPath = PKG_DIR + PName + ".spm";
     // debug message
     if (DEBUG)
     {
-        std::cout << "PPath : " << PPath << "\n";
+        logger.Print<Soviet::INFO>("PPath: %s\n", PPath);
     }
     // Getting the package data from the spm file
     const pkg_data &pkg_info = open_spm(PPath);
     // Debug message
-    if (DEBUG)
+    if (DEBUG) // mAAccccrrrrOO
         std::cout << pkg_info.name << " " << pkg_info.type << " " << pkg_info.version << "\n";
+
+    // SOMEONE REPLACE ALL std::cout WITH THE NEW LOGGER PLZ
 
     // Checking dependencies
     if (check_dependencies(pkg_info.dependencies, DATA_DIR))
@@ -258,6 +253,7 @@ void prepare_dirs()
 {
     // Creating the directories if they don't exist
     // TO DO: Simplify this
+    // TODO: execute this in batches
     system(("mkdir -pv " + PKG_DIR).c_str());
     system(("mkdir -pv " + SRC_DIR).c_str());
     system(("mkdir -pv " + BIN_DIR).c_str());
