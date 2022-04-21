@@ -187,7 +187,7 @@ void rm_pkg (const std::string& PPath,const std::string& DATA_DIR)
 }
 bool check_pkg (const std::string& PPath,const std::string& DATA_DIR)
 {
-    std::cout << "checking package" << std::endl;
+    std::cout << "Checking package" << std::endl;
     std::cout << PPath << std::endl;
     pkg_data data = open_spm(PPath);
     //remove all the files in the data["locations"]
