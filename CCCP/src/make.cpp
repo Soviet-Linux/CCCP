@@ -18,7 +18,7 @@
 void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
 {
     //moving binaries to their install location on the system
-    std::string move_cmd = "cp -rfvl " + BUILD_DIR + "* " + ROOT + "\n ";
+    std::string move_cmd = "cp -rfl " + BUILD_DIR + "* " + ROOT + "\n ";
     system(move_cmd.c_str());
     std::filesystem::remove(BUILD_DIR + "*");
 }

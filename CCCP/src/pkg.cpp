@@ -6,14 +6,16 @@
 
 #include "../include/spm.h"
 #include "../include/pkg.h"
+#include "../include/data.h"
 
 
 
 // this function is for uninstaling packages
-void rm_pkg (const std::string& PPath,const std::string& DATA_DIR,bool DEBUG)
+void rm_pkg (const std::string& PName,const std::string& DATA_DIR,const std::string& DATA_FILE,bool DEBUG)
 {
+    std::string PPath = DATA_DIR + PName + ".spm";
     std::cout << "Uninstalling package" << std::endl;
-    std::cout << PPath << std::endl;
+    if (DEBUG) std::cout << PPath << std::endl;
     pkg_data data = open_spm(PPath);
     //remove all the files in the data["locations"]
     for (int i = 0; i < data.locations.size(); i++)
@@ -42,8 +44,10 @@ void rm_pkg (const std::string& PPath,const std::string& DATA_DIR,bool DEBUG)
         }
         
     }
+    //removing the entries in packages.json
+    rm_pkg_data(DATA_FILE,PName);
     //remove the spm file from DATA
-    std::string rm_spm_cmd = "rm -rf " + DATA_DIR + data.name + ".spm";
+    std::string rm_spm_cmd = "rm -rf " + DATA_DIR + PName + ".spm";
     system((rm_spm_cmd).c_str());
 }
 
@@ -80,18 +84,16 @@ void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string
     }
     else 
     {
-
+        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && " + pkg.configure_info + " && " + pkg.make_info + " )";
+        std::cout << make_cmd << std::endl;
+        system(make_cmd.c_str());
+        if (TESTING) system(("( cd "+ package_dir + " && " + pkg.test_info + " > "+ LOG_DIR + pkg.name + ".test )").c_str());
     }
-    std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && " + pkg.configure_info + " && " + pkg.make_info + " )";
+    //installing the package in the build directory
     std::string install_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd "+ package_dir + " && " + pkg.install_info + " )";
-
-    std::cout << make_cmd << std::endl;
-    std::cout << install_cmd << std::endl;
-
-    
-    system(make_cmd.c_str());
+    std::cout << install_cmd << std::endl; 
     //executing test command
-    if (TESTING) system(("( cd "+ package_dir + " && " + pkg.test_info + " > "+ LOG_DIR + pkg.name + ".test )").c_str());
+    
     system(install_cmd.c_str());
 
     // cleaning up the build directory

@@ -41,8 +41,11 @@ std::string BIN_DIR = MAIN_DIR + "bin/";
 std::string BUILD_DIR = WORK_DIR + "build/";
 // Dir where the package sources are downloaded and built
 std::string MAKE_DIR = WORK_DIR + "sources/";
-//dir where specialscripts are stored
+//dir where special scripts are stored
 std::string SPECIAL_DIR = MAIN_DIR + "special/";
+//The file where a lot of data are stored
+std::string DATA_FILE = DATA_DIR + "packages.json";
+
 
 bool DEBUG = false; // set to true to see the debug messages
 bool TESTING = false; // set to true to see the test messages
@@ -61,6 +64,8 @@ int main(int argc, char *argv[])
     }
     //preparing dirs
     prepare_dirs(); // create the directories if they dont exist
+    if (not std::filesystem::exists(DATA_FILE)) init_data(DATA_FILE); // create the data file  
+
     for (int i = 1; i < argc; i++) {
         std::string option = argv[i];
         if (option.substr(0,1) == "-") {
@@ -114,16 +119,14 @@ int main(int argc, char *argv[])
             // the remove option , calling rm_pkg
             else if (option == "--remove")
             {
-                std::string PPath = DATA_DIR + argv[argc - 1] + ".spm";
+                std::string PName = argv[argc - 1] ;
                 logger.Print<Soviet::INFO>("Removing package %s\n", argv[argc - 1]);
-                if (DEBUG) // use a macro instead...
-                    logger.Print<Soviet::INFO>("Package info path is %s \n",PPath.c_str());
-                if (!std::filesystem::exists(PPath))
+                if (!std::filesystem::exists(DATA_DIR + PName + ".spm"))
                 {
                     logger.Print<Soviet::ERROR>("Package file %s does not exist. Terminating.\n", argv[argc - 1]);
                     exit(1);
                 }
-                rm_pkg(DATA_DIR + argv[argc - 1] + ".spm", DATA_DIR,DEBUG);
+                rm_pkg(PName, DATA_DIR,DATA_FILE,DEBUG);
                 i++;
             }
             else if (option == "--check")
@@ -146,7 +149,6 @@ int main(int argc, char *argv[])
                 //This option is for developers only
                 // dont use it unless you know what you are doing
                 logger.Print<Soviet::WARNING>("Developer mode enabled.\n"); 
-                init_data(DATA_DIR + "packages.json");
             }
             // Check if debug is enabled
             else
@@ -164,6 +166,12 @@ int main(int argc, char *argv[])
             std ::cout << "Usage: cccp --create <package_name>\n\n";
             std::cout << "To install a binary package : \n";
             std ::cout << "Usage: cccp --binary <package_name>\n\n";
+            std::cout << "To remove a package : \n";
+            std ::cout << "Usage: cccp --remove <package_name>\n\n";
+            std::cout << "To check if a package is installed : \n";
+            std ::cout << "Usage: cccp --check <package_name>\n\n";
+            std::cout << "To initiate the data directory (Do this if you think your system is fucked because it will destroy eveything): \n";
+            std ::cout << "Usage: cccp --initiate\n\n";
             exit(1);
         } 
     }
@@ -199,32 +207,13 @@ void install_package(const std::string &PName)
         std::cout << pkg_info.name << " " << pkg_info.type << " " << pkg_info.version << "\n";
 
     // SOMEONE REPLACE ALL std::cout WITH THE NEW LOGGER PLZ
+    // OK i'll do it later
+    // TODO: do that 
 
     // Checking dependencies
     if (check_dependencies(pkg_info.dependencies, DATA_DIR))
     {
-        std::cout << "Dependency check passed"<< "\n";
-        if (pkg_info.type == "src")
-        {
-            // downloading package source into the work directory
-            const std::string &download_cmd = "( cd " + MAKE_DIR + " && " + pkg_info.download_info + " )";
-
-            std::cout << download_cmd << "\n";
-            system(download_cmd.c_str());
-        }
-        else if (pkg_info.type == "local")
-        {
-            std::string cmd_archive = "tar -xf " + SRC_DIR + PName + "*tar*" + " -C " + MAKE_DIR;
-            std::cout << cmd_archive << "\n";
-            system(cmd_archive.c_str());
-        }
-
-        // making the package from source
-        make_pkg(pkg_info, MAKE_DIR, BUILD_DIR,LOG_DIR,TESTING);
-        std::cout << "☭ Package built"<< "\n";
-        // Storing package data
-        // Adding the locations to the package files , and the packages files to DATA_DIR
-        store_spm(PPath, BUILD_DIR, DATA_DIR + PName + ".spm");
+        std::cout << "Dependency check passed"<< "\n";     
     }
     else
     {
@@ -233,31 +222,73 @@ void install_package(const std::string &PName)
         exit(1);
     }
 
+    if (pkg_info.type == "src")
+    {
+        // downloading package source into the work directory
+        const std::string &download_cmd = "( cd " + MAKE_DIR + " && " + pkg_info.download_info + " )";
+
+        std::cout << download_cmd << "\n";
+        system(download_cmd.c_str());
+    }
+    else if (pkg_info.type == "local")
+    {
+        std::string cmd_archive = "tar -xf " + SRC_DIR + PName + "*tar*" + " -C " + MAKE_DIR;
+        std::cout << cmd_archive << "\n";
+        system(cmd_archive.c_str());
+    }  
+    // making the package from source
+    make_pkg(pkg_info, MAKE_DIR, BUILD_DIR,LOG_DIR,TESTING);
+    std::cout << "☭ Package built"<< "\n";
+
+    //check if the package is already installed
+    if (std::filesystem::exists(DATA_DIR + PName + ".spm"))
+    {
+        logger.Print<Soviet::INFO>("Package %s is already installed. Reinstalling.\n", PName.c_str());
+        // removing the package
+        rm_pkg(PName, DATA_DIR,DATA_FILE,DEBUG);
+    }
+
+    // Storing package data
+    // Adding the locations to the package files , and the packages files to DATA_DIR
+    store_spm(PPath, BUILD_DIR, DATA_DIR + PName + ".spm");
+    //adding the package to the data file
+    add_pkg_data(DATA_FILE,pkg_info.name,pkg_info.version);
+
     // Moving built binaries to their install location on the system
     move_binaries(BUILD_DIR, ROOT);
-    std::string special_cmd = "SPECIAL_DIR=" + SPECIAL_DIR + "; " + pkg_info.special_info;
-    system(special_cmd.c_str());
+    //executing post installation scripts
+    if ( not pkg_info.special_info.empty()) 
+    {
+        system((SPECIAL_DIR + pkg_info.special_info).c_str());  
+    }
+    else 
+    {
+        if (DEBUG) std::cout << "No post installation scripts found" << "\n";
+    }
+    
+
 }
 
 // this function installs a binary package
 int install_binary(const std::string &PName)
 {
-    
     // Uncompressing the binary package into the temorary dir
-    std::string cmd_uncompress = "tar -xvf " + BIN_DIR + PName + ".tar.gz -C " + BUILD_DIR;
+    std::string cmd_uncompress = "tar -xf " + BIN_DIR + PName + ".tar.gz -C " + BUILD_DIR;
+    // the name of the spm package file (its good )
+    std::string SName = PName + ".spm";
     // Debug log of the command
     if (DEBUG)
         std::cout << cmd_uncompress << "\n";
     // executing the command
     system((cmd_uncompress).c_str());
     // Reading package data from .spm file
-    const pkg_data &pkg_info = open_spm(BUILD_DIR + PName + ".spm");
+    const pkg_data &pkg_info = open_spm(BUILD_DIR + SName);
     // add the spm to the datas
-    system(("mv " + BUILD_DIR + PName + ".spm " + DATA_DIR).c_str());
+    std::filesystem::rename(BUILD_DIR + SName , DATA_DIR + SName);
     // Checking dependencies
     if (check_dependencies(pkg_info.dependencies, DATA_DIR))
     {
-        std::cout << "Dependency check passed"<< "\n"; 
+        logger.Print<Soviet::INFO>("Dependency check passed"); 
         
     }
     else
@@ -271,10 +302,18 @@ int install_binary(const std::string &PName)
     std::cout << "☭ Package Installed, Comrade"<< "\n";
 
     //executing post installation scripts
-    std::string special_cmd = "SPECIAL_DIR=" + SPECIAL_DIR + "; " + pkg_info.special_info;
-    system(special_cmd.c_str());
+    if ( not pkg_info.special_info.empty()) 
+    {
+        system((BUILD_DIR + pkg_info.special_info).c_str());  
+    }
+    else 
+    {
+        if (DEBUG) std::cout << "No post installation scripts found" << "\n";
+    }
 
     system(("rm -rf " + BUILD_DIR + "*").c_str());
+    // adding the package to the data file
+    add_pkg_data(DATA_FILE,pkg_info.name,pkg_info.version);
     // Returning 1 means the program ran successfully
     return 1;
 }
@@ -309,20 +348,23 @@ void create_binary(const std::string &PName)
     {
         // unpacking the sources archive
         std::string cmd_source = "tar -xf " + SRC_DIR + PName + "*" + " -C " + WORK_DIR + "sources/";
-        if (DEBUG)
-            std::cout << cmd_source << "\n";
+        if (DEBUG) std::cout << cmd_source << "\n";
         system(cmd_source.c_str());
     }
 
     // making the package from source
     make_pkg(pkg_info, MAKE_DIR, BUILD_DIR,LOG_DIR,TESTING);
     std::cout << "☭ Package built"<< "\n";
+
     // adding locations and other thing to spm file
     bin_spm(PPath, temp_path);
     store_spm(temp_path, BUILD_DIR, BUILD_DIR + PName + ".spm");
+    
     // Creating the tar.gz package archive
     std::string cmd_archive = "( cd " + BUILD_DIR + " && tar -cf " + BIN_DIR + PName + ".tar.gz * )";
-    std::cout << cmd_archive << "\n";
+
+    if (DEBUG) logger.Print<Soviet::DEBUG>("%s",cmd_archive.c_str());
+
     system(cmd_archive.c_str());
     // cleaning build directory
     system(("rm -rf " + BUILD_DIR + "*").c_str());
