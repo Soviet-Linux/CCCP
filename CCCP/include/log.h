@@ -1,5 +1,7 @@
 #pragma once
 
+#define _DEBUG 1
+
 #include <string>
 #include <chrono>
 
