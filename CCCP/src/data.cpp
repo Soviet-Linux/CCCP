@@ -4,6 +4,16 @@
 
 #include "../include/nlohmann/json.hpp"
 using nlohmann::json;
+/*
+This file contains several functions that are used to store , remove and manipulate installed package data.
+Currently the data is stored in a json file.
+This is not optimal , in fact it is reaaallly bad , but I dont know database stuff.
+So every package name and version is stored , also the number of packages
+If someone wants to chnage it , you just have to rewrite theses functions, dont touch other files.
+I you want to do something , you can use sqlite3 or any other database.
+
+I really dont like that code so i wont comment. 
+*/
 
 int init_data (const std::string& data_path)
 {
