@@ -194,7 +194,13 @@ void install_package(const std::string &PName)
         logger.Print<Soviet::ERROR>("Package %s does not exist. Terminating.\n", PName.c_str());
         exit(1);
     }
-
+    //check if the package is already installed
+    if (std::filesystem::exists(DATA_DIR + PName + ".spm"))
+    {
+        logger.Print<Soviet::INFO>("Package %s is already installed. Reinstalling.\n", PName.c_str());
+        // removing the package
+        rm_pkg(PName, DATA_DIR,DATA_FILE,DEBUG);
+    }
     // debug message
     if (DEBUG)
     {
@@ -240,19 +246,9 @@ void install_package(const std::string &PName)
     make_pkg(pkg_info, MAKE_DIR, BUILD_DIR,LOG_DIR,TESTING);
     std::cout << "☭ Package built"<< "\n";
 
-    //check if the package is already installed
-    if (std::filesystem::exists(DATA_DIR + PName + ".spm"))
-    {
-        logger.Print<Soviet::INFO>("Package %s is already installed. Reinstalling.\n", PName.c_str());
-        // removing the package
-        rm_pkg(PName, DATA_DIR,DATA_FILE,DEBUG);
-    }
+    
 
-    // Storing package data
-    // Adding the locations to the package files , and the packages files to DATA_DIR
-    store_spm(PPath, BUILD_DIR, DATA_DIR + PName + ".spm");
-    //adding the package to the data file
-    add_pkg_data(DATA_FILE,pkg_info.name,pkg_info.version);
+    
 
     // Moving built binaries to their install location on the system
     move_binaries(BUILD_DIR, ROOT);
@@ -265,13 +261,24 @@ void install_package(const std::string &PName)
     {
         if (DEBUG) std::cout << "No post installation scripts found" << "\n";
     }
-    
+    // Storing package data
+    // Adding the locations to the package files , and the packages files to DATA_DIR
+    store_spm(PPath, BUILD_DIR, DATA_DIR + PName + ".spm");
+    //adding the package to the data file
+    add_pkg_data(DATA_FILE,pkg_info.name,pkg_info.version);
 
 }
 
 // this function installs a binary package
 int install_binary(const std::string &PName)
 {
+    //check if the package is already installed
+    if (std::filesystem::exists(DATA_DIR + PName + ".spm"))
+    {
+        logger.Print<Soviet::INFO>("Package %s is already installed. Reinstalling.\n", PName.c_str());
+        // removing the package
+        rm_pkg(PName, DATA_DIR,DATA_FILE,DEBUG);
+    }
     // Uncompressing the binary package into the temorary dir
     std::string cmd_uncompress = "tar -xf " + BIN_DIR + PName + ".tar.gz -C " + BUILD_DIR;
     // the name of the spm package file (its good )
@@ -283,12 +290,11 @@ int install_binary(const std::string &PName)
     system((cmd_uncompress).c_str());
     // Reading package data from .spm file
     const pkg_data &pkg_info = open_spm(BUILD_DIR + SName);
-    // add the spm to the datas
-    std::filesystem::rename(BUILD_DIR + SName , DATA_DIR + SName);
+    
     // Checking dependencies
     if (check_dependencies(pkg_info.dependencies, DATA_DIR))
     {
-        logger.Print<Soviet::INFO>("Dependency check passed"); 
+        logger.Print<Soviet::INFO>("Dependency check passed\n"); 
         
     }
     else
@@ -311,9 +317,12 @@ int install_binary(const std::string &PName)
         if (DEBUG) std::cout << "No post installation scripts found" << "\n";
     }
 
-    system(("rm -rf " + BUILD_DIR + "*").c_str());
     // adding the package to the data file
+    // add the spm to the datas
+    std::filesystem::rename(BUILD_DIR + SName , DATA_DIR + SName);
     add_pkg_data(DATA_FILE,pkg_info.name,pkg_info.version);
+    // Cleaning everything
+    system(("rm -rf " + BUILD_DIR + "*").c_str());
     // Returning 1 means the program ran successfully
     return 1;
 }
