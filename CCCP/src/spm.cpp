@@ -32,14 +32,10 @@ pkg_data open_spm (const std::string& PPath)
     if (data.type == "src")
     {
         data.download_info = pkg_info["info"]["download"];
-        data.configure_info = pkg_info["info"]["configure"];
-        data.make_info = pkg_info["info"]["make"];
-        data.test_info = pkg_info["info"]["test"];
-        data.install_info = pkg_info["info"]["install"];
-        data.special_info = pkg_info["info"]["special"];
     }
-    else if (data.type == "local")
+    else if (data.type == "local" || data.type == "src")
     {
+        data.prepare_info = pkg_info["info"]["prepare"];
         data.configure_info = pkg_info["info"]["configure"];
         data.make_info = pkg_info["info"]["make"];
         data.install_info = pkg_info["info"]["install"];

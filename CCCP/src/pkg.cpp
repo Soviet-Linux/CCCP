@@ -168,34 +168,39 @@ void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string
     */
     // TODO: find someone intelligent to ameliorate this code
 
-    //check if  pkg.configure_info and pkg.make_info are empty
-    // TODO: implement checking for every command 
-    if (pkg.configure_info.empty() && pkg.make_info.empty())
+    //checking is the command are used and formatting and executing them
+    if (!pkg.prepare_info.empty())
     {
-        // if they are empty dont execute the commands
-        std::cout << "No make or configure info found in the package.\n";
+        //formatting the prepare command
+        std::string prepare_cmd = "cd " + package_dir + " && " + pkg.prepare_info;
+        //Printing the command to the terminal
+        std::cout << prepare_cmd << std::endl;
+        //executing the command
+        system(prepare_cmd.c_str());
     }
-    else 
+    if (!pkg.configure_info.empty())
     {
-       // if they are not empty , execute the commands 
-
         //Formating the commands
         std::string configure_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && " + pkg.configure_info + " )";
-        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && "  + pkg.make_info + " )";
-
         // printing the command to standard output ( this is for devloppement , i'll remove it for the release )
         std::cout << configure_cmd << std::endl;
-        std::cout << make_cmd << std::endl;
-
         //executing the commands
-        // I know system is bad but i dont know how to do it better
-        // TODO: Do it better
         system(configure_cmd.c_str());
-        system(make_cmd.c_str());
-
-        // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
-        if (TESTING) system(("( cd "+ package_dir + " && " + pkg.test_info + " > "+ LOG_DIR + pkg.name + ".test )").c_str());
     }
+    if (!pkg.make_info.empty())
+    {
+        //Formating the command
+        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && "  + pkg.make_info + " )";
+        // printing the command to standard output 
+        std::cout << make_cmd << std::endl;
+        //executing the command
+        system(make_cmd.c_str());
+        
+    }
+
+    // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
+    if (TESTING) system(("( cd "+ package_dir + " && " + pkg.test_info + " > "+ LOG_DIR + pkg.name + ".test )").c_str());
+
     //installing the package in the build directory
 
     //formatting the install command
