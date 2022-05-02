@@ -18,7 +18,7 @@
 void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
 {
     //moving binaries to their install location on the system
-    std::string move_cmd = "cp -rfl " + BUILD_DIR + "* " + ROOT + "\n ";
+    std::string move_cmd = "cp -rpfl " + BUILD_DIR + "* " + ROOT + "\n ";
     system(move_cmd.c_str());
     std::filesystem::remove(BUILD_DIR + "*");
 }
@@ -43,7 +43,9 @@ int check_dependencies (const std::vector<std::string>& dependencies, const std:
             }
             else {
                 std::cout << "dependency " << dependencies[i] << " is not installed.\n";
-                return 0;
+                //install automatically the needed dependency
+                //To do this run install_package
+                install_package(dependencies[i]);
             }
         }
     }
