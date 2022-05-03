@@ -14,14 +14,8 @@
 
 
 
-// This function is moving the binaries to the correct locations
-void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
-{
-    //moving binaries to their install location on the system
-    std::string move_cmd = "cp -rpfl " + BUILD_DIR + "* " + ROOT + "\n ";
-    system(move_cmd.c_str());
-    std::filesystem::remove(BUILD_DIR + "*");
-}
+
+
 // This function will check if all dependencies of a package are installed
 int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR) 
 {
