@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "../include/nlohmann/json.hpp"
+#include "../lib/nlohmann/json.hpp"
 using nlohmann::json;
 /*
 This file contains several functions that are used to store , remove and manipulate installed package data.
