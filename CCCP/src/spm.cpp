@@ -2,8 +2,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "../include/spm.h"
-#include "../include/nlohmann/json.hpp"
+
+#include "../lib/nlohmann/json.hpp"
 
 //using json = nlohmann::json;
 using nlohmann::json;
@@ -76,8 +76,7 @@ void store_spm (const std::string& PPath,const std::string& BUILD_DIR,const std:
     //parsing json data
     auto pkg_info = json::parse(buffer.str());
     //Get package file location
-    //this work is a little outside the scope of this function , but its ok
-    // TODO: change this
+
     std::string location_cmd = "( cd " + BUILD_DIR + " && find . -type f | cut -c2- > " + temp_file + " && find . -type d | cut -c2- | tac  | sed '/^$/d' >> " + temp_file + " )";
     //std::cout << location_cmd << std::endl;
     system(location_cmd.c_str());

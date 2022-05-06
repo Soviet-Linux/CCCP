@@ -17,7 +17,6 @@ Thank you for your help :)
 #include <filesystem>
 
 #include "../include/cccp.h"
-#include "../lib/log.hpp"
 
 // The filesystem root
 std::string ROOT = "/";

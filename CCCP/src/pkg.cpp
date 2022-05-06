@@ -1,5 +1,5 @@
 /*
-Hi guys , I hope you'll have fn reading all of this 
+Hi guys , I hope you'll have fun reading all of this 
 If you can help me on improving it it would be great
 PS : all of this is a little hacky , i know , but i'm not sure how to make it better
 PS2: All of these includes are not needed but im to lazy to remove them
@@ -8,11 +8,11 @@ PS2: All of these includes are not needed but im to lazy to remove them
 #include <string>
 #include <vector>
 #include <iostream>
-#include <filesystem>
-#include <regex>
+#include <stdio.h>
+
+#include "../lib/pkg_data.h"
 
 #include "../include/spm.h"
-#include "../include/pkg.h"
 #include "../include/data.h"
 
 
@@ -29,16 +29,13 @@ This is simple . It could be simpler but really i dont know how .
 So dont touch this , except if there are a critical bug or an important missing feature.
 */
 // this function is for uninstaling packages
-void rm_pkg (const std::string& PName,const std::string& DATA_DIR,const std::string& DATA_FILE,bool DEBUG)
+void rm_pkg (const std::string& PName,const std::string& DATA_DIR,const std::string& DATA_FILE)
 {
     //All the block of code below is for getting the data from the spm file of the package
     // creating a string variable to hold the package's spm file path
     std::string PPath = DATA_DIR + PName + ".spm";
     //small message , its uselless but i'll leave it there
-    std::cout << "Uninstalling package" << std::endl;
-    //Printing the package's spm file path , if DEBUG is true
-    // Obviously its for debugging purposes
-    if (DEBUG) std::cout << PPath << std::endl;
+    std::cout << "Uninstalling package " << PName << std::endl;
     //paring spm file using open_spm()
     pkg_data data = open_spm(PPath);
 
@@ -55,16 +52,15 @@ void rm_pkg (const std::string& PName,const std::string& DATA_DIR,const std::str
             More on that later
         */
         try {
-            if (DEBUG) std::cout << "Removing " << data.locations[i] << std::endl;
-            std::filesystem::remove(data.locations[i].c_str());
+            std::cout << "Removing " << data.locations[i] << std::endl;
+            remove(data.locations[i].c_str());
         }
         catch (std::exception& e)
         {
             std::string str_e = e.what();
-            if (DEBUG) std::cout << "Exception: " << str_e << '\n';
 
             /*
-            Here we are chacking if the exception is the one that we sould catch ("Directory not empty") or another exception
+            Here we are checking if the exception is the one that we sould catch ("Directory not empty") or another exception
             The way we are doing this is not very good for performance but i was not sure how to do it better
             TODO: find a better way 
             We could use error codes or smth like that
@@ -74,11 +70,7 @@ void rm_pkg (const std::string& PName,const std::string& DATA_DIR,const std::str
             //checking if the excetion string we should catch is inside the catched exception 
             // I know it isn't clear (Again , DM me on discord if you dont understand  )
             //Or maybe read the docs (at the time i write this the docs are not yet good enough to understand this)
-            if ( str_e.find("Directory not empty") != std::string::npos)
-            {
-                if(DEBUG) std::cout << "its good , no worry.\n";
-            }
-            else
+            if (!(str_e.find("Directory not empty") != std::string::npos))
             {
                 std::cout << "This is BAD, terminating : " << str_e << '\n';
                 exit(1);
@@ -94,7 +86,7 @@ void rm_pkg (const std::string& PName,const std::string& DATA_DIR,const std::str
     std::string rm_spm_cmd = "rm -rf " + DATA_DIR + PName + ".spm";
     system((rm_spm_cmd).c_str());
 }
-//checking if package is installed an untouched
+//checking if package is installed and untouched
 bool check_pkg (const std::string& PPath,const std::string& DATA_DIR,bool DEBUG)
 {
     // Pasing data from the spm file
