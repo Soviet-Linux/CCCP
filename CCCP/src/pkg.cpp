@@ -172,7 +172,7 @@ void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string
     if (!pkg.prepare_info.empty())
     {
         //formatting the prepare command
-        std::string prepare_cmd = "cd " + package_dir + " && " + pkg.prepare_info;
+        std::string prepare_cmd = "cd " + package_dir + ";" + pkg.prepare_info;
         //Printing the command to the terminal
         std::cout << prepare_cmd << std::endl;
         //executing the command
@@ -181,7 +181,7 @@ void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string
     if (!pkg.configure_info.empty())
     {
         //Formating the commands
-        std::string configure_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && " + pkg.configure_info + " )";
+        std::string configure_cmd = "BUILD_ROOT="+ BUILD_DIR +"; cd " + package_dir + ";" + pkg.configure_info;
         // printing the command to standard output ( this is for devloppement , i'll remove it for the release )
         std::cout << configure_cmd << std::endl;
         //executing the commands
@@ -190,7 +190,7 @@ void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string
     if (!pkg.make_info.empty())
     {
         //Formating the command
-        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && "  + pkg.make_info + " )";
+        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; cd " + package_dir + ";" + pkg.make_info;
         // printing the command to standard output 
         std::cout << make_cmd << std::endl;
         //executing the command
@@ -199,12 +199,12 @@ void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string
     }
 
     // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
-    if (TESTING) system(("( cd "+ package_dir + " && " + pkg.test_info + " > "+ LOG_DIR + pkg.name + ".test )").c_str());
+    if (TESTING) system(("cd "+ package_dir + ";" + pkg.test_info + " > "+ LOG_DIR + pkg.name + ".test").c_str());
 
     //installing the package in the build directory
 
     //formatting the install command
-    std::string install_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd "+ package_dir + " && " + pkg.install_info + " )";
+    std::string install_cmd = "BUILD_ROOT="+ BUILD_DIR +"; cd "+ package_dir + ";" + pkg.install_info;
 
     //printing , for debugging purposes
     std::cout << install_cmd << std::endl; 
@@ -215,3 +215,4 @@ void make_pkg (const pkg_data& pkg,const std::string& MAKE_DIR,const std::string
     // cleaning up the build directory
     system(("rm -rf " + MAKE_DIR + pkg.name + "*").c_str());
 }
+

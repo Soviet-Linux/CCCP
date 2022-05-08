@@ -219,11 +219,12 @@ void install_package(const std::string &PName)
     // Checking dependencies
     if (check_dependencies(pkg_info.dependencies, DATA_DIR))
     {
-        std::cout << "Dependency check passed"<< "\n";     
+        logger.Print<Soviet::INFO>("Dependencies check passed\n");
     }
     else
     {
-        std::cout << "Dependency check failed"<< "\n";
+        //print error message using logger.Print
+        logger.Print<Soviet::ERROR>("Dependencies check failed. Terminating.\n");
         // TODO: ADD THE DEPENDENCIES STUFF HERE
         exit(1);
     }
@@ -356,7 +357,7 @@ void create_binary(const std::string &PName)
     else if (pkg_info.type == "local")
     {
         // unpacking the sources archive
-        std::string cmd_source = "tar -xf " + SRC_DIR + PName + "*" + " -C " + WORK_DIR + "sources/";
+        std::string cmd_source = "tar -xf " + SRC_DIR + PName + "*tar*" + " -C " + WORK_DIR + "sources/";
         if (DEBUG) std::cout << cmd_source << "\n";
         system(cmd_source.c_str());
     }
