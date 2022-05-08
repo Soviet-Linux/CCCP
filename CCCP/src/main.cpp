@@ -45,7 +45,22 @@ std::string MAKE_DIR = WORK_DIR + "sources/";
 std::string SPECIAL_DIR = MAIN_DIR + "special/";
 //The file where a lot of data are stored
 std::string DATA_FILE = DATA_DIR + "packages.json";
+/*
+Here is a more detailed look of the default directory structure 
+/ --> ROOT
+└── var
+    └── cccp --> MAIN_DIR
+        ├── bin --> BIN_DIR
+        ├── data --> DATA_DIR
+        ├── log --> LOG_DIR
+        ├── pkg --> PKG_DIR
+        ├── special --> SPECIAL_DIR
+        ├── src --> SRC_DIR
+        └── work --> WORK_DIR
+            ├── build --> BUILD_DIR
+            └── sources --> MAKE_DIR
 
+*/
 
 bool DEBUG = false; // set to true to see the debug messages
 bool TESTING = false; // set to true to see the test messages
