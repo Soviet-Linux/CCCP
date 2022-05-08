@@ -16,6 +16,7 @@ std::vector<std::string> get_locations(const std::string& BUILD_DIR)
         while ((ent = readdir (dir)) != NULL) 
         {
             locations.push_back(ent->d_name);
+            std::cout << " " << ent->d_name << "\n";
         }
         closedir (dir);
         

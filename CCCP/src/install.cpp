@@ -14,6 +14,7 @@
 #include "../include/data.h"
 #include "../include/deps.h"
 #include "../include/move.h"
+#include "../include/locations.h"
 
 
 
@@ -51,20 +52,22 @@ void install_source(const std::string &PName,const std::string &PKG_DIR,const st
     make_pkg(pkg_info, MAKE_DIR, BUILD_DIR,LOG_DIR);
     std::cout << "☭ Package built"<< "\n";
 
+    //Get package locations
+    std::vector<std::string> files = get_locations(BUILD_DIR);
     // Moving built binaries to their install location on the system
     move_binaries(files, ROOT);
     //executing post installation scripts
     if (!pkg_info.special_info.empty()) 
     {
-        system((SPECIAL_DIR + pkg_info.special_info).c_str());  
+        system((BUILD_DIR + pkg_info.special_info).c_str());  
     }
     else 
     {
-        if (DEBUG) std::cout << "No post installation scripts found" << "\n";
+        std::cout << "No post installation scripts found" << "\n";
     }
     // Storing package data
     // Adding the locations to the package files , and the packages files to DATA_DIR
-    store_spm(PPath, BUILD_DIR, DATA_DIR + PName + ".spm");
+    store_spm( BUILD_DIR, DATA_DIR + PName + ".spm");
     //adding the package to the data file
     add_pkg_data(DATA_FILE,pkg_info.name,pkg_info.version);
 
@@ -76,17 +79,16 @@ int install_binary(const std::string &PName)
     //check if the package is already installed
     if (std::filesystem::exists(DATA_DIR + PName + ".spm"))
     {
-        logger.Print<Soviet::INFO>("Package %s is already installed. Reinstalling.\n", PName.c_str());
+        std::cout << "Package " << PName << " already exists , reinstalling \n"; 
         // removing the package
-        rm_pkg(PName, DATA_DIR,DATA_FILE,DEBUG);
+        rm_pkg(PName,DATA_DIR,DATA_FILE);
     }
     // Uncompressing the binary package into the temorary dir
     std::string cmd_uncompress = "tar -xf " + BIN_DIR + PName + ".tar.gz -C " + BUILD_DIR;
     // the name of the spm package file (its good )
     std::string SName = PName + ".spm";
-    // Debug log of the command
-    if (DEBUG)
-        std::cout << cmd_uncompress << "\n";
+
+    std::cout << cmd_uncompress << "\n";
     // executing the command
     system((cmd_uncompress).c_str());
     // Reading package data from .spm file
@@ -95,7 +97,7 @@ int install_binary(const std::string &PName)
     // Checking dependencies
     if (check_dependencies(pkg_info.dependencies, DATA_DIR))
     {
-        logger.Print<Soviet::INFO>("Dependency check passed\n"); 
+        std::cout << "Dependency check passed\n"; 
         
     }
     else
@@ -105,7 +107,7 @@ int install_binary(const std::string &PName)
     }
     
     // installing  package with install_info command from the .spm file
-    move_binaries(BUILD_DIR, ROOT);
+    move_binaries(files, ROOT);
     std::cout << "☭ Package Installed, Comrade"<< "\n";
 
     //executing post installation scripts

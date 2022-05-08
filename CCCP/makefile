@@ -1,5 +1,6 @@
 CC = g++
 MAIN = main
+TEST = test
 
 
 OUTPUT = bin
@@ -20,3 +21,6 @@ clean:
 	rm -rf ${OUTPUT}
 install:
 	cp -r ${OUTPUT}/${MAIN} ${SOVIET}/bin/cccp
+test :
+	${CC} tests/${TEST}.cpp ${FLAGS} -o ${OUTPUT}/${TEST}
+	./${OUTPUT}/${TEST}

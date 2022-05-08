@@ -1,0 +1,1 @@
+std::vector<std::string> get_locations(const std::string& BUILD_DIR);
