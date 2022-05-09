@@ -18,49 +18,7 @@ Thank you for your help :)
 
 #include "../include/cccp.h"
 
-// The filesystem root
-std::string ROOT = "/";
-// For real use it must be set to "/"
 
-// main dir where all the files and packages will be stored and where we will work
-std::string MAIN_DIR = ROOT + "var/cccp/";
-// the dir where we will be building the packages and downoading the sources
-//  TODO: proper dir names , but i dont have time to do it
-std::string WORK_DIR = MAIN_DIR + "work/";
-// the dir where the package file are storeds
-std::string PKG_DIR = MAIN_DIR + "pkg/";
-// the dir where the data is stored
-std::string DATA_DIR = MAIN_DIR + "data/";
-//where we store tests and logs
-std::string LOG_DIR = MAIN_DIR + "log/";
-// where the sources are stored for local packages
-std::string SRC_DIR = MAIN_DIR + "src/";
-// where the binaries are stored
-std::string BIN_DIR = MAIN_DIR + "bin/";
-// Dir where built binaries are stored after making or after uncompressing
-std::string BUILD_DIR = WORK_DIR + "build/";
-// Dir where the package sources are downloaded and built
-std::string MAKE_DIR = WORK_DIR + "sources/";
-//dir where special scripts are stored
-std::string SPECIAL_DIR = MAIN_DIR + "special/";
-//The file where a lot of data are stored
-std::string DATA_FILE = DATA_DIR + "packages.json";
-/*
-Here is a more detailed look of the default directory structure 
-/ --> ROOT
-└── var
-    └── cccp --> MAIN_DIR
-        ├── bin --> BIN_DIR
-        ├── data --> DATA_DIR
-        ├── log --> LOG_DIR
-        ├── pkg --> PKG_DIR
-        ├── special --> SPECIAL_DIR
-        ├── src --> SRC_DIR
-        └── work --> WORK_DIR
-            ├── build --> BUILD_DIR
-            └── sources --> MAKE_DIR
-
-*/
 
 bool DEBUG = false; // set to true to see the debug messages
 bool TESTING = false; // set to true to see the test messages
