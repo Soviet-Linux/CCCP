@@ -1,1 +1,3 @@
-std::vector<std::string> get_locations(const std::string& BUILD_DIR);
+#pragma once
+
+std::vector<std::string> get_locations(const std::string &PATH);
