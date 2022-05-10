@@ -1,7 +1,6 @@
 CC = g++
 MAIN = main
 TEST = test
-TARGET = null
 
 OUTPUT = bin
 
@@ -19,6 +18,6 @@ clean:
 install:
 	cp -r ${OUTPUT}/${MAIN} ${SOVIET}/bin/cccp
 test :
-	${CC} -c src/${TARGET}.cpp ${FLAGS} -o ${OUTPUT}/${TARGET}.o
-	${CC} ${OUTPUT}/${TARGET}.o tests/${TEST}.cpp ${FLAGS} -o ${OUTPUT}/${TEST}
+	${CC} -c tests/print_test.cpp -o ${OUTPUT}/print_test.o
+	${CC}  tests/${TEST}.cpp ${FLAGS} -o ${OUTPUT}/${TEST}
 	./${OUTPUT}/${TEST}

@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "stdio.h"
 
+//the class file 
+#include  "../include/cccp.hpp"
 
 /*
 To uninstall packages , we'll use the location data ( all the files that were installed by the program )
@@ -14,9 +17,8 @@ This is simple . It could be simpler but really i dont know how .
 So dont touch this , except if there are a critical bug or an important missing feature.
 */
 // this function is for uninstaling packages
-void remove(const std::string& PName,bool DEBUG)
+void soviet::package::remove(const std::string& PName,bool DEBUG)
 {
-    //All the block of code below is for getting the data from the spm file of the package
     // creating a string variable to hold the package's spm file path
     std::string PPath = DATA_DIR + PName + ".spm";
     //small message , its uselless but i'll leave it there
@@ -65,7 +67,7 @@ void remove(const std::string& PName,bool DEBUG)
         
     }
     //removing the entries in packages.json
-    rm_pkg_data(DATA_FILE,PName);
+    remove_data(DATA_FILE,PName);
 
     //remove the spm file from DATA_DIR
     std::string rm_spm_cmd = "rm -rf " + DATA_DIR + PName + ".spm";

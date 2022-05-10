@@ -65,7 +65,7 @@ void make (bool DEBUG)
     }
 
     // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
-    if (TESTING && !test_info.empty()) system(("( cd "+ package_dir + " && " + pkg.test_info + " > "+ LOG_DIR + pkg.name + ".test )").c_str());
+    if (TESTING && !test_info.empty()) system(("( cd "+ package_dir + " && " + test_info + " > "+ LOG_DIR + name + ".test )").c_str());
 
     //installing the package in the build directory
 

@@ -24,18 +24,13 @@ namespace soviet {
     std::string PKG_DIR = MAIN_DIR + "pkg/";
     // the dir where the data is stored
     std::string DATA_DIR = MAIN_DIR + "data/";
+    std::string SPM_DIR = MAIN_DIR + "spm/";
     //where we store tests and logs
     std::string LOG_DIR = MAIN_DIR + "log/";
-    // where the sources are stored for local packages
-    std::string SRC_DIR = MAIN_DIR + "src/";
-    // where the binaries are stored
-    std::string BIN_DIR = MAIN_DIR + "bin/";
     // Dir where built binaries are stored after making or after uncompressing
     std::string BUILD_DIR = WORK_DIR + "build/";
     // Dir where the package sources are downloaded and built
-    std::string MAKE_DIR = WORK_DIR + "sources/";
-    //dir where special scripts are stored
-    std::string SPECIAL_DIR = MAIN_DIR + "special/";
+    std::string MAKE_DIR = WORK_DIR + "make/";
     //The file where a lot of data are stored
     std::string DATA_FILE = DATA_DIR + "packages.json";
     /*
@@ -43,17 +38,15 @@ namespace soviet {
     / --> ROOT
     └── var
         └── cccp --> MAIN_DIR
-            ├── bin --> BIN_DIR
             ├── data --> DATA_DIR
+            ├── spm --> SPM_DIR
             ├── log --> LOG_DIR
-            ├── pkg --> PKG_DIR
-            ├── special --> SPECIAL_DIR
-            ├── src --> SRC_DIR
             └── work --> WORK_DIR
-                ├── build --> BUILD_DIR
-                └── sources --> MAKE_DIR
+                ├── build --> BUILD_DIR (also called $BUILD_ROOT)
+                └── make --> MAKE_DIR
 
     */
+
     /*
         This is an attempt to organize this project with fancy object-oriented stuff 
         I dont know how to do it yet but inshallah i will learn
@@ -61,7 +54,7 @@ namespace soviet {
     */
     enum types {src,bin};
 
-    bool DEBUG;
+    extern bool DEBUG;
 
     class package 
     {
@@ -82,13 +75,29 @@ namespace soviet {
 
             std::string special_info;
 
+            // main functions that will be called from main.cpp
+            void remove(const std::string& PName,bool DEBUG);
+            bool check(const std::string& PName,bool DEBUG);
+
             // idk why this is public , but i will leave it here
             void make (bool DEBUG);
-            bool check_pkg (const std::string& PPath,bool DEBUG);
+            
             
         private :
 
-            std::string MAIN_DIR = soviet::MAIN_DIR;
+            // this is putting the directory structure in in the class 
+            //Its not pretty , its probably bad but i i havent found other solution
+            // also , its not accidental string copying , we need it in case we need to change the dir structure at runtime
+            const std::string MAIN_DIR = soviet::MAIN_DIR;
+            const std::string WORK_DIR = soviet::WORK_DIR;
+            const std::string PKG_DIR = soviet::PKG_DIR;
+            const std::string DATA_DIR = soviet::DATA_DIR;
+            const std::string SPM_DIR = soviet::SPM_DIR;
+            const std::string LOG_DIR = soviet::LOG_DIR;
+            const std::string BUILD_DIR = soviet::BUILD_DIR;
+            const std::string MAKE_DIR = soviet::MAKE_DIR;
+            const std::string DATA_FILE = soviet::DATA_FILE;
+
 
             //utility functions that will be used for other things
             std::vector<std::string> get_locations(const std::string &PATH);

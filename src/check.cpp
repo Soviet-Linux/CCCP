@@ -6,8 +6,9 @@
 
 
 //checking if package is installed and untouched
-bool check_pkg (const std::string& PPath,bool DEBUG)
+bool check_pkg (const std::string& PName,bool DEBUG)
 {
+    std::string PPath = DATA_DIR + PName + ".spm";
     // Pasing data from the spm file
     open_spm(PPath);
     // check if the data["location "] is not empty
