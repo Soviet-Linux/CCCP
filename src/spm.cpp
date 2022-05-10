@@ -5,10 +5,13 @@
 
 #include "../lib/nlohmann/json.hpp"
 
+// class thing
+#include "../include/cccp.hpp"
+
 //using json = nlohmann::json;
 using nlohmann::json;
 
-int open_spm (const std::string& PPath)
+nlohmann::json soviet::package::open_spm (const std::string& PPath)
 {
     std::ifstream file_spm((PPath).c_str(), std::ios::in);
     std::stringstream buffer;
@@ -16,46 +19,22 @@ int open_spm (const std::string& PPath)
     //parsing json data
     auto pkg_info = json::parse(buffer.str());
 
-    name = pkg_info["name"];
-    type = pkg_info["type"];
-    version = pkg_info["version"];
-    special_info = pkg_info["info"]["special"];
-    for (int i = 0; i < pkg_info["dependencies"].size(); i++)
-    {
-        dependencies.push_back(pkg_info["dependencies"][i]);
-    }
-
-    if (type == src)
-    {
-        prepare_info = pkg_info["info"]["prepare"];
-        build_info = pkg_info["info"]["make"];
-        test_info = pkg_info["info"]["test"];
-        install_info = pkg_info["info"]["install"];
-        
-    }
-    else if (type == bin)
-    {
-        for (int i = 0; i < pkg_info["locations"].size(); i++)
-        {
-        locations.push_back(pkg_info["locations"][i]);
-        }
-    }
-    return 1;
+    return pkg_info;
     
 }
-//This fucntion is very important , it will store the install location data to the "DB"
-void store_spm (const std::string& PPath,const std::string& out_path)
+// This function is very important , it will store the install location data to the "DB"
+void soviet::package::store_spm (const std::string& spm_path,const std::string& out_path)
 {
     std::string temp_file = "/tmp/temp_loc.txt";
     std::cout << "Storing location in spm file" << std::endl;
-    std::ifstream file_spm((PPath).c_str(), std::ios::in);
+    std::ifstream file_spm((spm_path).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     file_spm.close();
     //parsing json data
     auto pkg_info = json::parse(buffer.str());
     //change package type if its a binary
-    if (type == bin)
+    if (type == "bin")
     {
         pkg_info["type"] = "bin";
     }
@@ -76,8 +55,32 @@ void store_spm (const std::string& PPath,const std::string& out_path)
     //removing temp file 
     // TODO: comment this better
     system(("rm "+ temp_file).c_str());
-    //Writing the data to a file 
-    std::ofstream file_spm_out((out_path).c_str(), std::ios::out);
+    //Writing the data to the package spm file in data_dir (SPath)
+    std::ofstream file_spm_out((dataSpmPath).c_str(), std::ios::out);
     file_spm_out << pkg_info.dump(4);
     file_spm_out.close();
+}
+int soviet::package::var_spm(const std::string& spm_path)
+{
+    auto pkg_info = open_spm(spm_path);
+    name = pkg_info["name"];
+    type = pkg_info["type"];
+    version = pkg_info["version"];
+    special_info = pkg_info["info"]["special"];
+    for (int i = 0; i < pkg_info["dependencies"].size(); i++)
+    {
+        dependencies.push_back(pkg_info["dependencies"][i]);
+    }
+    prepare_info = pkg_info["info"]["prepare"];
+    build_info = pkg_info["info"]["make"];
+    test_info = pkg_info["info"]["test"];
+    install_info = pkg_info["info"]["install"];
+    if (type == "bin")
+    {
+        for (int i = 0; i < pkg_info["locations"].size(); i++)
+        {
+        locations.push_back(pkg_info["locations"][i]);
+        }
+    }
+    return 1;
 }

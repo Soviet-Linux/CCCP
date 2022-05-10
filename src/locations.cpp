@@ -2,14 +2,17 @@
 #include <string>
 #include <vector>
 
-std::vector<std::string> get_locations(const std::string &PATH)
+// class stuff
+#include "../include/cccp.hpp"
+
+void soviet::package::get_locations()
 {
     //declaring output vector
     std::vector<std::string> locations;
 
     std::string temp_file = "/tmp/temp_loc.txt";
     //Get package file location
-    std::string location_cmd = "( cd " + PATH + " && find . -type f | cut -c2- > " + temp_file + " && find . -type d | cut -c2- | tac  | sed '/^$/d' >> " + temp_file + " )";
+    std::string location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- > %s && find . type d | cut -c2- | tac | sed '/^$/d' << %s )", BUILD_DIR.c_str(), temp_file.c_str(), temp_file.c_str());
     //std::cout << location_cmd << std::endl;
     system(location_cmd.c_str());
     //also the temp.txt file is a little hacky i think
@@ -26,5 +29,4 @@ std::vector<std::string> get_locations(const std::string &PATH)
         }
         data_file.close();
     }
-    return locations;
 }

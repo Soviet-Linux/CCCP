@@ -4,11 +4,14 @@
 #include <stdio.h>
 #include <iostream>
 
+// class stuff
+#include "../include/cccp.hpp"
+
 
 //checking if package is installed and untouched
-bool check_pkg (const std::string& PName,bool DEBUG)
+bool soviet::package::check ()
 {
-    std::string PPath = DATA_DIR + PName + ".spm";
+    std::string PPath = DATA_DIR + name + ".spm";
     // Pasing data from the spm file
     open_spm(PPath);
     // check if the data["location "] is not empty
@@ -26,8 +29,8 @@ bool check_pkg (const std::string& PName,bool DEBUG)
             This is a bad way to do  this but i dont have a better idea 
             Again , if you have an idea DM me on discord 
         */
-         if (DEBUG) std::cout << "Checking " << data.locations[i] << std::endl;
-         if (access(locations[i]),F_OK) 
+         if (DEBUG) std::cout << "Checking " << locations[i] << std::endl;
+         if (access(locations[i].c_str(),F_OK)) 
          {
              if (DEBUG) std::cout << locations[i] << " exists !" << std::endl;
          }

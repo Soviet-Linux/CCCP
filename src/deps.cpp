@@ -3,9 +3,11 @@
 #include <iostream> 
 #include <unistd.h>
 
+// class stuff
+#include "../include/cccp.hpp"
 
 // This function will check if all dependencies of a package are installed
-int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR) 
+int soviet::package::check_dependencies () 
 {
     //TODO : check if the dependencies are installed
     //

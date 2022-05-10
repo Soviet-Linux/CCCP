@@ -2,15 +2,18 @@
 #include <vector>
 #include <string>
 
+// class stuff
+#include "../include/cccp.hpp"
+
 // This function is moving the binaries to the correct locations
-void move_binaries( std::vector<std::string> files ,std::string ROOT)
+void soviet::package::move_binaries()
 {
     //moving binaries to their install location on the system
-    //loop through the files and move them to the correct location
-    for (int i = 0; i < files.size(); i++)
+    //loop through the locations and move them to the correct location
+    for (int i = 0; i < locations.size(); i++)
     {
         // C is better (Why this fucking function is called rename and not move ?!)
-        rename(files[i].c_str(), (ROOT + files[i]).c_str());
+        rename(locations[i].c_str(), (ROOT + locations[i]).c_str());
         
     }
 }

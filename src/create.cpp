@@ -1,57 +1,70 @@
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <unistd.h>
 
-#include "../lib/pkg_data.h"
+// class stuff
+#include "../include/cccp.hpp"
 
 
-// Creating a binary package from a .spm file
-void create_binary(const std::string &PName,const std::string &PKG_DIR)
+// parsing data and installing package
+void soviet::package::create(const std::string& binPath)
 {
-    // PKG file location
-    std::string PPath = PKG_DIR + PName + ".spm";
-    // checking if the package file exists 
-    if (!access(PPath.c_str(), F_OK))
+    std::string USING_DIR;
+    // chnaging uncompress and spm dir with package type
+    if (type == "src") USING_DIR = MAKE_DIR;
+    else if (type == "bin") USING_DIR = BUILD_DIR;
+    else {
+        std::cout << "Package type not supported" << std::endl;
+        return;
+    }
+
+    // checking if package is already installed
+    if (check())
     {
-        std::cout << "Package " << PName << " already exists. Terminating.\n";
+        std::cout << "Package is already installed, reinstalling" << std::endl;
+        // removing the package
+        purge();
+
+    }
+    std::string cmd_uncompress = soviet::format("tar -xf %s -C %s",packagePath.c_str(),USING_DIR.c_str());
+    //uncompressing <PName>.src.spm.tar.gz in PKG_DIR
+    system(cmd_uncompress.c_str());
+
+    // Reading spm file in MAKE DIR
+    open_spm(soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()));
+
+    // Checking dependencies
+    //This dependencies if;else system is deprecated and will be removed in the future
+    if (check_dependencies())
+    {
+        std::cout << "Dependency check passed"<< "\n";     
+    }
+    else
+    {
+        std::cout << "Dependency check failed"<< "\n";
+        // TODO: ADD THE DEPENDENCIES STUFF HERE
         exit(1);
     }
-    // temp spm file location ( I know , this is not very good , if you are very intelligent maybe you could change it :)
-    //  TODO: change this to a better location
-    std::string temp_path = "/tmp/temp.spm";
-
-    std::cout << "Processing package " << PName << "\n";
-    // Getting package data from .spm file
-    const pkg_data &pkg_info = open_spm(PPath);
-    if (pkg_info.type == "src")
-    {
-        // downloading package source into the work directory
-        const std::string &download_cmd = "( cd " + MAKE_DIR + " && " + pkg_info.download_info + " )";
-
-        std::cout << download_cmd << "\n";
-        system(download_cmd.c_str());
-    }
-    else if (pkg_info.type == "local")
-    {
-        // unpacking the sources archive
-        std::string cmd_source = "tar -xf " + SRC_DIR + PName + "*" + " -C " + WORK_DIR + "sources/";
-        if (DEBUG) std::cout << cmd_source << "\n";
-        system(cmd_source.c_str());
-    }
-
-    // making the package from source
-    make_pkg(pkg_info, MAKE_DIR, BUILD_DIR,LOG_DIR,TESTING);
+    //making package
+    make();
+    // fancy output
     std::cout << "☭ Package built"<< "\n";
+    //changing type to bin 
+    type = "bin";
+    //Get package locations
+    get_locations();
+    rename(soviet::format("/tmp/%s.tmp.spm"),name.c_str()),soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str());
 
-    // adding locations and other thing to spm file
-    bin_spm(PPath, temp_path);
-    store_spm(temp_path, BUILD_DIR, BUILD_DIR + PName + ".spm");
+    // Storing package data
+    // Adding the locations to the package files , and the packages files to DATA_DIR
+    store_spm(soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()),soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()));
     
     // Creating the tar.gz package archive
-    std::string cmd_archive = "( cd " + BUILD_DIR + " && tar -cf " + BIN_DIR + PName + ".tar.gz * )";
+    std::string cmd_archive = soviet::format("( cd %s && tar -cf %s * ", BUILD_DIR.c_str() , binPath.c_str());
 
-    if (DEBUG) logger.Print<Soviet::DEBUG>("%s",cmd_archive.c_str());
+    if (DEBUG) std::cout << cmd_archive << std::endl;
 
     system(cmd_archive.c_str());
     // cleaning build directory

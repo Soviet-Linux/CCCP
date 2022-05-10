@@ -2,6 +2,9 @@
 #include <vector>
 #include <iostream>
 
+//class stuff
+#include "../include/cccp.hpp"
+
 /*
     All hte complexity in this function and really in this entire project if just because we need to track  files installed by a makefile
     For now we juste install in a separate directory (BUILD_DIR) and then move it to the correct location (The real filesystem)
@@ -15,7 +18,7 @@
     (I tried , but its not good enough)
 
 */
-void make (bool DEBUG)
+void soviet::package::make ()
 {
     /*
         We have some problems here , because some complex packages require advanced options to be installed 
@@ -47,16 +50,16 @@ void make (bool DEBUG)
     if (!prepare_info.empty())
     {
         //formatting the prepare command
-        std::string prepare_cmd = "cd " + package_dir + " && " + pkg.prepare_info;
+        std::string prepare_cmd = "cd " + package_dir + " && " + prepare_info;
         //Printing the command to the terminal
         std::cout << prepare_cmd << std::endl;
         //executing the command
         system(prepare_cmd.c_str());
     }
-    if (!make_info.empty())
+    if (!build_info.empty())
     {
         //Formating the command
-        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && "  + pkg.make_info + " )";
+        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && "  + build_info + " )";
         // printing the command to standard output 
         std::cout << make_cmd << std::endl;
         //executing the command
@@ -70,13 +73,17 @@ void make (bool DEBUG)
     //installing the package in the build directory
 
     //formatting the install command
-    std::string install_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd "+ package_dir + " && " + pkg.install_info + " )";
+    std::string install_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd "+ package_dir + " && " + install_info + " )";
 
     //printing , for debugging purposes
     std::cout << install_cmd << std::endl; 
 
     //And finally , executing the install command
     system(install_cmd.c_str());
+
+    // i have a small problem here , i dont know what to do with the package spm file so im just gonna move it in a random place 
+    // and then move it to the correct location
+    rename(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) , soviet::format("/tmp/%s.tmp.spm",name.c_str()));
 
     // cleaning up the build directory
     system(("rm -rf " + package_dir).c_str());

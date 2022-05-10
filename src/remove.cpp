@@ -17,14 +17,13 @@ This is simple . It could be simpler but really i dont know how .
 So dont touch this , except if there are a critical bug or an important missing feature.
 */
 // this function is for uninstaling packages
-void soviet::package::remove(const std::string& PName,bool DEBUG)
+void soviet::package::purge()
 {
-    // creating a string variable to hold the package's spm file path
-    std::string PPath = DATA_DIR + PName + ".spm";
     //small message , its uselless but i'll leave it there
-    std::cout << "Uninstalling package " << PName << std::endl;
-    //paring spm file using open_spm()
-    open_spm(PPath);
+    std::cout << "Uninstalling package " << name << std::endl;
+
+    // Initializing soviet::package class values using var_spm
+    var_spm(dataSpmPath);
 
     //remove all the files in the data["locations"]
     for (int i = 0; i < locations.size(); i++)
@@ -67,9 +66,9 @@ void soviet::package::remove(const std::string& PName,bool DEBUG)
         
     }
     //removing the entries in packages.json
-    remove_data(DATA_FILE,PName);
+    remove_data();
 
     //remove the spm file from DATA_DIR
-    std::string rm_spm_cmd = "rm -rf " + DATA_DIR + PName + ".spm";
+    std::string rm_spm_cmd = "rm -rf " + DATA_DIR + name + ".spm";
     system((rm_spm_cmd).c_str());
 }

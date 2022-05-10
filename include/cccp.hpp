@@ -52,16 +52,18 @@ namespace soviet {
         I dont know how to do it yet but inshallah i will learn
         The result may be cool !
     */
-    enum types {src,bin};
+    
 
     extern bool DEBUG;
+    extern bool TESTING;
 
     class package 
     {
         public:
             std::string name;
             std::string version;
-            types type;
+            // At first i used an enum but it caused some problems
+            std::string type;
 
             std::vector<std::string> dependencies;
             std::vector<std::string> locations;
@@ -75,12 +77,20 @@ namespace soviet {
 
             std::string special_info;
 
+            //Where the package is stored
+            std::string packagePath;
+            // where the spm file in data is stored
+            std::string dataSpmPath = DATA_DIR + name + ".spm";
+
+
             // main functions that will be called from main.cpp
-            void remove(const std::string& PName,bool DEBUG);
-            bool check(const std::string& PName,bool DEBUG);
+            void purge();
+            bool check();
+            void install();
+            void create(const std::string& binPath );
 
             // idk why this is public , but i will leave it here
-            void make (bool DEBUG);
+            void make ();
             
             
         private :
@@ -97,19 +107,31 @@ namespace soviet {
             const std::string BUILD_DIR = soviet::BUILD_DIR;
             const std::string MAKE_DIR = soviet::MAKE_DIR;
             const std::string DATA_FILE = soviet::DATA_FILE;
+            // declaring here the DEBUG and TESTING variables
+            bool DEBUG = soviet::DEBUG;
+            bool TESTING = soviet::TESTING;
 
 
             //utility functions that will be used for other things
-            std::vector<std::string> get_locations(const std::string &PATH);
-            int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR);
-            void move_binaries( std::vector<std::string> files ,std::string ROOT);
-            // This function will open the spm file , parse the json and return the data
-            int open_spm (const std::string& PPath);
-            void store_spm (const std::string& PPath,const std::string& out_path);
+            void get_locations();
+            int check_dependencies ();
+            void move_binaries();
+
+            // Set of function that manipulate spm files
+            nlohmann::json open_spm (const std::string& spm_path);
+            void store_spm (const std::string &spm_path,const std::string& out_path);
+            int var_spm(const std::string& spm_path);
+
+            int add_data ();
+            int remove_data ();
+
+
                   
     };
     // I spend hours on this one , but it works !!
     char* format( const char* strFmtString, ... );
+    int init_data (const std::string& data_path);
+
     
 }
 
