@@ -7,7 +7,7 @@
 
 
 // parsing data and installing package
-void soviet::package::create(const std::string& binPath)
+void soviet::package::createBinary(const std::string& binPath)
 {
     std::string USING_DIR;
     // chnaging uncompress and spm dir with package type

@@ -86,7 +86,7 @@ namespace soviet {
             void purge();
             bool check();
             void install();
-            void create(const std::string& binPath );
+            void createBinary(const std::string& binPath );
 
             // idk why this is public , but i will leave it here
             void make ();
