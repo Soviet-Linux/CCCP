@@ -64,8 +64,8 @@ int main(int argc, char *argv[])
     soviet::action action;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
-    //Dir where the package is stored
-    std::string packageDir;
+    // in case of 'p' option
+    bool specifiedPkgPath = false;
 
     for (int i = 1;i < argc;i++)
     {
@@ -115,7 +115,10 @@ int main(int argc, char *argv[])
                             action = soviet::LIST;
                             break;
                         case 'p' :
-                            // Specify package dir 
+                            // Specify a location to find a package 
+                            specifiedPkgPath = true;
+                            break;
+
                 
                     }
                 }
@@ -136,13 +139,23 @@ int main(int argc, char *argv[])
     switch (action)
     {
         case soviet::INSTALL :
-            for (int i = 0;i < parameters.size();i++)
+            if (specifiedPkgPath)
             {
-                std::cout << "Installing " << parameters[i] << "\n";
                 soviet::package pkg;
-                pkg.name = parameters[i];
-
+                pkg.packagePath = parameters[0];
                 pkg.install();
+            }
+            else
+            {
+                for (int i = 0;i < parameters.size();i++)
+                {
+                    std::cout << "Installing " << parameters[i] << "\n";
+                    soviet::package pkg;
+                    pkg.name = parameters[i];
+                    // do stuff to get package from repo
+                    // TODO: implement that
+                    //something like : pkg.get(repo);
+                }
             }
         default :
             throw std::runtime_error("Action error . Terminating.\n");
