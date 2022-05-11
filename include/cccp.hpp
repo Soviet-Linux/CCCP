@@ -54,34 +54,38 @@ namespace soviet {
         The result may be cool !
     */
     
-    enum action {INSTALL,CHECK,REMOVE,CREATE,LIST};
+    enum action {INSTALL,CHECK,LIST,REMOVE,CREATE,NOTHING};
 
     class package 
     {
         public:
-            std::string name;
-            std::string version;
-            // At first i used an enum but it caused some problems
-            std::string type;
 
-            std::vector<std::string> dependencies;
-            std::vector<std::string> locations;
+            // constructor
+            package();
+
+            static std::string name;
+            static  std::string version;
+            // At first i used an enum but it caused some problems
+            static std::string type;
+
+            static std::vector<std::string> dependencies;
+            static std::vector<std::string> locations;
 
             // commands to prepare , build , test and install the package 
             // It can be a script 
-            std::string prepare_info;
-            std::string build_info;
-            std::string test_info;
-            std::string install_info;
+            static std::string prepare_info;
+            static std::string build_info;
+            static std::string test_info;
+            static std::string install_info;
 
-            std::string special_info;
+            static std::string special_info;
 
             //Where the package is stored
-            std::string packagePath;
+            static std::string packagePath;
             // where the spm file in data is stored
-            std::string dataSpmPath = DATA_DIR + name + ".spm";
+            static std::string dataSpmPath ;
 
-
+            
             // main functions that will be called from main.cpp
             void purge();
             bool check();
@@ -116,8 +120,6 @@ namespace soviet {
     // I spend hours on this one , but it works !!
     char* format( const char* strFmtString, ... );
     int init_data (const std::string& data_path);
-    std::vector<action> parse(int argc, char *argv[]);
-
     
 }
 
