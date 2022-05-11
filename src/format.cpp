@@ -2,7 +2,10 @@
 #include <stdarg.h>
 #include <iostream>
 
-char* format( const char* strFmtString, ... )
+// class stuff
+#include "../include/cccp.hpp"
+
+char* soviet::format( const char* strFmtString, ... )
 {
     //declare char* strDest
     char* strDest;

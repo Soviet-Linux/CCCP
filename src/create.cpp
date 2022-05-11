@@ -1,8 +1,6 @@
-#include <cstdio>
 #include <string>
 #include <vector>
 #include <iostream>
-#include <unistd.h>
 
 // class stuff
 #include "../include/cccp.hpp"

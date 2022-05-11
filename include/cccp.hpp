@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <string>
 #include <vector>
 #include <fstream>
@@ -12,27 +13,27 @@ using nlohmann::json;
 namespace soviet {
 
     // The filesystem root
-    std::string ROOT = "/";
+    extern std::string ROOT;
     // For real use it must be set to "/"
 
     // main dir where all the files and packages will be stored and where we will work
-    std::string MAIN_DIR = ROOT + "var/cccp/";
+    extern std::string MAIN_DIR;
     // the dir where we will be building the packages and downoading the sources
     //  TODO: proper dir names , but i dont have time to do it
-    std::string WORK_DIR = MAIN_DIR + "work/";
+    extern std::string WORK_DIR;
     // the dir where the package file are storeds
-    std::string PKG_DIR = MAIN_DIR + "pkg/";
+    extern std::string PKG_DIR;
     // the dir where the data is stored
-    std::string DATA_DIR = MAIN_DIR + "data/";
-    std::string SPM_DIR = MAIN_DIR + "spm/";
+    extern std::string DATA_DIR;
+    extern std::string SPM_DIR;
     //where we store tests and logs
-    std::string LOG_DIR = MAIN_DIR + "log/";
+    extern std::string LOG_DIR;
     // Dir where built binaries are stored after making or after uncompressing
-    std::string BUILD_DIR = WORK_DIR + "build/";
+    extern std::string BUILD_DIR;
     // Dir where the package sources are downloaded and built
-    std::string MAKE_DIR = WORK_DIR + "make/";
+    extern std::string MAKE_DIR;
     //The file where a lot of data are stored
-    std::string DATA_FILE = DATA_DIR + "packages.json";
+    extern std::string DATA_FILE;
     /*
     Here is a more detailed look of the default directory structure 
     / --> ROOT
@@ -53,9 +54,7 @@ namespace soviet {
         The result may be cool !
     */
     
-
-    extern bool DEBUG;
-    extern bool TESTING;
+    enum action {INSTALL,CHECK,REMOVE,CREATE,LIST};
 
     class package 
     {
@@ -92,25 +91,11 @@ namespace soviet {
             // idk why this is public , but i will leave it here
             void make ();
             
+            // declaring here the DEBUG and TESTING variables
+            bool DEBUG = false;
+            bool TESTING = false;
             
         private :
-
-            // this is putting the directory structure in in the class 
-            //Its not pretty , its probably bad but i i havent found other solution
-            // also , its not accidental string copying , we need it in case we need to change the dir structure at runtime
-            const std::string MAIN_DIR = soviet::MAIN_DIR;
-            const std::string WORK_DIR = soviet::WORK_DIR;
-            const std::string PKG_DIR = soviet::PKG_DIR;
-            const std::string DATA_DIR = soviet::DATA_DIR;
-            const std::string SPM_DIR = soviet::SPM_DIR;
-            const std::string LOG_DIR = soviet::LOG_DIR;
-            const std::string BUILD_DIR = soviet::BUILD_DIR;
-            const std::string MAKE_DIR = soviet::MAKE_DIR;
-            const std::string DATA_FILE = soviet::DATA_FILE;
-            // declaring here the DEBUG and TESTING variables
-            bool DEBUG = soviet::DEBUG;
-            bool TESTING = soviet::TESTING;
-
 
             //utility functions that will be used for other things
             void get_locations();
@@ -131,6 +116,7 @@ namespace soviet {
     // I spend hours on this one , but it works !!
     char* format( const char* strFmtString, ... );
     int init_data (const std::string& data_path);
+    std::vector<action> parse(int argc, char *argv[]);
 
     
 }
