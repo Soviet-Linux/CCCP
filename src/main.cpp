@@ -6,6 +6,7 @@ Thank you for your help :)
 */
 
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -55,27 +56,108 @@ int main(int argc, char *argv[])
 {
     //verifying if the user has entered arguments
     if (argc < 2) {
-        std::cout << "No arguments given. Terminating.\n";
-        exit(1);
+        throw std::runtime_error("No arguments given. Terminating.\n");
     }
 
-    //parse agruments
-    std::vector<soviet::action> actions = soviet::parse(argc, argv);
+    // A way to store the action arguments 
+    // This isnt optimal but i dont know how to do it better
+    soviet::action action;
+    // The packages to be installed or removed
+    std::vector<std::string> parameters;
+    //Dir where the package is stored
+    std::string packageDir;
 
-    //execute actions
-    for (int i = 0; i < actions.size(); i++) 
+    for (int i = 1;i < argc;i++)
     {
-        switch (actions[i])
+        std::string option = argv[i];
+        if (option.substr(0,1) == "-")
         {
-            case soviet::INSTALL:
-                std::cout << "Installing package...\n";
-                break;
-            default :
-                std::cout << "Parsing shit. Fix this !\n";
+            if (option.substr(0,2) == "--")
+            {
+
+            }
+            else  
+            {
+                for (int i = 2;i < option.size();i++)
+                {
+                    switch (option[i]) 
+                    {
+                        case 'h' :
+                            // print a real help message ( TODO: improve the message)
+                            std::cout << "Help message\n";
+                            break;
+                        case 'S' :
+                            // Synchronize mirrors
+                            break;
+
+                        case 'i' :
+                            // Install packages
+                            std::cout << "Installing packages\n";
+                            action = soviet::INSTALL;
+                            break;
+                        case 'r' :
+                            // Remove packages
+                            std::cout << "Removing packages\n";
+                            action = soviet::REMOVE;
+                            break;
+                        case 'u' :
+                            // Update packages
+                            // We are very far from an update system so i wont touch this in a while
+                            break;
+                        case 'c' :
+                            // Check packages
+                            std::cout << "Checking packages\n";
+                            action = soviet::CHECK;
+                            break;
+                        case 'l' :
+                            // List packages
+                            std::cout << "Listing packages\n";
+                            action = soviet::LIST;
+                            break;
+                        case 'p' :
+                            // Specify package dir 
+                
+                    }
+                }
+            }
         }
+        else
+        {
+            if (i == 1)
+            {
+                throw std::runtime_error("No action given. Terminating.\n");
+            }
+            else
+            {
+                parameters.push_back(option);
+            }
+        }
+    }
+    switch (action)
+    {
+        case soviet::INSTALL :
+            for (int i = 0;i < parameters.size();i++)
+            {
+                std::cout << "Installing " << parameters[i] << "\n";
+                soviet::package pkg;
+                pkg.name = parameters[i];
+
+                pkg.install();
+            }
+        default :
+            throw std::runtime_error("Action error . Terminating.\n");
     }
 
     //Returning 0 means the program ran successfully
     // 
     return 0;
 }
+
+/*
+Usage is :
+cccp -Si package1 package2 package3
+cccp -i package1 package2 package3
+cccp -h
+cccp --install package1 package2 package3
+cccp --sync 
+*/
