@@ -1,4 +1,5 @@
 .git
 .vs
 .vscode
-CCCP/tests/env/*
+bin/*
+obj/*

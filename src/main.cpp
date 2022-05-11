@@ -62,10 +62,19 @@ int main(int argc, char *argv[])
     //parse agruments
     std::vector<soviet::action> actions = soviet::parse(argc, argv);
 
-    for (int i = 0;i < actions.size();i++)
+    //execute actions
+    for (int i = 0; i < actions.size(); i++) 
     {
-        std::cout << argv[i] << std::endl;
+        switch (actions[i])
+        {
+            case soviet::INSTALL:
+                std::cout << "Installing package...\n";
+                break;
+            default :
+                std::cout << "Parsing shit. Fix this !\n";
+        }
     }
+
     //Returning 0 means the program ran successfully
     // 
     return 0;
