@@ -63,27 +63,27 @@ namespace soviet {
             // constructor
             package();
 
-            static std::string name;
-            static  std::string version;
+            std::string name;
+            std::string version;
             // At first i used an enum but it caused some problems
-            static std::string type;
+            std::string type;
 
-            static std::vector<std::string> dependencies;
-            static std::vector<std::string> locations;
+            std::vector<std::string> dependencies;
+            std::vector<std::string> locations;
 
             // commands to prepare , build , test and install the package 
             // It can be a script 
-            static std::string prepare_info;
-            static std::string build_info;
-            static std::string test_info;
-            static std::string install_info;
+            std::string prepare_info;
+            std::string build_info;
+            std::string test_info;
+            std::string install_info;
 
-            static std::string special_info;
+            std::string special_info;
 
             //Where the package is stored
-            static std::string packagePath;
+            std::string packagePath;
             // where the spm file in data is stored
-            static std::string dataSpmPath ;
+            std::string dataSpmPath ;
 
             
             // main functions that will be called from main.cpp

@@ -6,6 +6,7 @@ Thank you for your help :)
 */
 
 
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -56,12 +57,13 @@ int main(int argc, char *argv[])
 {
     //verifying if the user has entered arguments
     if (argc < 2) {
-        throw std::runtime_error("No arguments given. Terminating.\n");
+        std::cout << "No arguments given. Terminating.\n";
+        exit(1);
     }
 
     // A way to store the action arguments 
     // This isnt optimal but i dont know how to do it better
-    soviet::action action;
+    soviet::action action = soviet::NOTHING;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
     // in case of 'p' option
@@ -78,7 +80,7 @@ int main(int argc, char *argv[])
             }
             else  
             {
-                for (int i = 2;i < option.size();i++)
+                for (int i = 1;i < option.size();i++)
                 {
                     switch (option[i]) 
                     {
@@ -92,8 +94,8 @@ int main(int argc, char *argv[])
 
                         case 'i' :
                             // Install packages
-                            std::cout << "Installing packages\n";
                             action = soviet::INSTALL;
+                            std::cout << action << "\n";
                             break;
                         case 'r' :
                             // Remove packages
@@ -118,6 +120,11 @@ int main(int argc, char *argv[])
                             // Specify a location to find a package 
                             specifiedPkgPath = true;
                             break;
+                        default:
+                            // Unknown option
+                            std::cout << "Unknown option\n";
+                            break;
+
 
                 
                     }
@@ -126,24 +133,55 @@ int main(int argc, char *argv[])
         }
         else
         {
-            if (i == 1)
+            if (i > 1)
             {
-                throw std::runtime_error("No action given. Terminating.\n");
+                parameters.push_back(option);
+                
             }
             else
             {
-                parameters.push_back(option);
+                std::cout << "No action argument given. Terminating.\n";
+                exit(1);
             }
         }
     }
     switch (action)
     {
+       
+        case soviet::NOTHING :
+            std::cout << "No action given. Terminating.\n";
+            exit(1);
         case soviet::INSTALL :
             if (specifiedPkgPath)
             {
-                soviet::package pkg;
-                pkg.packagePath = parameters[0];
-                pkg.install();
+                std::cout << "Installing packages from a specified path\n";         
+                for (int i = 0;i < parameters.size();i++)
+                {
+                    std::cout << "Installing " << parameters[i] << "\n";
+                    soviet::package pkg;
+                    pkg.packagePath = parameters[i];
+                    if (pkg.packagePath.length() < 15) 
+                    {
+                        std::cout << "Package path is too short , maybe it isn't a package ?. Terminating.\n";
+                        exit(1);
+                    }
+                    std::string extension = pkg.packagePath.substr(pkg.packagePath.length() - 14,pkg.packagePath.length());
+                    std::cout << extension << "\n";
+                    if (extension == "src.spm.tar.gz")
+                    {
+                        pkg.type = "src";
+                    }
+                    else if (extension == "bin.spm.tar.gz") 
+                    {
+                        pkg.type = "bin";
+                    }
+                    else 
+                    {
+                        std::cout << "The file is not a package. Terminating.\n";
+                        exit(1);
+                    }
+                    pkg.install();
+                }
             }
             else
             {
@@ -158,7 +196,8 @@ int main(int argc, char *argv[])
                 }
             }
         default :
-            throw std::runtime_error("Action error . Terminating.\n");
+            std::cout << "Action error . Terminating.\n";
+            exit(1);
     }
 
     //Returning 0 means the program ran successfully
@@ -173,4 +212,5 @@ cccp -i package1 package2 package3
 cccp -h
 cccp --install package1 package2 package3
 cccp --sync 
+With the 'p' option , the package mustbe src.spm.tar.gz
 */

@@ -1,9 +1,11 @@
 CC := g++
-CFLAGS := -Wall -g
+CFLAGS := -Wall -g -std=c++2a -pedantic
 TARGET := main
 SRC_DIR = src
 BIN_DIR = bin
 OBJ_DIR = obj
+
+SOVIET = soviet
 
 # $(wildcard *.cpp /xxx/xxx/*.cpp): get all .cpp files from the current directory and dir "/xxx/xxx/"
 SRCS := $(wildcard ${SRC_DIR}/*.cpp)
@@ -24,3 +26,10 @@ clean:
 	rm -rf $(TARGET) *.o
 # I still don't know what tis means	
 .PHONY: all clean
+
+direct: $(SRCS)
+	$(CC) $(CFLAGS)  -o ${BIN_DIR}/${TARGET} $^
+
+soviet:
+	cp -pv ${BIN_DIR}/${TARGET} ${SOVIET}/bin/cccp
+	
