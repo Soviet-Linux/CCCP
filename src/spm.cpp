@@ -25,7 +25,7 @@ nlohmann::json soviet::package::open_spm (const std::string& PPath)
 // This function is very important , it will store the install location data to the "DB"
 void soviet::package::store_spm (const std::string& spm_path,const std::string& out_path)
 {
-    std::string temp_file = "/tmp/temp_loc.txt";
+    std::string temp_file = "/tmp/spm.cccp.tmp";
     std::cout << "Storing location in spm file" << std::endl;
     std::ifstream file_spm((spm_path).c_str(), std::ios::in);
     std::stringstream buffer;

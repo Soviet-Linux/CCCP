@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <vector>
 #include <filesystem>
+#include <sys/stat.h>
 
 
 // class stuff
@@ -24,6 +25,13 @@ Binary packages are archive files containing the compiled binary files of the pa
 // parsing data and installing package
 void soviet::package::install()
 {
+    /* All these variables are bad.*/
+    // file where we temporarily store the spm data
+    std::string temp_file = soviet::format("/tmp/%s.spm.tmp",name.c_str());
+    //location spm file in build dir
+    std::string spm_build = soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str());
+
+
     std::string USING_DIR;
     // chnaging uncompress and spm dir with package type
     if (type == "src") USING_DIR = MAKE_DIR;
@@ -33,7 +41,7 @@ void soviet::package::install()
         return;
     }
 
-    std::string cmd_uncompress = soviet::format("tar -xvf %s -C %s ",packagePath.c_str(),USING_DIR.c_str());
+    std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),USING_DIR.c_str());
     // if debug is on , print the command
     if (soviet::DEBUG) std::cout << cmd_uncompress << std::endl;
     //uncompressing <PName>.src.spm.tar.gz in PKG_DIR
@@ -76,7 +84,11 @@ void soviet::package::install()
         std::cout << "☭ Package built"<< "\n";
         //Get package locations
         get_locations();
-        rename(soviet::format("/tmp/%s.tmp.spm"),name.c_str()),soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str());
+        //moving temporary spm files to build dir to match bin package look
+        rename(temp_file.c_str(),spm_build.c_str());
+        if (soviet::DEBUG) std::cout << "Spm file moved" << "\n";
+        // Using the C function because it's better
+        remove(temp_file.c_str());
     }
     // Moving built binaries to their install location on the system
     move_binaries();
@@ -92,12 +104,23 @@ void soviet::package::install()
     }
     // Storing package data
     // Adding the locations to the package files , and the packages files to DATA_DIR
-    store_spm(soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()),dataSpmPath);
+    store_spm(spm_build,dataSpmPath);
 
     //adding the package to the data file
     add_data();
+
     // Cleaning everything
-    system(("rm -rf " + BUILD_DIR + "*").c_str());
+    // Again im forced to use this fucking std::filesystem
+    std::filesystem::remove_all(BUILD_DIR);
+    // recreating the dir 
+    mkdir(BUILD_DIR.c_str(), 0777);
+    /* 
+    The solution i used in the code above is bad 
+    If you have an idea , do it 
+    The goal is to remove all the content of BUILD_DIR 
+    Without using complicated stuff
+    */
+
 
 }
 

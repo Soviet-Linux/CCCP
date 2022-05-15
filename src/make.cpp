@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+//I hate this , and i dont know why , but im forced to use  it because there is no other good alternative
+#include <filesystem>
 
 //class stuff
 #include "../include/cccp.hpp"
@@ -20,6 +22,7 @@
 */
 void soviet::package::make ()
 {
+     
     /*
         We have some problems here , because some complex packages require advanced options to be installed 
         (like glibc that wants a separate build dir )
@@ -83,8 +86,20 @@ void soviet::package::make ()
 
     // i have a small problem here , i dont know what to do with the package spm file so im just gonna move it in a random place 
     // and then move it to the correct location
-    rename(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) , soviet::format("/tmp/%s.tmp.spm",name.c_str()));
+    rename(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) , soviet::format("/tmp/%s.spm.tmp",name.c_str()));
 
     // cleaning up the build directory
-    system(("rm -rf " + package_dir).c_str());
+    // You may have noticed that i HATE the std::filesystem thing 
+    // But some people on discord told me that system(rm -rf) is bad
+    // They are right 
+    // But still , i think std::filesystem is worse
+    // too many "::" , its annoying 
+    // also my clangd server doesnt recognize the std::filesystem
+    // So my IDE is telling me that its an error , but its not 
+    // It's very annoying to me
+    // But you don't care
+    // So its all good
+    // I'm very close to write an entire c function to replace this shit
+    // But i dont have time to do that
+    std::filesystem::remove_all(package_dir)
 }
