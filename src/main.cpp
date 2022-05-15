@@ -23,8 +23,6 @@ std::string soviet::MAIN_DIR = soviet::ROOT + "var/cccp/";
 // the dir where we will be building the packages and downoading the sources
 //  TODO: proper dir names , but i dont have time to do it
 std::string soviet::WORK_DIR = soviet::MAIN_DIR + "work/";
-// the dir where the package file are storeds
-std::string soviet::PKG_DIR = soviet::MAIN_DIR + "pkg/";
 // the dir where the data is stored
 std::string soviet::DATA_DIR = soviet::MAIN_DIR + "data/";
 // where spm files are stored
@@ -38,12 +36,17 @@ std::string soviet::BUILD_DIR = soviet::WORK_DIR + "build/";
 std::string soviet::MAKE_DIR = soviet::WORK_DIR + "make/";
 //The file where a lot of data are stored
 std::string soviet::DATA_FILE = soviet::DATA_DIR + "packages.json";
+// configuraton file
+std::string soviet::CONFIG_FILE = soviet::ROOT + "cccp.conf";
 /*
 Here is a more detailed look of the default directory structure 
 / --> ROOT
+├──etc
+│   └── cccp.conf
 └── var
     └── cccp --> MAIN_DIR
         ├── data --> DATA_DIR
+        │   └── packages.json
         ├── spm --> SPM_DIR
         ├── log --> LOG_DIR
         └── work --> WORK_DIR
@@ -57,6 +60,8 @@ bool soviet::TESTING = false;
 // Main function
 int main(int argc, char *argv[])
 {
+    // Prepare the cccp
+    soviet::readConfig(soviet::CONFIG_FILE);
     //verifying if the user has entered arguments
     if (argc < 2) {
         std::cout << "No arguments given. Terminating.\n";

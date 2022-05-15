@@ -2,7 +2,7 @@ CC := g++
 CFLAGS := -Wall -g -std=c++2a -pedantic
 
 TARGET := main
-TEST := test.cpp
+TEST := test
 
 SRC_DIR = src
 BIN_DIR = bin
@@ -37,4 +37,4 @@ direct: $(SRCS)
 install:
 	cp -p $(BIN_DIR)/${TARGET} ${SOVIET}/bin/cccp
 test:
-	$(CC) $(CFLAGS) ${TEST_DIR}/${TEST} -o ${BIN_DIR}/${TEST}
+	$(CC) $(CFLAGS) ${TEST_DIR}/${TEST}.cpp -o ${BIN_DIR}/${TEST}

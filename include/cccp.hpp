@@ -5,12 +5,15 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <map>
 
 //json lib 
 #include "../lib/nlohmann/json.hpp"
 using nlohmann::json;
 
 namespace soviet {
+
+    extern std::map<std::string,std::string> configMap;
 
     // The filesystem root
     extern std::string ROOT;
@@ -21,8 +24,6 @@ namespace soviet {
     // the dir where we will be building the packages and downoading the sources
     //  TODO: proper dir names , but i dont have time to do it
     extern std::string WORK_DIR;
-    // the dir where the package file are storeds
-    extern std::string PKG_DIR;
     // the dir where the data is stored
     extern std::string DATA_DIR;
     // where spm files of installed packages are stored
@@ -35,6 +36,8 @@ namespace soviet {
     extern std::string MAKE_DIR;
     //The file where a lot of data are stored
     extern std::string DATA_FILE;
+    // configuraton file
+    extern std::string CONFIG_FILE;
     /*
     Here is a more detailed look of the default directory structure 
     / --> ROOT
@@ -121,6 +124,8 @@ namespace soviet {
     // I spend hours on this one , but it works !!
     char* format( const char* strFmtString, ... );
     int init_data (const std::string& data_path);
+
+    int readConfig(const std::string& configFilePath);
     
 }
 
