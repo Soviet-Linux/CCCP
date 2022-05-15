@@ -111,8 +111,8 @@ namespace soviet {
             void move_binaries();
 
             // Set of function that manipulate spm files
-            nlohmann::json open_spm (const std::string& spm_path);
-            void store_spm (const std::string &spm_path,const std::string& out_path);
+            nlohmann::json open_spm (const std::string& spm_path );
+            void store_spm (const std::string &spm_path,const std::string& spm_out);
             int var_spm(const std::string& spm_path);
 
             int add_data ();
@@ -123,9 +123,10 @@ namespace soviet {
     };
     // I spend hours on this one , but it works !!
     char* format( const char* strFmtString, ... );
-    int init_data (const std::string& data_path);
+    int init_data ();
 
     int readConfig(const std::string& configFilePath);
+    void init();
     
 }
 

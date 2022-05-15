@@ -1,6 +1,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "stdio.h"
+
 
 // class stuff
 #include "../include/cccp.hpp"
@@ -26,4 +28,5 @@ void soviet::package::get_locations()
         }
         data_file.close();
     }
+    remove(temp_file.c_str());
 }

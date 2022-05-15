@@ -87,7 +87,7 @@ void soviet::package::make ()
     // i have a small problem here , i dont know what to do with the package spm file so im just gonna move it in a random place 
     // and then move it to the correct location
     rename(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) , soviet::format("/tmp/%s.spm.tmp",name.c_str()));
-
+    std::cout << "File moved from " << soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) << " to " << soviet::format("/tmp/%s.spm.tmp",name.c_str()) << std::endl;
     // cleaning up the build directory
     // You may have noticed that i HATE the std::filesystem thing 
     // But some people on discord told me that system(rm -rf) is bad
@@ -101,5 +101,5 @@ void soviet::package::make ()
     // So its all good
     // I'm very close to write an entire c function to replace this shit
     // But i dont have time to do that
-    std::filesystem::remove_all(package_dir)
+    std::filesystem::remove_all(package_dir);
 }

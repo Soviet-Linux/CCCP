@@ -23,40 +23,22 @@ nlohmann::json soviet::package::open_spm (const std::string& PPath)
     
 }
 // This function is very important , it will store the install location data to the "DB"
-void soviet::package::store_spm (const std::string& spm_path,const std::string& out_path)
+void soviet::package::store_spm (const std::string& spm_path,const std::string& spm_out)
 {
-    std::string temp_file = "/tmp/spm.cccp.tmp";
-    std::cout << "Storing location in spm file" << std::endl;
-    std::ifstream file_spm((spm_path).c_str(), std::ios::in);
-    std::stringstream buffer;
-    buffer << file_spm.rdbuf();
-    file_spm.close();
-    //parsing json data
-    auto pkg_info = json::parse(buffer.str());
+   std::cout << "Storing package spm to " << spm_out << std::endl;
+    auto pkg_info = open_spm(spm_path);
     //change package type if its a binary
     if (type == "bin")
     {
         pkg_info["type"] = "bin";
     }
-    //also the temp.txt file is a little hacky i think
-    //Add the package locations
-    std::string line;
-    std::ifstream data_file ((temp_file).c_str());
-    //adding the location the the location list
-    if (data_file.is_open())
+
+    for (int i = 0; i < locations.size(); i++)
     {
-        //reading the command output from a file
-        while ( getline (data_file,line) )
-        {
-            pkg_info["locations"].push_back(line);
-        }
-        data_file.close();
+        pkg_info["locations"].push_back(locations[i]);
     }
-    //removing temp file 
-    // TODO: comment this better
-    system(("rm "+ temp_file).c_str());
-    //Writing the data to the package spm file in data_dir (SPath)
-    std::ofstream file_spm_out((dataSpmPath).c_str(), std::ios::out);
+    //Writing the data to the package spm file in data_dir (dataSpmPath)
+    std::ofstream file_spm_out((spm_out).c_str(), std::ios::out);
     file_spm_out << pkg_info.dump(4);
     file_spm_out.close();
 }

@@ -86,7 +86,7 @@ void soviet::package::install()
         get_locations();
         //moving temporary spm files to build dir to match bin package look
         rename(temp_file.c_str(),spm_build.c_str());
-        if (soviet::DEBUG) std::cout << "Spm file moved" << "\n";
+        if (soviet::DEBUG) std::cout << "Spm file moved from " << temp_file << " to " << spm_build << "\n";
         // Using the C function because it's better
         remove(temp_file.c_str());
     }

@@ -61,7 +61,7 @@ bool soviet::TESTING = false;
 int main(int argc, char *argv[])
 {
     // Prepare the cccp
-    soviet::readConfig(soviet::CONFIG_FILE);
+    soviet::init();
     //verifying if the user has entered arguments
     if (argc < 2) {
         std::cout << "No arguments given. Terminating.\n";

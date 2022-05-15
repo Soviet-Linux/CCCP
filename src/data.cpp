@@ -18,12 +18,12 @@ I you want to do something , you can use sqlite3 or any other database.
 
 I really dont like that code so i wont comment. 
 */
-int soviet::init_data(const std::string &data_path)
+int soviet::init_data()
 {
     auto basic_json = json::parse("{\"package_list\" :[],\"packages\" : 0}");
     std::cout << basic_json.dump(4) << std::endl;
     //write the json to data_path
-    std::ofstream file_spm((data_path).c_str(), std::ios::out);
+    std::ofstream file_spm((soviet::DATA_FILE).c_str(), std::ios::out);
     file_spm << basic_json.dump(4);
     file_spm.close();
 
