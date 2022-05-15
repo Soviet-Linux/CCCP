@@ -33,21 +33,27 @@ void soviet::package::install()
         return;
     }
 
-    // checking if package is already installed
-    if (check())
-    {
-        std::cout << "Package is already installed, reinstalling" << std::endl;
-        // removing the package
-        purge();
-
-    }
-    std::string cmd_uncompress = soviet::format("tar -xf %s -C %s",packagePath.c_str(),USING_DIR.c_str());
+    std::string cmd_uncompress = soviet::format("tar -xvf %s -C %s ",packagePath.c_str(),USING_DIR.c_str());
+    // if debug is on , print the command
+    if (soviet::DEBUG) std::cout << cmd_uncompress << std::endl;
     //uncompressing <PName>.src.spm.tar.gz in PKG_DIR
     system(cmd_uncompress.c_str());
 
+    //debug
+    if(soviet::DEBUG) std::cout << soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()) << std::endl;
     // Reading spm file in MAKE DIR
-    open_spm(soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()));
-
+    var_spm(soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()));
+    // checking if the package is already installed
+    if (soviet::DEBUG) std::cout << "checking if "<< dataSpmPath << " exists :  " << access(dataSpmPath.c_str(), F_OK) << "\n";
+    // this access function is weird , the return is 0 if it works and -1 if it doesnt 
+    if (!access(dataSpmPath.c_str(), F_OK))
+    {
+        std::cout << "Package is already installed , reinstalling." << std::endl;
+    }
+    else
+    {
+        if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
+    }
     // Checking dependencies
     //This dependencies if;else system is deprecated and will be removed in the future
     if (check_dependencies())

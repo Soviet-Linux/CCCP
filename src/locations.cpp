@@ -12,7 +12,7 @@ void soviet::package::get_locations()
 
     std::string temp_file = "/tmp/temp_loc.txt";
     //Get package file location
-    std::string location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- > %s && find . type d | cut -c2- | tac | sed '/^$/d' << %s )", BUILD_DIR.c_str(), temp_file.c_str(), temp_file.c_str());
+    std::string location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- > %s && find . type d | cut -c2- | tac | sed '/^$/d' >> %s )", BUILD_DIR.c_str(), temp_file.c_str(), temp_file.c_str());
     //std::cout << location_cmd << std::endl;
     system(location_cmd.c_str());
     //also the temp.txt file is a little hacky i think

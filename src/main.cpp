@@ -51,6 +51,8 @@ Here is a more detailed look of the default directory structure
             └── make --> MAKE_DIR
 
 */
+bool soviet::DEBUG = false;
+bool soviet::TESTING = false;
 
 // Main function
 int main(int argc, char *argv[])
@@ -95,7 +97,6 @@ int main(int argc, char *argv[])
                         case 'i' :
                             // Install packages
                             action = soviet::INSTALL;
-                            std::cout << action << "\n";
                             break;
                         case 'r' :
                             // Remove packages
@@ -119,6 +120,14 @@ int main(int argc, char *argv[])
                         case 'p' :
                             // Specify a location to find a package 
                             specifiedPkgPath = true;
+                            break;
+                        case 'd' :
+                            // Debug mode
+                            soviet::DEBUG = true;
+                            break;
+                        case 't' :
+                            // Testing mode
+                            soviet::TESTING = true;
                             break;
                         default:
                             // Unknown option
@@ -158,20 +167,23 @@ int main(int argc, char *argv[])
                 for (int i = 0;i < parameters.size();i++)
                 {
                     std::cout << "Installing " << parameters[i] << "\n";
+
                     soviet::package pkg;
                     pkg.packagePath = parameters[i];
+
                     if (pkg.packagePath.length() < 15) 
                     {
                         std::cout << "Package path is too short , maybe it isn't a package ?. Terminating.\n";
                         exit(1);
                     }
-                    std::string extension = pkg.packagePath.substr(pkg.packagePath.length() - 14,pkg.packagePath.length());
-                    std::cout << extension << "\n";
-                    if (extension == "src.spm.tar.gz")
+                    std::string extension = pkg.packagePath.substr(pkg.packagePath.find_first_of("."),pkg.packagePath.length());
+                    pkg.name = pkg.packagePath.substr(0,pkg.packagePath.find_first_of("."));
+
+                    if (extension == ".src.spm.tar.gz")
                     {
                         pkg.type = "src";
                     }
-                    else if (extension == "bin.spm.tar.gz") 
+                    else if (extension == ".bin.spm.tar.gz") 
                     {
                         pkg.type = "bin";
                     }
@@ -180,6 +192,7 @@ int main(int argc, char *argv[])
                         std::cout << "The file is not a package. Terminating.\n";
                         exit(1);
                     }
+                    if (soviet::DEBUG) std::cout << "launching installation with " << pkg.packagePath << "\n";
                     pkg.install();
                 }
             }
@@ -193,6 +206,28 @@ int main(int argc, char *argv[])
                     // do stuff to get package from repo
                     // TODO: implement that
                     //something like : pkg.get(repo);
+                }
+            }
+        case soviet::REMOVE :
+            for (int i = 0;i < parameters.size();i++)
+            {
+                std::cout << "Removing " << parameters[i] << "\n";
+                soviet::package pkg;
+                pkg.name = parameters[i];
+            }
+        case soviet::CHECK :
+            for (int i = 0;i < parameters.size();i++)
+            {
+                std::cout << "Checking " << parameters[i] << "\n";
+                soviet::package pkg;
+                pkg.name = parameters[i];
+                if (pkg.check())
+                {
+                    std::cout << "Package " << parameters[i] << " is installed and good\n";
+                }
+                else 
+                {
+                    std::cout << "Package " << parameters[i] << " is not installed or corrupted\n";
                 }
             }
         default :
@@ -214,3 +249,14 @@ cccp --install package1 package2 package3
 cccp --sync 
 With the 'p' option , the package mustbe src.spm.tar.gz
 */
+/*
+package structure is :
+    src -> $NAME.src.spm.tar.gz
+            ├──$NAME.spm
+            └──$NAME-$VERSION
+                └──[sources]
+    bin -> $NAME.bin.spm.tar.gz
+            ├──$NAME.spm
+            └──$NAME-$VERSION
+                └──[sources]
+*/  

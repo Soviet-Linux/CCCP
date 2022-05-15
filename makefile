@@ -1,9 +1,13 @@
 CC := g++
 CFLAGS := -Wall -g -std=c++2a -pedantic
+
 TARGET := main
+TEST := test.cpp
+
 SRC_DIR = src
 BIN_DIR = bin
 OBJ_DIR = obj
+TEST_DIR = tests
 
 SOVIET = soviet
 
@@ -24,12 +28,13 @@ $(TARGET): $(OBJS)
 # Dont try it may break stuff
 clean:
 	rm -rf $(TARGET) *.o
-# I still don't know what tis means	
+# I still don't know what this means	
 .PHONY: all clean
 
 direct: $(SRCS)
 	$(CC) $(CFLAGS)  -o ${BIN_DIR}/${TARGET} $^
 
-soviet:
-	cp -pv ${BIN_DIR}/${TARGET} ${SOVIET}/bin/cccp
-	
+install:
+	cp -p $(BIN_DIR)/${TARGET} ${SOVIET}/bin/cccp
+test:
+	$(CC) $(CFLAGS) ${TEST_DIR}/${TEST} -o ${BIN_DIR}/${TEST}

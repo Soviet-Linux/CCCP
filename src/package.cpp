@@ -4,6 +4,7 @@
 
 soviet::package::package()
 {
-    //initialize variables
-    dataSpmPath = DATA_DIR + name + ".spm";
+    // do nothing...
+    // .............
+    // ....nothing..
 }

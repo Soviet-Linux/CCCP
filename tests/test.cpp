@@ -2,12 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "test.hpp"
-
+#include "../src/config.cpp"
 
 int main()
 {
+   readConfig("tests/test.conf"); 
     
-    test_class test;
-    test.print_test();
 }

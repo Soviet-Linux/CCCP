@@ -11,9 +11,17 @@
 //checking if package is installed and untouched
 bool soviet::package::check ()
 {
-    std::string PPath = DATA_DIR + name + ".spm";
-    // Pasing data from the spm file
-    open_spm(PPath);
+    // checkinig if package data file exists
+    std::cout << dataSpmPath << std::endl;
+    if (!access(dataSpmPath.c_str(),F_OK)){
+        return false;
+    }
+    else
+    {
+        if (soviet::DEBUG) std::cout << "Package data file exists, good!" << std::endl;    
+        // Pasing data from the spm file
+        open_spm(dataSpmPath);
+    } 
     // check if the data["location "] is not empty
     //it could be empty because of a failed install
     if (locations.empty())

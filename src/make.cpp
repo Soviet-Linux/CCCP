@@ -35,8 +35,7 @@ void soviet::package::make ()
     */
     //TODO: resolve this issue (the original TODO was "fix this shit" , but i think "resolve this issue is better")
 
-    // this solution with the '*' is very bad i think
-    std::string package_dir = MAKE_DIR + name + "*";
+    std::string package_dir = soviet::format("%s/%s-%s", soviet::MAKE_DIR.c_str(), name.c_str(), version.c_str());
 
     /*
         So in this part we are foramtting and executing the commands to configure , compile , test and install the package.
@@ -50,7 +49,8 @@ void soviet::package::make ()
     if (!prepare_info.empty())
     {
         //formatting the prepare command
-        std::string prepare_cmd = "cd " + package_dir + " && " + prepare_info;
+        std::string prepare_cmd = soviet::format("( cd %s && %s )",package_dir.c_str(),prepare_info.c_str());
+
         //Printing the command to the terminal
         std::cout << prepare_cmd << std::endl;
         //executing the command
@@ -59,7 +59,7 @@ void soviet::package::make ()
     if (!build_info.empty())
     {
         //Formating the command
-        std::string make_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd " + package_dir + " && "  + build_info + " )";
+        std::string make_cmd = soviet::format("( cd %s && %s )",package_dir.c_str(),build_info.c_str());
         // printing the command to standard output 
         std::cout << make_cmd << std::endl;
         //executing the command
@@ -68,12 +68,12 @@ void soviet::package::make ()
     }
 
     // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
-    if (TESTING && !test_info.empty()) system(("( cd "+ package_dir + " && " + test_info + " > "+ LOG_DIR + name + ".test )").c_str());
+    if (soviet::TESTING && !test_info.empty()) system(("( cd "+ package_dir + " && " + test_info + " > "+ LOG_DIR + name + ".test )").c_str());
 
     //installing the package in the build directory
 
     //formatting the install command
-    std::string install_cmd = "BUILD_ROOT="+ BUILD_DIR +"; ( cd "+ package_dir + " && " + install_info + " )";
+    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s )",soviet::BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
 
     //printing , for debugging purposes
     std::cout << install_cmd << std::endl; 

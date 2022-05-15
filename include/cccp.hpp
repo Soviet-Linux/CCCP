@@ -25,6 +25,7 @@ namespace soviet {
     extern std::string PKG_DIR;
     // the dir where the data is stored
     extern std::string DATA_DIR;
+    // where spm files of installed packages are stored
     extern std::string SPM_DIR;
     //where we store tests and logs
     extern std::string LOG_DIR;
@@ -53,6 +54,9 @@ namespace soviet {
         I dont know how to do it yet but inshallah i will learn
         The result may be cool !
     */
+    // declaring here the DEBUG and TESTING variables
+    extern bool DEBUG;
+    extern bool TESTING;
     
     enum action {INSTALL,CHECK,LIST,REMOVE,CREATE,NOTHING};
 
@@ -60,7 +64,7 @@ namespace soviet {
     {
         public:
 
-            // constructor
+            // constructor , unused 
             package();
 
             std::string name;
@@ -80,7 +84,7 @@ namespace soviet {
 
             std::string special_info;
 
-            //Where the package is stored
+            //Where the package is stored, This is used just for installing package 
             std::string packagePath;
             // where the spm file in data is stored
             std::string dataSpmPath ;
@@ -94,10 +98,7 @@ namespace soviet {
 
             // idk why this is public , but i will leave it here
             void make ();
-            
-            // declaring here the DEBUG and TESTING variables
-            bool DEBUG = false;
-            bool TESTING = false;
+        
             
         private :
 

@@ -82,5 +82,8 @@ int soviet::package::var_spm(const std::string& spm_path)
         locations.push_back(pkg_info["locations"][i]);
         }
     }
+    //initialize variables
+    dataSpmPath = SPM_DIR + name + ".spm";
+    if (soviet::DEBUG) std::cout << "Package " << name << " initialized successfully !" << std::endl;
     return 1;
 }
