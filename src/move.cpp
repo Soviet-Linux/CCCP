@@ -12,8 +12,11 @@ void soviet::package::move_binaries()
     //loop through the locations and move them to the correct location
     for (int i = 0; i < locations.size(); i++)
     {
-        // C is better (Why this fucking function is called rename and not move ?!)
-        rename(locations[i].c_str(), (ROOT + locations[i]).c_str());
+        // Please someone find a better solution than a system call
+        //move all files from BUILD_DIR to ROOT
+        std::string cmd = "cp -rflv " + BUILD_DIR + "/*" + " " + ROOT;
+        system(cmd.c_str());
+        
         
     }
 }

@@ -21,7 +21,7 @@ I really dont like that code so i wont comment.
 int soviet::init_data()
 {
     auto basic_json = json::parse("{\"package_list\" :[],\"packages\" : 0}");
-    std::cout << basic_json.dump(4) << std::endl;
+    if (DEBUG) std::cout << "Base data file loaded :" << basic_json << std::endl;
     //write the json to data_path
     std::ofstream file_spm((soviet::DATA_FILE).c_str(), std::ios::out);
     file_spm << basic_json.dump(4);
@@ -31,6 +31,7 @@ int soviet::init_data()
 }
 int soviet::package::add_data ()
 {
+    std::cout << "Adding " << name << " data to " << DATA_FILE << std::endl;
     std::ifstream file_spm((DATA_FILE).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
@@ -40,6 +41,7 @@ int soviet::package::add_data ()
     json o;
     o["name"] = name;
     o["version"] = version;
+    o["type"] = type;
     pkg_info["package_list"].push_back(o);
     pkg_info["packages"] = int(pkg_info["packages"]) + 1;
     std::ofstream file_data_new((DATA_FILE).c_str(), std::ios::out);
@@ -70,3 +72,4 @@ int soviet::package::remove_data ()
     file_data_new.close();
     return 0;
 }
+

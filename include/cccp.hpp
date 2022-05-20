@@ -38,44 +38,45 @@ namespace soviet {
     extern std::string DATA_FILE;
     // configuraton file
     extern std::string CONFIG_FILE;
-    /*
-    Here is a more detailed look of the default directory structure 
-    / --> ROOT
-    └── var
-        └── cccp --> MAIN_DIR
-            ├── data --> DATA_DIR
-            ├── spm --> SPM_DIR
-            ├── log --> LOG_DIR
-            └── work --> WORK_DIR
-                ├── build --> BUILD_DIR (also called $BUILD_ROOT)
-                └── make --> MAKE_DIR
-
-    */
-
+    
     /*
         This is an attempt to organize this project with fancy object-oriented stuff 
         I dont know how to do it yet but inshallah i will learn
         The result may be cool !
     */
     // declaring here the DEBUG and TESTING variables
+    // I know @stefan wanted to use weird macros but i dont know how to do it
+    // so i will use a global variable
+    // But if one day you see that this is not enough, you can use the macros
+    // Good Night
     extern bool DEBUG;
     extern bool TESTING;
     
-    enum action {INSTALL,CHECK,LIST,REMOVE,CREATE,NOTHING};
+    enum action {INSTALL,CHECK,LIST,REMOVE,CREATE,GET};
 
     class package 
     {
         public:
 
-            // constructor , unused 
+            // constructor , unused  , but it looks cool
             package();
 
+            // Package name , used to identify the package
             std::string name;
+            // Package version , used to identify the package
             std::string version;
             // At first i used an enum but it caused some problems
             std::string type;
-
+            // Package dependencies
             std::vector<std::string> dependencies;
+            // Package location (Post install)
+            /*
+            Guys , im thinking about a better way to do this
+            We could find a system to transform this long list of file locations
+            into a list of directory used by the package 
+            you understand ?
+            It's not very useful , but it may be better for performance
+            */
             std::vector<std::string> locations;
 
             // commands to prepare , build , test and install the package 
@@ -94,7 +95,7 @@ namespace soviet {
 
             
             // main functions that will be called from main.cpp
-            void purge();
+            void uninstall();
             bool check();
             void install();
             void createBinary(const std::string& binPath );
@@ -125,6 +126,8 @@ namespace soviet {
     char* format( const char* strFmtString, ... );
     int init_data ();
 
+    void help () ;
+    void listPkgs ();
     int readConfig(const std::string& configFilePath);
     void init();
     

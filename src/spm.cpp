@@ -57,15 +57,10 @@ int soviet::package::var_spm(const std::string& spm_path)
     build_info = pkg_info["info"]["make"];
     test_info = pkg_info["info"]["test"];
     install_info = pkg_info["info"]["install"];
-    if (type == "bin")
+    for (int i = 0; i < pkg_info["locations"].size(); i++)
     {
-        for (int i = 0; i < pkg_info["locations"].size(); i++)
-        {
         locations.push_back(pkg_info["locations"][i]);
-        }
     }
-    //initialize variables
-    dataSpmPath = SPM_DIR + name + ".spm";
     if (soviet::DEBUG) std::cout << "Package " << name << " initialized successfully !" << std::endl;
     return 1;
 }

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "stdio.h"
+#include "unistd.h"
 
 //the class file 
 #include  "../include/cccp.hpp"
@@ -17,14 +18,22 @@ This is simple . It could be simpler but really i dont know how .
 So dont touch this , except if there are a critical bug or an important missing feature.
 */
 // this function is for uninstaling packages
-void soviet::package::purge()
-{
+void soviet::package::uninstall()
+{       
+    // verify if the package is installed
+    // check if SPM_FILE exists
+    if (access(dataSpmPath.c_str(),F_OK)) {
+        std::cout << "Package " << name << " is not installed" << std::endl;
+        return;
+    }
     //small message , its uselless but i'll leave it there
     std::cout << "Uninstalling package " << name << std::endl;
 
     // Initializing soviet::package class values using var_spm
     var_spm(dataSpmPath);
 
+    if (DEBUG) std::cout << "Uninstalling package " << name << " from " << dataSpmPath << std::endl;
+    std::cout << locations.size() << " locations found" << std::endl;
     //remove all the files in the data["locations"]
     for (int i = 0; i < locations.size(); i++)
     {
@@ -38,7 +47,6 @@ void soviet::package::purge()
             More on that later
         */
         try {
-            std::cout << "Removing " << locations[i] << std::endl;
             remove(locations[i].c_str());
         }
         catch (std::exception& e)
@@ -69,6 +77,5 @@ void soviet::package::purge()
     remove_data();
 
     //remove the spm file from DATA_DIR
-    std::string rm_spm_cmd = "rm -rf " + DATA_DIR + name + ".spm";
-    system((rm_spm_cmd).c_str());
+    remove(dataSpmPath.c_str());
 }

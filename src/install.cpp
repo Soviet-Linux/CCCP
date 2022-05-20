@@ -31,6 +31,17 @@ void soviet::package::install()
     //location spm file in build dir
     std::string spm_build = soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str());
 
+    // checking if the package is already installed
+    if (soviet::DEBUG) std::cout << "checking if "<< dataSpmPath << " exists :  " << access(dataSpmPath.c_str(), F_OK) << "\n";
+    // this access function is weird , the return is 0 if it works and -1 if it doesnt 
+    if (!access(dataSpmPath.c_str(), F_OK))
+    {
+        std::cout << "Package is already installed , reinstalling." << std::endl;
+    }
+    else
+    {
+        if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
+    }
 
     std::string USING_DIR;
     // chnaging uncompress and spm dir with package type
@@ -51,17 +62,7 @@ void soviet::package::install()
     if(soviet::DEBUG) std::cout << soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()) << std::endl;
     // Reading spm file in MAKE DIR
     var_spm(soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()));
-    // checking if the package is already installed
-    if (soviet::DEBUG) std::cout << "checking if "<< dataSpmPath << " exists :  " << access(dataSpmPath.c_str(), F_OK) << "\n";
-    // this access function is weird , the return is 0 if it works and -1 if it doesnt 
-    if (!access(dataSpmPath.c_str(), F_OK))
-    {
-        std::cout << "Package is already installed , reinstalling." << std::endl;
-    }
-    else
-    {
-        if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
-    }
+    
     // Checking dependencies
     //This dependencies if;else system is deprecated and will be removed in the future
     if (check_dependencies())
@@ -120,6 +121,7 @@ void soviet::package::install()
     The goal is to remove all the content of BUILD_DIR 
     Without using complicated stuff
     */
+    std::cout << "Your package is installed , enjoy" << std::endl;
 
 
 }

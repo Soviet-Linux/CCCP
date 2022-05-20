@@ -20,7 +20,7 @@ void soviet::init ()
     if (!access(soviet::MAKE_DIR.c_str(),F_OK)) mkdir(soviet::MAKE_DIR.c_str(),0777);
 
     // init data
-    soviet::init_data();
+    if (access(DATA_FILE.c_str(),F_OK)) soviet::init_data();
 
     // Do other stuff if you want
 
