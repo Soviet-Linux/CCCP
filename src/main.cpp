@@ -74,8 +74,6 @@ int main(int argc, char *argv[])
     std::vector<soviet::action> action ;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
-    // in case of 'p' option
-    bool specifiedPkgPath = false;
 
     for (int i = 1;i < argc;i++)
     {
@@ -102,7 +100,7 @@ int main(int argc, char *argv[])
 
                         case 'i' :
                             // Install packages
-                            action.push_back(soviet::INSTALL);
+                            action.push_back(soviet::INSTALL_FROM_REPO);
                             break;
                         case 'r' :
                             // Remove packages
@@ -121,10 +119,6 @@ int main(int argc, char *argv[])
                             // List packages
                             action.push_back(soviet::LIST);
                             break;
-                        case 'p' :
-                            // Specify a location to find a package 
-                            specifiedPkgPath = true;
-                            break;
                         case 'd' :
                             // Debug mode
                             soviet::DEBUG = true;
@@ -133,11 +127,18 @@ int main(int argc, char *argv[])
                             // Testing mode
                             soviet::TESTING = true;
                             break;
+                        case 'g':
+                            // Get packages
+                            action.push_back(soviet::GET);
+                            break;
+                        case 'p' :
+                            //install local
+                            action.push_back(soviet::INSTALL_LOCAL);
+                            break;
                         default:
                             // Unknown option
                             std::cout << "Unknown option\n";
                             break;
-
 
                 
                     }
@@ -154,7 +155,7 @@ int main(int argc, char *argv[])
             else
             { 
                 soviet::help();
-                std::cout << "No action argument given. Terminating.\n"; git config --global user.name "Your Name"
+                std::cout << "No action argument given. Terminating.\n"; 
                 exit(1);
             }
         }
@@ -164,58 +165,46 @@ int main(int argc, char *argv[])
     {  
         switch (action[i])
         {   
-            case soviet::INSTALL :
-                if (specifiedPkgPath)
+            case soviet::INSTALL_LOCAL :
+                // Install packages 
+                // Verify if parameters are given
+                if (parameters.empty())
+                {      
+                    std::cout << "No packages specified.Terminating\n";
+                }         
+                for (int i = 0;i < parameters.size();i++)
                 {
-                    std::cout << "Installing packages from a specified path\n";         
-                    for (int i = 0;i < parameters.size();i++)
-                    {
-                        std::cout << "Here\n";
-                        std::cout << "Installing " << parameters[i] << "\n";
+                    std::cout << "Installing " << parameters[i] << "\n";
 
-                        soviet::package pkg;
-                        pkg.packagePath = parameters[i];
-                        
-                        if (pkg.packagePath.length() < 15) 
-                        {
-                            std::cout << "Package path is too short , maybe it isn't a package ?. Terminating.\n";
-                            exit(1);
-                        }
-                        std::string extension = pkg.packagePath.substr(pkg.packagePath.find_first_of("."),pkg.packagePath.length());
-                        pkg.name = pkg.packagePath.substr(0,pkg.packagePath.find_first_of("."));
-                        //initialize variables
-                        
-                        pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
-                        if (extension == ".src.spm.tar.gz")
-                        {
-                            pkg.type = "src";
-                        }
-                        else if (extension == ".bin.spm.tar.gz") 
-                        {
-                            pkg.type = "bin";
-                        }
-                        else 
-                        {
-                            std::cout << "The file is not a package. Terminating.\n";
-                            exit(1);
-                        }
-                        if (soviet::DEBUG) std::cout << "launching installation with " << pkg.packagePath << "\n";
-                        pkg.install();
-                    }
-                }
-                else
-                {
-                    for (int i = 0;i < parameters.size();i++)
+                    soviet::package pkg;
+                    pkg.packagePath = parameters[i];
+                    
+                    if (pkg.packagePath.length() < 15) 
                     {
-                        std::cout << "Installing " << parameters[i] << "\n";
-                        soviet::package pkg;
-                        pkg.name = parameters[i];
-                        // do stuff to get package from repo
-                        // TODO: implement that
-                        //something like : pkg.get(repo);
+                        std::cout << "Package path is too short , maybe it isn't a package ?. Terminating.\n";
+                        exit(1);
                     }
+                    std::string extension = pkg.packagePath.substr(pkg.packagePath.find_first_of("."),pkg.packagePath.length());
+                    pkg.name = pkg.packagePath.substr(0,pkg.packagePath.find_first_of("."));
+                    //initialize variables
+                    
+                    pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
+                    if (extension == ".src.spm.tar.gz")
+                    {
+                        pkg.type = "src";
+                    }
+                    else if (extension == ".bin.spm.tar.gz") 
+                    {
+                        pkg.type = "bin";
+                    }
+                    else 
+                    {
+                        std::cout << "The file is not a package. Terminating.\n";
+                        exit(1);
+                    }
+                    if (soviet::DEBUG) std::cout << "launching installation with " << pkg.packagePath << "\n";
+                    pkg.install();
                 }
-                break;
             case soviet::REMOVE :
                 for (int i = 0;i < parameters.size();i++)
                 {
@@ -244,6 +233,15 @@ int main(int argc, char *argv[])
                     {
                         std::cout << "Package " << parameters[i] << " is not installed or corrupted\n";
                     }
+                }
+                break;
+            case soviet::INSTALL_FROM_REPO :
+                for (int i = 0;i < parameters.size();i++)
+                {
+                    std::cout << "Getting " << parameters[i] << "\n";
+                    soviet::package pkg;
+                    pkg.name = parameters[i];
+                    pkg.get();
                 }
                 break;
             default :

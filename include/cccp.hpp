@@ -52,7 +52,7 @@ namespace soviet {
     extern bool DEBUG;
     extern bool TESTING;
     
-    enum action {INSTALL,CHECK,LIST,REMOVE,CREATE,GET};
+    enum action {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 
     class package 
     {
