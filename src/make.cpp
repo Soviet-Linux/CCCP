@@ -52,7 +52,7 @@ void soviet::package::make ()
     if (!prepare_info.empty())
     {
         //formatting the prepare command
-        std::string prepare_cmd = soviet::format("( cd %s && %s )",package_dir.c_str(),prepare_info.c_str());
+        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s )",BUILD_DIR.c_str(),package_dir.c_str(),prepare_info.c_str());
 
         //Printing the command to the terminal
         std::cout << prepare_cmd << std::endl;

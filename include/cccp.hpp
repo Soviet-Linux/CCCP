@@ -35,10 +35,12 @@ namespace soviet {
     // Dir where the package sources are downloaded and built
     extern std::string MAKE_DIR;
     //The file where a lot of data are stored
-    extern std::string DATA_FILE;
+    extern std::string INSTALLED_FILE;
+    extern std::string ALL_FILE;
     // configuraton file
     extern std::string CONFIG_FILE;
     
+    extern std::vector<std::string> REPOS;
     /*
         This is an attempt to organize this project with fancy object-oriented stuff 
         I dont know how to do it yet but inshallah i will learn
@@ -95,6 +97,7 @@ namespace soviet {
 
             
             // main functions that will be called from main.cpp
+            void get();
             void uninstall();
             bool check();
             void install();

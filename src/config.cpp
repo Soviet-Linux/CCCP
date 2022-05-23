@@ -63,6 +63,27 @@ int soviet::readConfig(const std::string& configFilePath)
     {
         soviet::MAKE_DIR = configMap["MAKE_DIR"];
     }
+    if (configMap.count("REPOS") > 0)
+    {
+        std::string temp = "";
+        std::string s = configMap["REPOS"]; 
+        for(int i=0;i<s.length();++i){
+            
+            if(s[i]==' '){
+                soviet::REPOS.push_back(temp);
+                temp = "";
+            }
+            else{
+                temp.push_back(s[i]);
+            }
+            
+        }
+        REPOS.push_back(temp);
+        for (int i = 0;i < REPOS.size();i++)
+        {
+            std::cout << REPOS[i] << std::endl;
+        }
+    }
 
     
 

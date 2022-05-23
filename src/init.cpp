@@ -20,7 +20,11 @@ void soviet::init ()
     if (!access(soviet::MAKE_DIR.c_str(),F_OK)) mkdir(soviet::MAKE_DIR.c_str(),0777);
 
     // init data
-    if (access(DATA_FILE.c_str(),F_OK)) soviet::init_data();
+    if (access(INSTALLED_FILE.c_str(),F_OK)) soviet::init_data();
+    if (access(ALL_FILE.c_str(), F_OK))
+    {
+        std::cout << " Global package data file not found, to download it use -s option" << std::endl;
+    }
 
     // Do other stuff if you want
 

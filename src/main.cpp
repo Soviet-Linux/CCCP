@@ -35,7 +35,8 @@ std::string soviet::BUILD_DIR = soviet::WORK_DIR + "build/";
 // Dir where the package sources are downloaded and built
 std::string soviet::MAKE_DIR = soviet::WORK_DIR + "make/";
 //The file where a lot of data are stored
-std::string soviet::DATA_FILE = soviet::DATA_DIR + "packages.json";
+std::string soviet::INSTALLED_FILE = soviet::DATA_DIR + "installed.json";
+std::string soviet::ALL_FILE = soviet::DATA_DIR + "all.json";
 // configuraton file
 std::string soviet::CONFIG_FILE = soviet::ROOT + "cccp.conf";
 /*
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
         std::cout << "No arguments given. Terminating.\n";
         exit(1);
     }
-
+    
     // A way to store the action arguments 
     // This isnt optimal but i dont know how to do it better
     std::vector<soviet::action> action ;
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
                             // print a real help message ( TODO: improve the message)
                             soviet::help();
                             break;
-                        case 'S' :
+                        case 's' :
                             // Synchronize mirrors
                             break;
 
