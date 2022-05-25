@@ -2,8 +2,12 @@
 #include <fstream>
 #include <iostream>
 
-#include "../include/nlohmann/json.hpp"
+#include "../lib/nlohmann/json.hpp"
 using nlohmann::json;
+
+//class thing
+#include "../include/cccp.hpp"
+
 /*
 This file contains several functions that are used to store , remove and manipulate installed package data.
 Currently the data is stored in a json file.
@@ -14,39 +18,40 @@ I you want to do something , you can use sqlite3 or any other database.
 
 I really dont like that code so i wont comment. 
 */
-
-int init_data (const std::string& data_path)
+int soviet::init_data()
 {
     auto basic_json = json::parse("{\"package_list\" :[],\"packages\" : 0}");
-    std::cout << basic_json.dump(4) << std::endl;
+    if (DEBUG) std::cout << "Base data file loaded :" << basic_json << std::endl;
     //write the json to data_path
-    std::ofstream file_spm((data_path).c_str(), std::ios::out);
+    std::ofstream file_spm((soviet::INSTALLED_FILE).c_str(), std::ios::out);
     file_spm << basic_json.dump(4);
     file_spm.close();
 
     return 0;
 }
-int add_pkg_data (const std::string& data_path, const std::string& pkg_name, const std::string& pkg_version)
+int soviet::package::add_data ()
 {
-    std::ifstream file_spm((data_path).c_str(), std::ios::in);
+    std::cout << "Adding " << name << " data to " << INSTALLED_FILE << std::endl;
+    std::ifstream file_spm((INSTALLED_FILE).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     file_spm.close();
     //parsing json data
     auto pkg_info = json::parse(buffer.str());
     json o;
-    o["name"] = pkg_name;
-    o["version"] = pkg_version;
+    o["name"] = name;
+    o["version"] = version;
+    o["type"] = type;
     pkg_info["package_list"].push_back(o);
     pkg_info["packages"] = int(pkg_info["packages"]) + 1;
-    std::ofstream file_data_new((data_path).c_str(), std::ios::out);
+    std::ofstream file_data_new((INSTALLED_FILE).c_str(), std::ios::out);
     file_data_new << pkg_info.dump(4);
     file_data_new.close();
     return 0;
 }
-int rm_pkg_data (const std::string& data_path, const std::string& pkg_name)
+int soviet::package::remove_data ()
 {
-    std::ifstream file_spm((data_path).c_str(), std::ios::in);
+    std::ifstream file_spm((INSTALLED_FILE).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     file_spm.close();
@@ -54,19 +59,22 @@ int rm_pkg_data (const std::string& data_path, const std::string& pkg_name)
     auto pkg_info = json::parse(buffer.str());
     for (int i = 0; i < pkg_info["package_list"].size(); i++)
     {
-        std::string name = pkg_info["package_list"][i]["name"];
-        if (name == pkg_name)
+        std::string pkg_name = pkg_info["package_list"][i]["name"];
+        if (pkg_name  == name )
         {
             pkg_info["package_list"].erase(pkg_info["package_list"].begin() + i);
             pkg_info["packages"] = int(pkg_info["packages"]) - 1;
             break;
         }
     }
-    std::ofstream file_data_new((data_path).c_str(), std::ios::out);
+    std::ofstream file_data_new((INSTALLED_FILE).c_str(), std::ios::out);
     file_data_new << pkg_info.dump(4);
     file_data_new.close();
     return 0;
 }
+<<<<<<< HEAD:src/data.cpp
+
+=======
 //Lister tout les packages installés
 int list_pkg_data (const std::string& data_path)
 {
@@ -84,3 +92,4 @@ int list_pkg_data (const std::string& data_path)
     }
     return 0;
 }
+>>>>>>> origin/main:CCCP/src/data.cpp

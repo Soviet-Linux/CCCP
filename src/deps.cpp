@@ -1,11 +1,13 @@
-#include <fstream>
-#include <iostream>
 #include <string>
-#include <sys/types.h>
 #include <vector>
-#include <filesystem>
+#include <iostream> 
+#include <unistd.h>
 
+// class stuff
+#include "../include/cccp.hpp"
 
+<<<<<<< HEAD:src/deps.cpp
+=======
 
 
 //including header file
@@ -22,8 +24,9 @@ void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
     system(move_cmd.c_str());
     std::filesystem::remove(BUILD_DIR + "*");
 }
+>>>>>>> origin/main:CCCP/src/make.cpp
 // This function will check if all dependencies of a package are installed
-int check_dependencies (const std::vector<std::string>& dependencies, const std::string& DATA_DIR) 
+int soviet::package::check_dependencies () 
 {
     //TODO : check if the dependencies are installed
     //
@@ -37,7 +40,8 @@ int check_dependencies (const std::vector<std::string>& dependencies, const std:
         for (int i = 0; i < dependencies.size(); i++)
         {
             // TODO: implement vesrion checking
-            if (std::filesystem::exists(DATA_DIR + dependencies[i] + ".spm"))
+            // is use the C function because my clangd server doesnt recognize the fucking std::filesystem thing and it bothered me 
+            if (access((DATA_DIR + dependencies[i] + ".spm").c_str(),F_OK))
             {
                 std::cout << "dependency " << dependencies[i] << " is installed.\n";
             }
@@ -45,11 +49,10 @@ int check_dependencies (const std::vector<std::string>& dependencies, const std:
                 std::cout << "dependency " << dependencies[i] << " is not installed.\n";
                 //install automatically the needed dependency
                 //To do this run install_package
-                install_package(dependencies[i]);
+                //install_package(dependencies[i]);
             }
         }
     }
    
     return 1;
 }
-

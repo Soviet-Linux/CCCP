@@ -1,10 +1,6 @@
-CCCP/lolcat*
-CCCP/bin/*
-CCCP/build/*
-CCCP/sources/*
 .git
 .vs
 .vscode
-CCCP/run.sh
-CCCP/DATA_DIR
-CCCP/PKG_DIR
+soviet/*
+bin/*
+obj/*

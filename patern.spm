@@ -1,13 +1,11 @@
 {
     "name" : "<package name>",
-    "type" : "<src,bin,local>",
+    "type" : "src,bin",
     "version" : "<version>",
     "dependencies" : ["<a dependencie>","<other dependencie>"],
     "info" : 
     {
-        "download" : "<download command>",
         "prepare" : "<prepare command>",
-        "configure" : "<configure command>",
         "make" : "<build command>",
         "test" : "<commend to test the package>",
         "install" : "<install command>",
