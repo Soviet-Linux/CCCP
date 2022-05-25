@@ -83,23 +83,8 @@ void soviet::package::make ()
 
     //And finally , executing the install command
     system(install_cmd.c_str());
-
-    // i have a small problem here , i dont know what to do with the package spm file so im just gonna move it in a random place 
-    // and then move it to the correct location
-    rename(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) , soviet::format("/tmp/%s.spm.tmp",name.c_str()));
-    std::cout << "File moved from " << soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) << " to " << soviet::format("/tmp/%s.spm.tmp",name.c_str()) << std::endl;
-    // cleaning up the build directory
-    // You may have noticed that i HATE the std::filesystem thing 
-    // But some people on discord told me that system(rm -rf) is bad
-    // They are right 
-    // But still , i think std::filesystem is worse
-    // too many "::" , its annoying 
-    // also my clangd server doesnt recognize the std::filesystem
-    // So my IDE is telling me that its an error , but its not 
-    // It's very annoying to me
-    // But you don't care
-    // So its all good
-    // I'm very close to write an entire c function to replace this shit
-    // But i dont have time to do that
-    std::filesystem::remove_all(package_dir);
+    
+    //moving temporary spm files to build dir to match bin package look
+    if (DEBUG) std::cout << rename(format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()),format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str())) << "\n";
+    if (soviet::DEBUG) std::cout << "Spm file moved from " << format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) << " to " << format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()) << "\n";
 }

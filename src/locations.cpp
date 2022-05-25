@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include "stdio.h"
@@ -9,24 +10,27 @@
 
 void soviet::package::get_locations()
 {
-    std::string temp_file = "/tmp/locations.cccp.tmp.txt";
     //Get package file location
-    std::string location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- > %s && find . -type d | cut -c2- | tac | sed '/^$/d' >> %s )", BUILD_DIR.c_str(), temp_file.c_str(), temp_file.c_str());
-    if (soviet::DEBUG) std::cout << location_cmd << std::endl;
-    system(location_cmd.c_str());
-    //also the temp.txt file is a little hacky i think
-    //Add the package locations
+    std::string files_location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- ) ", BUILD_DIR.c_str());
+    std::string dirs_location_cmd = soviet::format("( cd %s && find . -type d | cut -c2- | tac | sed '/^$/d')", BUILD_DIR.c_str());
+    if (soviet::DEBUG) std::cout << files_location_cmd << dirs_location_cmd << std::endl;
+    // execute the commands
+    std::string files_locations = soviet::exec(files_location_cmd.c_str());
+    std::string dirs_locations = soviet::exec(dirs_location_cmd.c_str());
+    // print the locations
+    if (soviet::DEBUG) std::cout << "Files locations : " << files_locations << std::endl;
+    if (soviet::DEBUG) std::cout << "Dirs locations : " << dirs_locations << std::endl;
+
+    // Parsing everything ad storing it in a vector
     std::string line;
-    std::ifstream data_file ((temp_file).c_str());
-    //adding the location the the location list
-    if (data_file.is_open())
-    {
-        //reading the command output from a file
-        while ( getline (data_file,line) )
-        {
-            locations.push_back(line);
-        }
-        data_file.close();
+    std::stringstream files_ss(files_locations);  
+    std::stringstream dirs_ss(dirs_locations);
+    while (std::getline(files_ss, line)) {
+        locations.push_back(line);
+    } 
+    while ( getline (dirs_ss,line) ) {
+        locations.push_back(line);
     }
-    remove(temp_file.c_str());
+
+
 }

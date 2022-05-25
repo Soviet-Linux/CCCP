@@ -1,6 +1,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
+#include <unistd.h>
 
 
 #include "../lib/nlohmann/json.hpp"
@@ -13,6 +15,11 @@ using nlohmann::json;
 
 nlohmann::json soviet::package::open_spm (const std::string& PPath)
 {
+    if (access(PPath.c_str(), F_OK))
+    {
+        std::cout << "SPM file not found" << std::endl;
+        return json();
+    }
     std::ifstream file_spm((PPath).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
@@ -25,7 +32,8 @@ nlohmann::json soviet::package::open_spm (const std::string& PPath)
 // This function is very important , it will store the install location data to the "DB"
 void soviet::package::store_spm (const std::string& spm_path,const std::string& spm_out)
 {
-   std::cout << "Storing package spm to " << spm_out << std::endl;
+    if (DEBUG) std::cout << "Storing package spm to " << spm_out << std::endl;
+    if (DEBUG) std::cout << "parsing : " << spm_path << std::endl;
     auto pkg_info = open_spm(spm_path);
     //change package type if its a binary
     if (type == "bin")

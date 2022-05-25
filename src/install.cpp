@@ -26,10 +26,17 @@ Binary packages are archive files containing the compiled binary files of the pa
 void soviet::package::install()
 {
     /* All these variables are bad.*/
-    // file where we temporarily store the spm data
-    std::string temp_file = soviet::format("/tmp/%s.spm.tmp",name.c_str());
     //location spm file in build dir
     std::string spm_build = soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str());
+    // Dir where we will do a=everything
+    std::string USING_DIR;
+    // chnaging uncompress and spm dir with package type
+    if (type == "src") USING_DIR = MAKE_DIR;
+    else if (type == "bin") USING_DIR = BUILD_DIR;
+    else {
+        std::cout << "Package type not supported" << std::endl;
+        return;
+    }
 
     // checking if the package is already installed
     if (soviet::DEBUG) std::cout << "checking if "<< dataSpmPath << " exists :  " << access(dataSpmPath.c_str(), F_OK) << "\n";
@@ -41,15 +48,6 @@ void soviet::package::install()
     else
     {
         if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
-    }
-
-    std::string USING_DIR;
-    // chnaging uncompress and spm dir with package type
-    if (type == "src") USING_DIR = MAKE_DIR;
-    else if (type == "bin") USING_DIR = BUILD_DIR;
-    else {
-        std::cout << "Package type not supported" << std::endl;
-        return;
     }
 
     std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),USING_DIR.c_str());
@@ -85,11 +83,6 @@ void soviet::package::install()
         std::cout << "☭ Package built"<< "\n";
         //Get package locations
         get_locations();
-        //moving temporary spm files to build dir to match bin package look
-        rename(temp_file.c_str(),spm_build.c_str());
-        if (soviet::DEBUG) std::cout << "Spm file moved from " << temp_file << " to " << spm_build << "\n";
-        // Using the C function because it's better
-        remove(temp_file.c_str());
     }
     // Moving built binaries to their install location on the system
     move_binaries();
@@ -111,10 +104,23 @@ void soviet::package::install()
     add_data();
 
     // Cleaning everything
-    // Again im forced to use this fucking std::filesystem
+    // You may have noticed that i HATE the std::filesystem thing 
+    // But some people on discord told me that system(rm -rf) is bad
+    // They are right 
+    // But still , i think std::filesystem is worse
+    // too many "::" , its annoying 
+    // also my clangd server doesnt recognize the std::filesystem
+    // So my IDE is telling me that its an error , but its not 
+    // It's very annoying to me
+    // But you don't care
+    // So its all good
+    // I'm very close to write an entire c function to replace this shit
+    // But i dont have time to do that
+    std::filesystem::remove_all(MAKE_DIR);
     std::filesystem::remove_all(BUILD_DIR);
     // recreating the dir 
     mkdir(BUILD_DIR.c_str(), 0777);
+    mkdir(MAKE_DIR.c_str(), 0777);
     /* 
     The solution i used in the code above is bad 
     If you have an idea , do it 

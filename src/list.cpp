@@ -6,7 +6,7 @@
 #include "../include/cccp.hpp"
 void soviet::listPkgs() {
     //open DATA_FILE
-    std::ifstream file_spm((soviet::DATA_FILE).c_str(), std::ios::in);
+    std::ifstream file_spm((INSTALLED_FILE).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     file_spm.close();
@@ -20,4 +20,5 @@ void soviet::listPkgs() {
         std::cout << pkg_name << std::endl;
     }
     std::cout << "Total packages: " << pkg_info["package_list"].size() << std::endl;
+    
 }

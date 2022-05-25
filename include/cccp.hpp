@@ -128,6 +128,7 @@ namespace soviet {
     // I spend hours on this one , but it works !!
     char* format( const char* strFmtString, ... );
     int init_data ();
+    std::string exec(const char* cmd);
 
     void help () ;
     void listPkgs ();

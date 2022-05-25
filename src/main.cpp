@@ -39,6 +39,8 @@ std::string soviet::INSTALLED_FILE = soviet::DATA_DIR + "installed.json";
 std::string soviet::ALL_FILE = soviet::DATA_DIR + "all.json";
 // configuraton file
 std::string soviet::CONFIG_FILE = soviet::ROOT + "cccp.conf";
+//package repos
+std::vector<std::string> soviet::REPOS;
 /*
 Here is a more detailed look of the default directory structure 
 / --> ROOT
