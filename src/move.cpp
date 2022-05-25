@@ -14,8 +14,9 @@ void soviet::package::move_binaries()
     {
         // Please someone find a better solution than a system call
         //move all files from BUILD_DIR to ROOT
-        std::string cmd = "cp -rflv " + BUILD_DIR + "/*" + " " + ROOT;
-        system(cmd.c_str());
+        std::string move_cmd = format("shopt -s extglob ;cp -rfl  !(%s.spm) %s/* %s",name.c_str(),BUILD_DIR.c_str(),ROOT.c_str());
+        if (DEBUG) std::cout << "Executing move cmd :" << move_cmd << std::endl;
+        system(move_cmd.c_str());
         
         
     }
