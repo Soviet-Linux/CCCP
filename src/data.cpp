@@ -72,24 +72,3 @@ int soviet::package::remove_data ()
     file_data_new.close();
     return 0;
 }
-<<<<<<< HEAD:src/data.cpp
-
-=======
-//Lister tout les packages installés
-int list_pkg_data (const std::string& data_path)
-{
-    std::ifstream file_spm((data_path).c_str(), std::ios::in);
-    std::stringstream buffer;
-    buffer << file_spm.rdbuf();
-    file_spm.close();
-    //parsing json data
-    auto pkg_info = json::parse(buffer.str());
-    //Couting all this data
-    // TODO: add functionality
-    for (int i = 0; i < pkg_info["package_list"].size(); i++)
-    {
-        std::cout << pkg_info["package_list"][i]["name"] << " " << pkg_info["package_list"][i]["version"] << std::endl;
-    }
-    return 0;
-}
->>>>>>> origin/main:CCCP/src/data.cpp

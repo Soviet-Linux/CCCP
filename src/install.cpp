@@ -44,6 +44,11 @@ void soviet::package::install()
     if (!access(dataSpmPath.c_str(), F_OK))
     {
         std::cout << "Package is already installed , reinstalling." << std::endl;
+        // removing the old package
+       remove_data();
+       remove(dataSpmPath.c_str());
+
+
     }
     else
     {

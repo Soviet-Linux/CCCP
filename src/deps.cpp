@@ -6,25 +6,6 @@
 // class stuff
 #include "../include/cccp.hpp"
 
-<<<<<<< HEAD:src/deps.cpp
-=======
-
-
-//including header file
-#include "../include/make.h"
-#include "../include/pkg.h"
-
-
-// wsh
-// This function is moving the binaries to the correct locations
-void move_binaries(const std::string& BUILD_DIR ,const std::string& ROOT)
-{
-    //moving binaries to their install location on the system
-    std::string move_cmd = "cp -rpfl " + BUILD_DIR + "* " + ROOT + "\n ";
-    system(move_cmd.c_str());
-    std::filesystem::remove(BUILD_DIR + "*");
-}
->>>>>>> origin/main:CCCP/src/make.cpp
 // This function will check if all dependencies of a package are installed
 int soviet::package::check_dependencies () 
 {

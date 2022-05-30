@@ -91,3 +91,14 @@ int soviet::readConfig(const std::string& configFilePath)
     return 0;
 
 }
+/*
+smol comment to remember how the config file works :
+
+ROOT=/
+MAIN_DIR=/var/cccp
+DATA_DIR=/var/cccp/data
+SPM_DIR=/var/cccp/spm
+...etc...
+
+REPOS= http://localhost:8080/ 
+*/
