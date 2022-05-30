@@ -17,10 +17,10 @@ the [CCCP](https://github.com/Soviet-Linux/CCCP) package manager (CCCP Crafter o
 
 
 Here is a list of the parameters that may be used with the CCCP.:
-1. --install (installs a .spm files)
-1. --binary (installs a binary package in .tar.gz format)
-1. --create (creates a installer binary)
-1. --remove (removes a package)
+1. -i (installs a package from the repo)
+2. -p (installs a local package in [name].[src|bin].spm.tar.gz format)
+3. -c (creates a compiled binary package)
+4. -r (removes a package)
 
 
 for creating a package refer to the [docs](https://docs.sovietlinux.ml/repo)
