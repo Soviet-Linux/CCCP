@@ -17,7 +17,7 @@ nlohmann::json soviet::package::open_spm (const std::string& PPath)
 {
     if (access(PPath.c_str(), F_OK))
     {
-        std::cout << "SPM file not found" << std::endl;
+        std::cout << "SPM file not found!" << std::endl;
         return json();
     }
     std::ifstream file_spm((PPath).c_str(), std::ios::in);

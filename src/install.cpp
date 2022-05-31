@@ -32,14 +32,14 @@ void soviet::package::installFile()
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
         if (!access(dataSpmPath.c_str(), F_OK))
         {
-            std::cout << "Package is already installed , reinstalling." << std::endl;
+            std::cout << "Package is already installed, reinstalling..." << std::endl;
             // removing the old package
             remove_data();
             remove(dataSpmPath.c_str());
         }
         else
         {
-            if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
+            if(soviet::DEBUG) std::cout << "Package is not installed, installing..." << std::endl;
         }
 
         std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),MAKE_DIR.c_str());
@@ -57,11 +57,11 @@ void soviet::package::installFile()
         //This dependencies if;else system is deprecated and will be removed in the future
         if (check_dependencies())
         {
-            std::cout << "Dependency check passed"<< "\n";     
+            std::cout << "Dependency check passed!"<< "\n";     
         }
         else
         {
-            std::cout << "Dependency check failed"<< "\n";
+            std::cout << "Dependency check failed!"<< "\n";
             // TODO: ADD THE DEPENDENCIES STUFF HERE
             exit(1);
         }
@@ -130,7 +130,7 @@ void soviet::package::installFile()
         if (type == "src") USING_DIR = MAKE_DIR;
         else if (type == "bin") USING_DIR = BUILD_DIR;
         else {
-            std::cout << "Package type not supported" << std::endl;
+            std::cout << "Package type not supported!" << std::endl;
             return;
         }
 
@@ -139,7 +139,7 @@ void soviet::package::installFile()
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
         if (!access(dataSpmPath.c_str(), F_OK))
         {
-            std::cout << "Package is already installed , reinstalling." << std::endl;
+            std::cout << "Package is already installed, reinstalling..." << std::endl;
             // removing the old package
         remove_data();
         remove(dataSpmPath.c_str());
@@ -148,7 +148,7 @@ void soviet::package::installFile()
         }
         else
         {
-            if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
+            if(soviet::DEBUG) std::cout << "Package is not installed, installing..." << std::endl;
         }
 
         std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),USING_DIR.c_str());
@@ -166,11 +166,11 @@ void soviet::package::installFile()
         //This dependencies if;else system is deprecated and will be removed in the future
         if (check_dependencies())
         {
-            std::cout << "Dependency check passed"<< "\n";     
+            std::cout << "Dependency check passed!"<< "\n";     
         }
         else
         {
-            std::cout << "Dependency check failed"<< "\n";
+            std::cout << "Dependency check failed!"<< "\n";
             // TODO: ADD THE DEPENDENCIES STUFF HERE
             exit(1);
         }
@@ -181,7 +181,7 @@ void soviet::package::installFile()
             //making package
             make();
             // fancy output
-            std::cout << "☭ Package built"<< "\n";
+            std::cout << "☭ Package built! ☭"<< "\n";
             //Get package locations
             get_locations();
         }
@@ -195,7 +195,7 @@ void soviet::package::installFile()
         }
         else 
         {
-            std::cout << "No post installation scripts found" << "\n";
+            std::cout << "No post installation scripts found!" << "\n";
         }
         // Storing package data
         // Adding the locations to the package files , and the packages files to DATA_DIR
@@ -225,9 +225,9 @@ void soviet::package::installFile()
     }
     else 
     {
-        std::cout << "Package type not supported" << std::endl;
+        std::cout << "Package type not supported!" << std::endl;
     }
-    std::cout << "Your package is installed , enjoy" << std::endl;
+    std::cout << "Your package is installed, enjoy!" << std::endl;
 
 
 

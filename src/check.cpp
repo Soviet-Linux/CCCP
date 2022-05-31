@@ -26,7 +26,7 @@ bool soviet::package::check ()
     //it could be empty because of a failed install
     if (locations.empty())
     {
-        if (DEBUG) std::cout << "It may be some serious shit in the package , do something !!\n";
+        if (DEBUG) std::cout << "Do something, there could be some serious shit in the package!!\n";
         return false;
     }
     //check all the files in the data["locations"]
@@ -40,10 +40,10 @@ bool soviet::package::check ()
          if (DEBUG) std::cout << "Checking " << locations[i] << std::endl;
          if (access(locations[i].c_str(),F_OK)) 
          {
-             if (DEBUG) std::cout << locations[i] << " exists !" << std::endl;
+             if (DEBUG) std::cout << locations[i] << " exists!" << std::endl;
          }
          else {
-                std::cout << locations[i] << " does not exist !" << std::endl;
+                std::cout << locations[i] << " does not exist!" << std::endl;
                 return false;
          }
     }

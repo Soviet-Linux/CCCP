@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     soviet::init();
     //verifying if the user has entered arguments
     if (argc < 2) {
-        std::cout << "No arguments given. Terminating.\n";
+        std::cout << "No arguments given! Terminating...\n";
         exit(1);
     }
     
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
                             break;
                         case 'c' :
                             // Check packages
-                            std::cout << "Checking packages\n";
+                            std::cout << "Checking packages...\n";
                             action.push_back(soviet::CHECK);
                             break;
                         case 'l' :
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
                             break;
                         default:
                             // Unknown option
-                            std::cout << "Unknown option\n";
+                            std::cout << "Unknown option! Terminating...\n";
                             break;
 
                 
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
             else
             { 
                 soviet::help();
-                std::cout << "No action argument given. Terminating.\n"; 
+                std::cout << "No action argument given! Terminating...\n"; 
                 exit(1);
             }
         }
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
                 // Verify if parameters are given
                 if (parameters.empty())
                 {      
-                    std::cout << "No packages specified.Terminating\n";
+                    std::cout << "No packages specified! Terminating...\n";
                 }         
                 for (int i = 0;i < parameters.size();i++)
                 {
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
                     
                     if (pkg.packagePath.length() < 15) 
                     {
-                        std::cout << "Package path is too short , maybe it isn't a package ?. Terminating.\n";
+                        std::cout << "Package path is too short; maybe it's not a package? Terminating...\n";
                         exit(1);
                     }
                     std::string extension = pkg.packagePath.substr(pkg.packagePath.find_first_of("."),pkg.packagePath.length());
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
                     }
                     else 
                     {
-                        std::cout << "The file is not a package. Terminating.\n";
+                        std::cout << "The file is not a package. Terminating...\n";
                         exit(1);
                     }
                     if (soviet::DEBUG) std::cout << "launching installation with " << pkg.packagePath << "\n";
@@ -230,11 +230,11 @@ int main(int argc, char *argv[])
                     pkg.name = parameters[i];
                     if (pkg.check())
                     {
-                        std::cout << "Package " << parameters[i] << " is installed and good\n";
+                        std::cout << "Package " << parameters[i] << " is installed and good!\n";
                     }
                     else 
                     {
-                        std::cout << "Package " << parameters[i] << " is not installed or corrupted\n";
+                        std::cout << "Package " << parameters[i] << " is not installed or corrupted!\n";
                     }
                 }
                 break;
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
                 }
                 break;
             default :
-                std::cout << "Action error . Terminating.\n";
+                std::cout << "Action error! Terminating...\n";
                 exit(1);
         }
     }

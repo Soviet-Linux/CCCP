@@ -23,7 +23,7 @@ void soviet::package::uninstall()
     // verify if the package is installed
     // check if SPM_FILE exists
     if (access(dataSpmPath.c_str(),F_OK)) {
-        std::cout << "Package " << name << " is not installed" << std::endl;
+        std::cout << "Package " << name << " is not installed!" << std::endl;
         return;
     }
     //small message , its uselless but i'll leave it there
@@ -64,9 +64,9 @@ void soviet::package::uninstall()
             //checking if the excetion string we should catch is inside the catched exception 
             // I know it isn't clear (Again , DM me on discord if you dont understand  )
             //Or maybe read the docs (at the time i write this the docs are not yet good enough to understand this)
-            if (!(str_e.find("Directory not empty") != std::string::npos))
+            if (!(str_e.find("Directory not empty!") != std::string::npos))
             {
-                std::cout << "This is BAD, terminating : " << str_e << '\n';
+                std::cout << "This is BAD, terminating... : " << str_e << '\n';
                 exit(1);
             }
 

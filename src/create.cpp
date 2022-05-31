@@ -11,9 +11,9 @@ void soviet::package::createBinary(const std::string& binPath)
 {
     std::string USING_DIR;
     // chnaging uncompress and spm dir with package type
-    if (type == "src") std::cout << "creating binary package from source package.";
+    if (type == "src") std::cout << "creating binary package from source package...";
     else {
-        std::cout << "Package type not supported" << std::endl;
+        std::cout << "Package type not supported!" << std::endl;
         return;
     }
 
@@ -26,7 +26,7 @@ void soviet::package::createBinary(const std::string& binPath)
     //making package
     make();
     // fancy output
-    std::cout << "☭ Package built"<< "\n";
+    std::cout << "☭ Package built! ☭"<< "\n";
     //changing type to bin 
     type = "bin";
     //Get package locations
