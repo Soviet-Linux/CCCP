@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -Wall -g -std=c++2a -pedantic
+CFLAGS := -Wall -g -std=c++2a -pedantic 
 
 TARGET := main
 TEST := test
@@ -19,7 +19,7 @@ OBJS := $(patsubst %.cpp,%.o,$(subst src,obj,$(SRCS)))
 all: $(TARGET)
 # I should try to figure out what this is doing
 $(TARGET): $(OBJS)
-	$(CC) -o ${BIN_DIR}/$@ $(subst src,obj,$^)
+	$(CC) ${CFLAGS} -o ${BIN_DIR}/$@ $(subst src,obj,$^)
 # This is to compile all source files listed in SRCS to .o files in OBJ_DIR
 # The $(subst) thing is a little hacky I think
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.cpp

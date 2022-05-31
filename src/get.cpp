@@ -13,6 +13,9 @@
 
 void soviet::package::get()
 {
+    // I commented this part because the soviet system im working on right now doesnt support curl 
+    // I will add it later whan the rest of the stuff is ready 
+    /*
     // check if ALL_FILE exists
     if (access((ALL_FILE).c_str(),F_OK))
     {
@@ -27,32 +30,16 @@ void soviet::package::get()
         {
             std::cout << "Exiting" << std::endl;
             return;
-        }   
+        }  
+        else if (type == "y")
+        {
+            sync();
+        } 
         else 
         {
             std::cout << "something went wrong" << std::endl;
         }
 
-        for (int i = 0; i < REPOS.size(); i++)
-        {
-            std::string repo = REPOS[i];
-            std::string all_url = format("%s/all.json",repo.c_str());
-            FILE *data = fopen(ALL_FILE.c_str(),"wb");
-            // if not , download it
-            std::cout << "Downloading " << ALL_FILE << " from " << all_url << std::endl;
-            curl_global_init(CURL_GLOBAL_ALL);
-            CURL *curl = curl_easy_init();
-            curl_easy_setopt(curl, CURLOPT_URL, all_url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data);
-            curl_easy_perform(curl);
-            curl_easy_cleanup(curl);
-            curl_global_cleanup();
-            // write the data to ALL_FILE
-            std::ofstream file_spm((ALL_FILE).c_str(), std::ios::out);
-            file_spm << data;
-            file_spm.close();
-        }
         
     }
     // verify if package exists
@@ -94,10 +81,10 @@ void soviet::package::get()
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
             res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
-            fclose(fp);
-        }  
+            fclose(fp);[\u@\h \W]\$
+
     }
-    
+    */
 }
 /*
 Some explanation about the ALL_FILE

@@ -56,11 +56,40 @@ namespace soviet {
     
     enum action {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 
-    class package 
-    {
-        public:
+  /*
+    How the package class and the soviet function are designed :
 
-            // constructor , unused  , but it looks cool
+    The package class:
+       The package class is ment to create package object , to manipulate packages.
+       This class contains :
+        The package informations : 
+        - The package name : package::name
+	- The package version : package::version
+	- The package type : package::type (It can be either "src" or "bin")
+	- A vector containing all the dependencies of the package : package::dependencies
+	- A vector contaning all the location the the files installed by the packages : package::locations
+	The commands used to build the package :
+	- the command used to prepare the dire where the package will be built : package::prepare_info
+	- The command used to compile the package from source : package::build_info
+	- the command used to test the package : package::test_info
+	- the command used to install the package to the temporary root dir (BUILD_DIR or $BUILD_ROOT) : package::install_info
+	- the commands the need to be ran after the installation of the package : package::special_info
+	The path of the package files :
+	 - The path of the package archive (.spm.tar.gz) : package::packagePath
+	 - The path of the file contaning all the informations about the package when its installed : package::data:SpmPath
+	Some function that need to be called :
+	- The function used to install a package from a package archive file (.spm.tar.gz) : package::installFile
+	- The function used to download a package from the repo and install it : package::installFromRepo
+	- The function used to remove a package from the system : package::uninstall
+	- The function used to check if a package is installed and not corrupted : package::check
+	- The function used to create a binary package archive from a source package archive : package::createBinary
+  Some private functions : 
+  - TODO: finish this documentation
+	
+  */
+      class package 
+      {
+        public:
             package();
 
             // Package name , used to identify the package
@@ -100,12 +129,9 @@ namespace soviet {
             void get();
             void uninstall();
             bool check();
-            void install();
-            void createBinary(const std::string& binPath );
-
-            // idk why this is public , but i will leave it here
-            void make ();
-        
+            void installFile();
+            void installFromRepo();
+            void createBinary(const std::string& binPath);
             
         private :
 
@@ -113,6 +139,7 @@ namespace soviet {
             void get_locations();
             int check_dependencies ();
             void move_binaries();
+            void make ();
 
             // Set of function that manipulate spm files
             nlohmann::json open_spm (const std::string& spm_path );
@@ -134,6 +161,7 @@ namespace soviet {
     void listPkgs ();
     int readConfig(const std::string& configFilePath);
     void init();
+    void sync();
     
 }
 

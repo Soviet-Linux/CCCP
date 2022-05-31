@@ -277,4 +277,6 @@ package structure is :
             ├──$NAME.spm
             └──$NAME-$VERSION
                 └──[sources]
-*/  
+		
+*/
+
