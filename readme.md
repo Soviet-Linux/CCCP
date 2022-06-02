@@ -10,16 +10,18 @@
     The communist package manager
     <br/>
     <br/>
-    <a href="https://docs.sovietlinux.ml"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Soviet-Linux/CCCP"><strong>Explore the docs »</strong></a>
     <br/>
     <br/>
+    <a href="https://github.com/Soviet-Linux/CCCP">View Demo</a>
+    .
     <a href="https://github.com/Soviet-Linux/CCCP/issues">Report Bug</a>
     .
     <a href="https://github.com/Soviet-Linux/CCCP/issues">Request Feature</a>
   </p>
 </p>
 
-![Downloads](https://img.shields.io/github/downloads/Soviet-Linux/CCCP/total) ![Contributors](https://img.shields.io/github/contributors/Soviet-Linux/CCCP?color=dark-green) ![Issues](https://img.shields.io/github/issues/Soviet-Linux/CCCP) ![License](https://img.shields.io/github/license/Soviet-Linux/CCCP) 
+![Downloads](https://img.shields.io/github/downloads/Soviet-Linux/CCCP/total) ![Contributors](https://img.shields.io/github/contributors/Soviet-Linux/CCCP?color=dark-green) ![Forks](https://img.shields.io/github/forks/Soviet-Linux/CCCP?style=social) ![Stargazers](https://img.shields.io/github/stars/Soviet-Linux/CCCP?style=social) ![Issues](https://img.shields.io/github/issues/Soviet-Linux/CCCP) ![License](https://img.shields.io/github/license/Soviet-Linux/CCCP) 
 
 ## Table Of Contents
 
@@ -45,9 +47,8 @@ The package manager is written in c++
 
 ## Getting Started
 
-### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+### Prerequisites
 
 * g++
 * make
@@ -108,17 +109,13 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-Distributed under the GPLv3.0 License. See [LICENSE](https://github.com/Soviet-Linux/CCCP/blob/main/LICENSE.md) for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/Soviet-Linux/CCCP/blob/main/LICENSE.md) for more information.
 
 ## Authors
 
-* **PKD667** - [PKD667](https://github.com/PKD667) - *Started the project*
-* **TheHolyTachanka** - [TheHolyTachanka](https://github.com/TheHolyTachanka) - *Maintainer of the docs*
-
-
-
+* **PKD667** - [PKD667](https://github.com/PKD667) - *Founder of the project*
+* **TheHolyTachanka** - *Wannabe dev* - [TheHolyTachanka](https://github.com/TheHolyTachanka) - *Maintainer of the docs*
 
 ## Acknowledgements
 
 * [ImgShields](https://shields.io/)
-
