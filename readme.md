@@ -10,11 +10,9 @@
     The communist package manager
     <br/>
     <br/>
-    <a href="https://github.com/Soviet-Linux/CCCP"><strong>Explore the docs »</strong></a>
+    <a href="https://docs.sovietlinux.ml/"><strong>Explore the docs »</strong></a>
     <br/>
     <br/>
-    <a href="https://github.com/Soviet-Linux/CCCP">View Demo</a>
-    .
     <a href="https://github.com/Soviet-Linux/CCCP/issues">Report Bug</a>
     .
     <a href="https://github.com/Soviet-Linux/CCCP/issues">Request Feature</a>
