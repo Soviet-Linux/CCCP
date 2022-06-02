@@ -42,6 +42,7 @@ void soviet::package::installFile()
             if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
         }
 
+        //comand to  uncompress the .src;spm.tar.gz archive to MAKE_DIR
         std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),MAKE_DIR.c_str());
         // if debug is on , print the command
         if (soviet::DEBUG) std::cout << cmd_uncompress << std::endl;
@@ -69,6 +70,11 @@ void soviet::package::installFile()
         // building the package and getting the locations
         //making package
         make();
+
+        // I want to make a fancy auto-dection of dependencies using ldd
+        // TODO: Do this later
+        //
+        
         // fancy output
         std::cout << "☭ Package built"<< "\n";
         //Get package locations
@@ -87,7 +93,7 @@ void soviet::package::installFile()
         }
         // Storing package data
         // Adding the locations to the package files , and the packages files to DATA_DIR
-        store_spm(spm_build,dataSpmPath);
+        store_spm(soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()),dataSpmPath);
 
         //adding the package to the data file
         add_data();
@@ -121,21 +127,9 @@ void soviet::package::installFile()
     }
     else if (type == "bin")
     {
-        /* All these variables are bad.*/
-        //location spm file in build dir
-        std::string spm_build = soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str());
-        // Dir where we will do a=everything
-        std::string USING_DIR;
-        // chnaging uncompress and spm dir with package type
-        if (type == "src") USING_DIR = MAKE_DIR;
-        else if (type == "bin") USING_DIR = BUILD_DIR;
-        else {
-            std::cout << "Package type not supported" << std::endl;
-            return;
-        }
-
         // checking if the package is already installed
         if (soviet::DEBUG) std::cout << "checking if "<< dataSpmPath << " exists :  " << access(dataSpmPath.c_str(), F_OK) << "\n";
+
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
         if (!access(dataSpmPath.c_str(), F_OK))
         {
@@ -143,24 +137,22 @@ void soviet::package::installFile()
             // removing the old package
         remove_data();
         remove(dataSpmPath.c_str());
-
-
         }
         else
         {
             if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
         }
 
-        std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),USING_DIR.c_str());
+        std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),BUILD_DIR.c_str());
         // if debug is on , print the command
         if (soviet::DEBUG) std::cout << cmd_uncompress << std::endl;
         //uncompressing <PName>.src.spm.tar.gz in PKG_DIR
         system(cmd_uncompress.c_str());
 
         //debug
-        if(soviet::DEBUG) std::cout << soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()) << std::endl;
+        if(soviet::DEBUG) std::cout << soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()) << std::endl;
         // Reading spm file in MAKE DIR
-        var_spm(soviet::format("%s/%s.spm",USING_DIR.c_str(),name.c_str()));
+        var_spm(soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()));
         
         // Checking dependencies
         //This dependencies if;else system is deprecated and will be removed in the future
@@ -175,16 +167,6 @@ void soviet::package::installFile()
             exit(1);
         }
 
-        // building the package and getting locations if its a source package
-        if (type == "src" ) 
-        {
-            //making package
-            make();
-            // fancy output
-            std::cout << "☭ Package built"<< "\n";
-            //Get package locations
-            get_locations();
-        }
         // Moving built binaries to their install location on the system
         move_binaries();
 
@@ -199,7 +181,7 @@ void soviet::package::installFile()
         }
         // Storing package data
         // Adding the locations to the package files , and the packages files to DATA_DIR
-        store_spm(spm_build,dataSpmPath);
+        store_spm(soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()),dataSpmPath);
 
         //adding the package to the data file
         add_data();
@@ -217,11 +199,9 @@ void soviet::package::installFile()
         // So its all good
         // I'm very close to write an entire c function to replace this shit
         // But i dont have time to do that
-        std::filesystem::remove_all(MAKE_DIR);
         std::filesystem::remove_all(BUILD_DIR);
         // recreating the dir 
         mkdir(BUILD_DIR.c_str(), 0777);
-        mkdir(MAKE_DIR.c_str(), 0777);
     }
     else 
     {

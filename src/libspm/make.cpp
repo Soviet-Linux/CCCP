@@ -1,3 +1,4 @@
+#include <fstream>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -71,7 +72,15 @@ void soviet::package::make ()
     }
 
     // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
-    if (soviet::TESTING && !test_info.empty()) system(("( cd "+ package_dir + " && " + test_info + " > "+ LOG_DIR + name + ".test )").c_str());
+    if (soviet::TESTING && !test_info.empty()) 
+    {
+        std::string test_result  = exec(format("( cd %s  &&  %s )",package_dir.c_str(),test_info.c_str()));
+        std::ofstream log_file;
+        log_file.open(format("%s/%s.test",LOG_DIR.c_str(),name.c_str()));
+        log_file << test_result << std::endl;
+
+    }
+    
 
     //installing the package in the build directory
 
@@ -84,7 +93,11 @@ void soviet::package::make ()
     //And finally , executing the install command
     system(install_cmd.c_str());
     
+    /*
     //moving temporary spm files to build dir to match bin package look
     if (DEBUG) std::cout << rename(format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()),format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str())) << "\n";
     if (soviet::DEBUG) std::cout << "Spm file moved from " << format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) << " to " << format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()) << "\n";
+    */
+    // WOOW I'm Happy Right Now , it finally got rid af this annying code block above.
+    // I left it as a comment because people need to know what bad code is
 }
