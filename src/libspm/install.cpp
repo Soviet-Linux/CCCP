@@ -9,7 +9,7 @@
 
 
 // class stuff
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 
 /*
@@ -32,14 +32,14 @@ void soviet::package::installFile()
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
         if (!access(dataSpmPath.c_str(), F_OK))
         {
-            std::cout << "Package is already installed , reinstalling." << std::endl;
+            std::cout << "Package is already installed, reinstalling..." << std::endl;
             // removing the old package
             remove_data();
             remove(dataSpmPath.c_str());
         }
         else
         {
-            if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
+            if(soviet::DEBUG) std::cout << "Package is not installed, installing..." << std::endl;
         }
 
         //comand to  uncompress the .src;spm.tar.gz archive to MAKE_DIR
@@ -58,11 +58,11 @@ void soviet::package::installFile()
         //This dependencies if;else system is deprecated and will be removed in the future
         if (check_dependencies())
         {
-            std::cout << "Dependency check passed"<< "\n";     
+            std::cout << "Dependency check passed!"<< "\n";     
         }
         else
         {
-            std::cout << "Dependency check failed"<< "\n";
+            std::cout << "Dependency check failed!"<< "\n";
             // TODO: ADD THE DEPENDENCIES STUFF HERE
             exit(1);
         }
@@ -133,14 +133,14 @@ void soviet::package::installFile()
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
         if (!access(dataSpmPath.c_str(), F_OK))
         {
-            std::cout << "Package is already installed , reinstalling." << std::endl;
+            std::cout << "Package is already installed, reinstalling..." << std::endl;
             // removing the old package
         remove_data();
         remove(dataSpmPath.c_str());
         }
         else
         {
-            if(soviet::DEBUG) std::cout << "Package is not installed , installing." << std::endl;
+            if(soviet::DEBUG) std::cout << "Package is not installed, installing..." << std::endl;
         }
 
         std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),BUILD_DIR.c_str());
@@ -158,11 +158,11 @@ void soviet::package::installFile()
         //This dependencies if;else system is deprecated and will be removed in the future
         if (check_dependencies())
         {
-            std::cout << "Dependency check passed"<< "\n";     
+            std::cout << "Dependency check passed!"<< "\n";     
         }
         else
         {
-            std::cout << "Dependency check failed"<< "\n";
+            std::cout << "Dependency check failed!"<< "\n";
             // TODO: ADD THE DEPENDENCIES STUFF HERE
             exit(1);
         }
@@ -177,7 +177,7 @@ void soviet::package::installFile()
         }
         else 
         {
-            std::cout << "No post installation scripts found" << "\n";
+            std::cout << "No post installation scripts found!" << "\n";
         }
         // Storing package data
         // Adding the locations to the package files , and the packages files to DATA_DIR
@@ -205,9 +205,9 @@ void soviet::package::installFile()
     }
     else 
     {
-        std::cout << "Package type not supported" << std::endl;
+        std::cout << "Package type not supported!" << std::endl;
     }
-    std::cout << "Your package is installed , enjoy" << std::endl;
+    std::cout << "Your package is installed, enjoy!" << std::endl;
 
 
 

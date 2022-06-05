@@ -9,7 +9,7 @@
 #include "../include/cccp.hpp"
 
 /*
-    All hte complexity in this function and really in this entire project if just because we need to track  files installed by a makefile
+    All the complexity in this function and really in this entire project if just because we need to track  files installed by a makefile
     For now we juste install in a separate directory (BUILD_DIR) and then move it to the correct location (The real filesystem)
     I tried many solutions to do this like installwatch , checkinstall , but none of them worked for me.
     If you have an idea PLEASE , I beg you tell me or write it directly here .
