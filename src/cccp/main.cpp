@@ -11,7 +11,7 @@ Thank you for your help :)
 #include <string>
 #include <vector>
 
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 
 // The filesystem root
@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
                         exit(1);
                     }
                     if (soviet::DEBUG) std::cout << "launching installation with " << pkg.packagePath << "\n";
-                    pkg.install();
+                    pkg.installFile();
                 }
             case soviet::REMOVE :
                 for (int i = 0;i < parameters.size();i++)

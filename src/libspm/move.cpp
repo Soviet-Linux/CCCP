@@ -3,7 +3,7 @@
 #include <string>
 
 // class stuff
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 // This function is moving the binaries to the correct locations
 void soviet::package::move_binaries()

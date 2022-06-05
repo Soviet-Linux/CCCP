@@ -6,10 +6,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 //include json lib
-#include "../lib/nlohmann/json.hpp"
+#include "../../lib/nlohmann/json.hpp"
 
  // class stuff
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 void soviet::package::get()
 {

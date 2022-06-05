@@ -4,7 +4,7 @@
 #include <map>
 #include <iostream>
 
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 int soviet::readConfig(const std::string& configFilePath)
 {

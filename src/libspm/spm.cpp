@@ -5,10 +5,10 @@
 #include <unistd.h>
 
 
-#include "../lib/nlohmann/json.hpp"
+#include "../../lib/nlohmann/json.hpp"
 
 // class thing
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 //using json = nlohmann::json;
 using nlohmann::json;

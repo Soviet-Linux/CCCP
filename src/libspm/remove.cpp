@@ -5,7 +5,7 @@
 #include "unistd.h"
 
 //the class file 
-#include  "../include/cccp.hpp"
+#include  "../../include/cccp.hpp"
 
 /*
 To uninstall packages , we'll use the location data ( all the files that were installed by the program )

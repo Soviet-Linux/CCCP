@@ -5,7 +5,7 @@
 #include <iostream>
 
 // class stuff
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 
 //checking if package is installed and untouched

@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 // class stuff
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 // This function will check if all dependencies of a package are installed
 int soviet::package::check_dependencies () 

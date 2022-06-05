@@ -2,7 +2,7 @@
 #include "unistd.h"
 #include <sys/stat.h>
 
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 
 void soviet::init ()

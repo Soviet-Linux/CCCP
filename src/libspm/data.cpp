@@ -2,11 +2,11 @@
 #include <fstream>
 #include <iostream>
 
-#include "../lib/nlohmann/json.hpp"
+#include "../../lib/nlohmann/json.hpp"
 using nlohmann::json;
 
 //class thing
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 /*
 This file contains several functions that are used to store , remove and manipulate installed package data.

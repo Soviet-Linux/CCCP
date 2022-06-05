@@ -3,7 +3,7 @@
 #include <iostream>
 
 // class stuff
-#include "../include/cccp.hpp"
+#include "../../include/cccp.hpp"
 
 char* soviet::format( const char* strFmtString, ... )
 {
