@@ -11,7 +11,7 @@ uninstal:
 	./make.sh uninstall
 test:
 	./make.sh test
-soviet:
-	./make.sh soviet
+chroot:
+	./make.sh chroot
 clean:
 	./make.sh clean

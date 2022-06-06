@@ -27,8 +27,10 @@ function libspm()
     for FILE in $SRCS; do
         temp=$(echo $FILE | sed "s/\.cpp/.o/")
         OBJ_FILE="${temp/$LIB_SRC_DIR/$OBJ_DIR}"
-        echo "Compiling $FILE... to $OBJ_FILE"
-        $CXX $CXXFLAGS -c -o $OBJ_FILE $FILE -fPIC
+        if [ $FILE -nt $OBJ_FILE ]; then
+            echo "Compiling $FILE... to $OBJ_FILE"
+            $CXX $CXXFLAGS -c -o $OBJ_FILE $FILE -fPIC
+        fi
         OBJS="$OBJS $OBJ_FILE"
     done
     echo "Linking lib..."
@@ -45,8 +47,10 @@ function cccp()
         echo $FILE
         temp=$(echo $FILE | sed "s/\.cpp/.o/")
         OBJ_FILE="${temp/$CCCP_SRC_DIR/$OBJ_DIR}"
-        echo "Compiling $FILE... to $OBJ_FILE"
-        $CXX  $CXXFLAGS -c -o $OBJ_FILE $FILE 
+        if [ $FILE -nt $OBJ_FILE ]; then
+            echo "Compiling $FILE... to $OBJ_FILE"
+            $CXX $CXXFLAGS -c -o $OBJ_FILE $FILE 
+        fi
         OBJS="$OBJS $OBJ_FILE"
     done
     echo "Linking cccp..."
@@ -70,7 +74,7 @@ else
     elif [ $1 = "clean" ]; then
         rm -rf $OBJ_DIR/*
         rm -rf $BIN_DIR/*
-    elif [ $1 = "soviet" ]; then
+    elif [ $1 = "chroot" ]; then
         sudo cp $BIN_DIR/libspm.so $SOVIET/usr/lib/libspm.so
         sudo cp $BIN_DIR/cccp $SOVIET/usr/bin/cccp
     elif [ $1 = "install" ]; then

@@ -91,6 +91,7 @@ void soviet::package::installFile()
         {
             std::cout << "No post installation scripts found" << "\n";
         }
+
         // Storing package data
         // Adding the locations to the package files , and the packages files to DATA_DIR
         store_spm(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()),dataSpmPath);

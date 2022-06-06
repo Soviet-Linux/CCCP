@@ -21,7 +21,7 @@
     (I tried , but its not good enough)
 
 */
-void soviet::package::make (std::string cmd_parameters)
+void soviet::package::make ()
 {
     /*
         We have some problems here , because some complex packages require advanced options to be installed 
@@ -58,16 +58,21 @@ void soviet::package::make (std::string cmd_parameters)
         if (DEBUG) std::cout << prepare_cmd << std::endl;
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        system((prepare_cmd + cmd_parameters).c_str());
+        exec(prepare_cmd.c_str());
+        //debug
+        std::cout << "prepare command executed" << std::endl;
     }
     if (!build_info.empty())
     {
         //Formating the command
-        std::string make_cmd = soviet::format("( cd %s && %s )",package_dir.c_str(),build_info.c_str());
+        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s )",BUILD_DIR.c_str(),package_dir.c_str(),build_info.c_str());
         // printing the command to standard output 
         if (DEBUG) std::cout << make_cmd << std::endl;
         //executing the command
-        system((make_cmd + cmd_parameters).c_str());
+        exec(make_cmd.c_str());
+        //debug
+        if (DEBUG) std::cout << "build done" << std::endl;
+
         
     }
 
@@ -90,9 +95,11 @@ void soviet::package::make (std::string cmd_parameters)
     //printing , for debugging purposes
     if (DEBUG) std::cout << install_cmd << std::endl; 
 
-    if (DEBUG) std::cout << (install_cmd + cmd_parameters) << std::endl;
     //And finally , executing the install command
-    system((install_cmd + cmd_parameters).c_str());
+    exec(install_cmd.c_str());
+
+    //debug
+    if (DEBUG) std::cout << "install done" << std::endl;
     
     /*
     //moving temporary spm files to build dir to match bin package look

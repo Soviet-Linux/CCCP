@@ -40,11 +40,16 @@ void soviet::package::store_spm (const std::string& spm_path,const std::string& 
     {
         pkg_info["type"] = "bin";
     }
-
-    for (int i = 0; i < locations.size(); i++)
+    else
     {
-        pkg_info["locations"].push_back(locations[i]);
+        for (int i = 0; i < locations.size(); i++)
+        {
+            pkg_info["locations"].push_back(locations[i]);
+        }
+        
+
     }
+    
     //Writing the data to the package spm file in data_dir (dataSpmPath)
     std::ofstream file_spm_out((spm_out).c_str(), std::ios::out);
     file_spm_out << pkg_info.dump(4);
