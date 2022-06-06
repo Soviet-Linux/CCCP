@@ -16,6 +16,8 @@ CCCP_SRC_DIR=src/cccp
 
 LIBSPM_DIR=$BIN_DIR
 
+# This is the path to a soviet chroot
+SOVIET=soviet
 
 function libspm()
 {
@@ -62,6 +64,24 @@ else
         libspm
     elif [ $1 = "cccp" ]; then
         cccp
+    elif [ $1 = "all" ]; then
+        libspm
+        cccp
+    elif [ $1 = "clean" ]; then
+        rm -rf $OBJ_DIR/*
+        rm -rf $BIN_DIR/*
+    elif [ $1 = "soviet" ]; then
+        sudo cp $BIN_DIR/libspm.so $SOVIET/usr/lib/libspm.so
+        sudo cp $BIN_DIR/cccp $SOVIET/usr/bin/cccp
+    elif [ $1 = "install" ]; then
+        sudo cp $BIN_DIR/libspm.so /usr/lib/libspm.so
+        sudo cp $BIN_DIR/cccp /usr/bin/cccp
+    elif [ $1 = "uninstall" ]; then
+        sudo rm /usr/lib/libspm.so
+        sudo rm /usr/bin/cccp
+    elif [ $1 = "test" ]; then
+        $CXX $CXXFLAGS -o $BIN_DIR/test tests/test.cpp -lspm
+        ./$BIN_DIR/test
     else
         echo "Usage: ./make.sh [lib|cccp]"
         exit 1

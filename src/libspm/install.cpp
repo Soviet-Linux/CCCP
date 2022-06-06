@@ -93,7 +93,7 @@ void soviet::package::installFile()
         }
         // Storing package data
         // Adding the locations to the package files , and the packages files to DATA_DIR
-        store_spm(soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()),dataSpmPath);
+        store_spm(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()),dataSpmPath);
 
         //adding the package to the data file
         add_data();
@@ -166,7 +166,8 @@ void soviet::package::installFile()
             // TODO: ADD THE DEPENDENCIES STUFF HERE
             exit(1);
         }
-
+        // moving the spm file so it sint doing weird stuff
+        rename(format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()),format("%s/%s.spm",SPM_DIR.c_str(),name.c_str()));
         // Moving built binaries to their install location on the system
         move_binaries();
 
@@ -181,7 +182,7 @@ void soviet::package::installFile()
         }
         // Storing package data
         // Adding the locations to the package files , and the packages files to DATA_DIR
-        store_spm(soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()),dataSpmPath);
+        store_spm(format("%s/%s.spm",SPM_DIR.c_str(),name.c_str()),dataSpmPath);
 
         //adding the package to the data file
         add_data();

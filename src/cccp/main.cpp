@@ -208,6 +208,7 @@ int main(int argc, char *argv[])
                     if (soviet::DEBUG) std::cout << "launching installation with " << pkg.packagePath << "\n";
                     pkg.installFile();
                 }
+                break;
             case soviet::REMOVE :
                 for (int i = 0;i < parameters.size();i++)
                 {
