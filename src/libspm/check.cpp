@@ -13,14 +13,15 @@ bool soviet::package::check ()
 {
     // checkinig if package data file exists
     std::cout << dataSpmPath << std::endl;
-    if (!access(dataSpmPath.c_str(),F_OK)){
+    if (access(dataSpmPath.c_str(),F_OK)){
+        std::cout << "Package data file found!" << std::endl;
         return false;
     }
     else
     {
         if (soviet::DEBUG) std::cout << "Package data file exists, good!" << std::endl;    
         // Pasing data from the spm file
-        open_spm(dataSpmPath);
+        var_spm(dataSpmPath);
     } 
     // check if the data["location "] is not empty
     //it could be empty because of a failed install
@@ -38,7 +39,7 @@ bool soviet::package::check ()
             Again , if you have an idea DM me on discord 
         */
          if (DEBUG) std::cout << "Checking " << locations[i] << std::endl;
-         if (access(locations[i].c_str(),F_OK)) 
+         if (!access(locations[i].c_str(),F_OK)) 
          {
              if (DEBUG) std::cout << locations[i] << " exists!" << std::endl;
          }

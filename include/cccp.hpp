@@ -53,8 +53,6 @@ namespace soviet {
     // Good Night
     extern bool DEBUG;
     extern bool TESTING;
-    
-    enum action {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 
   /*
     How the package class and the soviet function are designed :
