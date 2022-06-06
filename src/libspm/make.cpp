@@ -21,9 +21,8 @@
     (I tried , but its not good enough)
 
 */
-void soviet::package::make ()
+void soviet::package::make (std::string cmd_parameters)
 {
-     
     /*
         We have some problems here , because some complex packages require advanced options to be installed 
         (like glibc that wants a separate build dir )
@@ -56,18 +55,19 @@ void soviet::package::make ()
         std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s )",BUILD_DIR.c_str(),package_dir.c_str(),prepare_info.c_str());
 
         //Printing the command to the terminal
-        std::cout << prepare_cmd << std::endl;
+        if (DEBUG) std::cout << prepare_cmd << std::endl;
         //executing the command
-        system(prepare_cmd.c_str());
+        // We add the extra command parameters to the command , so that the user can add extra parameters to the command
+        system((prepare_cmd + cmd_parameters).c_str());
     }
     if (!build_info.empty())
     {
         //Formating the command
         std::string make_cmd = soviet::format("( cd %s && %s )",package_dir.c_str(),build_info.c_str());
         // printing the command to standard output 
-        std::cout << make_cmd << std::endl;
+        if (DEBUG) std::cout << make_cmd << std::endl;
         //executing the command
-        system(make_cmd.c_str());
+        system((make_cmd + cmd_parameters).c_str());
         
     }
 
@@ -88,10 +88,11 @@ void soviet::package::make ()
     std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s )",soviet::BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
 
     //printing , for debugging purposes
-    std::cout << install_cmd << std::endl; 
+    if (DEBUG) std::cout << install_cmd << std::endl; 
 
+    if (DEBUG) std::cout << (install_cmd + cmd_parameters) << std::endl;
     //And finally , executing the install command
-    system(install_cmd.c_str());
+    system((install_cmd + cmd_parameters).c_str());
     
     /*
     //moving temporary spm files to build dir to match bin package look
