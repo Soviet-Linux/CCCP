@@ -52,7 +52,7 @@ function cccp()
             $CXX $CXXFLAGS -c -o $OBJ_FILE $FILE 
         fi
         OBJS="$OBJS $OBJ_FILE"
-    done
+    donecccp.hpp
     echo "Linking cccp..."
     echo " $CXX $CXXFLAGS -o $BIN_DIR/cccp $OBJS -fPIC -lspm"
     $CXX -L$LIBSPM_DIR $CXXFLAGS -o $BIN_DIR/cccp $OBJS -fPIC -lspm
