@@ -1,3 +1,4 @@
+#include <bits/types/FILE.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -47,6 +48,8 @@ void soviet::package::uninstall()
             More on that later
         */
         try {
+            // debug
+            if (DEBUG) std::cout << "Removing " << locations[i] << std::endl;
             remove(locations[i].c_str());
         }
         catch (std::exception& e)

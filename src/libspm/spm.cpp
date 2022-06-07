@@ -36,18 +36,17 @@ void soviet::package::store_spm (const std::string& spm_path,const std::string& 
     if (DEBUG) std::cout << "parsing : " << spm_path << std::endl;
     auto pkg_info = open_spm(spm_path);
     //change package type if its a binary
-    if (type == "bin")
-    {
-        pkg_info["type"] = "bin";
-    }
-    else
+
+    if (type == "src")
     {
         for (int i = 0; i < locations.size(); i++)
         {
             pkg_info["locations"].push_back(locations[i]);
         }
-        
-
+    }
+    if (type == "bin")
+    {
+        pkg_info["type"] = "bin";
     }
     
     //Writing the data to the package spm file in data_dir (dataSpmPath)
