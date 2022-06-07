@@ -6,7 +6,7 @@
 using nlohmann::json;
 
 //class thing
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 /*
 This file contains several functions that are used to store , remove and manipulate installed package data.

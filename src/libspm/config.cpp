@@ -4,7 +4,7 @@
 #include <map>
 #include <iostream>
 
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 int soviet::readConfig(const std::string& configFilePath)
 {

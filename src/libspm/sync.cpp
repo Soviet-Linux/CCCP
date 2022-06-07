@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 // class stuff
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 void soviet::sync ()
 {

@@ -12,7 +12,7 @@ Thank you for your help :)
 #include <unistd.h>
 #include <vector>
 
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 
 // The filesystem root
@@ -58,118 +58,23 @@ Here is a more detailed look of the default directory structure
             └── make --> MAKE_DIR
 
 */
-bool soviet::DEBUG = false;
-bool soviet::TESTING = false;
+bool soviet::DEBUG;
+bool soviet::TESTING;
 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
-
-// Main function
-int main(int argc, char *argv[])
+/*
+parameters are parameters
+option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
+*/
+int cccp(int option , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
 {
-
+    soviet::DEBUG = DEBUG;
+    soviet::TESTING = TESTING;
     // Prepare the cccp
     soviet::init();
-    //verifying if the user has entered arguments
-    if (argc < 2) {
-        std::cout << "No arguments given! Terminating...\n";
-        exit(1);
-    }
-    
-    // A way to store the action arguments 
-    // This isnt optimal but i dont know how to do it better
-    actionList action ;
-    // The packages to be installed or removed
-    std::vector<std::string> parameters;
-
-    for (int i = 1;i < argc;i++)
-    {
-        std::string option = argv[i];
-        if (option.substr(0,1) == "-")
-        {
-            if (option.substr(0,2) == "--")
-            {
-
-            }
-            else  
-            {
-                for (int i = 1;i < option.size();i++)
-                {
-                    switch (option[i]) 
-                    {
-                        case 'h' :
-                            // print a real help message ( TODO: improve the message)
-                            soviet::help();
-                            break;
-                        case 's' :
-                            // Synchronize mirrors
-                            break;
-
-                        case 'i' :
-                            // Install packages
-                            action = INSTALL_FROM_REPO;
-                            break;
-                        case 'r' :
-                            // Remove packages
-                            action = REMOVE;
-                            break;
-                        case 'u' :
-                            // Update packages
-                            // We are very far from an update system so i wont touch this in a while
-                            break;
-                        case 'c' :
-                            // Check packages
-                            std::cout << "Checking packages...\n";
-                            action = CHECK;
-                            break;
-                        case 'l' :
-                            // List packages
-                            action = LIST;
-                            break;
-                        case 'd' :
-                            // Debug mode
-                            soviet::DEBUG = true;
-                            break;
-                        case 't' :
-                            // Testing mode
-                            soviet::TESTING = true;
-                            break;
-                        case 'g':
-                            // Get packages
-                            action = GET;
-                            break;
-                        case 'p' :
-                            //install local
-                            action = INSTALL_LOCAL;
-                            break;
-                        case 'b' :
-                            //build
-                            action = CREATE;
-                            break;
-                        default:
-                            // Unknown option
-                            std::cout << "Unknown option! Terminating...\n";
-                            break;
-
-                
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (i > 1)
-            {
-                parameters.push_back(option);
-                
-            }
-            else
-            { 
-                soviet::help();
-                std::cout << "No action argument given! Terminating...\n"; 
-                exit(1);
-            }
-        }
-    }
+    //Declaring enum
+    enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
+    // casting the int parameter to an enum for the switch
+    actionList action = (actionList)option ;
     switch (action)
     {   
         case INSTALL_LOCAL :
@@ -288,6 +193,9 @@ int main(int argc, char *argv[])
                 if (soviet::DEBUG) std::cout << "launching creation with " << pkg.packagePath << "\n";
                 pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",get_current_dir_name(),pkg.name.c_str()));
             }
+            break;
+        case HELP:
+            soviet::help();
             break;
         default :
             std::cout << "Action error! Terminating...\n";

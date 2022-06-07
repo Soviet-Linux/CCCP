@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 
 // class stuff
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 
 // parsing data and installing package

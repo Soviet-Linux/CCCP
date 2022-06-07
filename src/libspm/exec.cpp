@@ -6,7 +6,7 @@
 #include <array>
 
 // class stuff
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 std::string soviet::exec(const char* cmd) {
     std::array<char, 128> buffer;

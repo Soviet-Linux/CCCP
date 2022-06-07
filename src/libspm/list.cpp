@@ -3,7 +3,7 @@
 #include <string>
 
 // class stuff
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 void soviet::listPkgs() {
     //open DATA_FILE
     std::ifstream file_spm((INSTALLED_FILE).c_str(), std::ios::in);

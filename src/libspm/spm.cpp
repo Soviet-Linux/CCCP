@@ -8,7 +8,7 @@
 #include "../../lib/nlohmann/json.hpp"
 
 // class thing
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 //using json = nlohmann::json;
 using nlohmann::json;

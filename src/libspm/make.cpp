@@ -6,7 +6,7 @@
 #include <filesystem>
 
 //class stuff
-#include "../../include/cccp.hpp"
+#include "../../include/libspm.hpp"
 
 /*
     All the complexity in this function and really in this entire project if just because we need to track  files installed by a makefile
