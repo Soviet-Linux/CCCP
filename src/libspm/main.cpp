@@ -191,7 +191,7 @@ int cccp(int option , std::vector<std::string> parameters, bool DEBUG=false, boo
                     exit(1);
                 }
                 if (soviet::DEBUG) std::cout << "launching creation with " << pkg.packagePath << "\n";
-                pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",get_current_dir_name(),pkg.name.c_str()));
+                pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
             }
             break;
         case HELP:
