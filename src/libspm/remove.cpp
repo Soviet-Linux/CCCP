@@ -1,4 +1,3 @@
-#include <bits/types/FILE.h>
 #include <iostream>
 #include <string>
 #include <vector>
