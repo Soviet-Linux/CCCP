@@ -15,6 +15,11 @@ void soviet::help()
     std::cout << "-c, --check\t\tCheck if a package is installed!" << std::endl;
     std::cout << "-h, --help\t\tPrint this help message!" << std::endl;
     std::cout << "-s, --sync\t\tSynchronize package file!" << std::endl;
+    std::cout << "-v, --version\t\tPrint the version of the package manager!" << std::endl;
+    std::cout << "-d, --debug\t\tPrint debug messages!" << std::endl;
+    std::cout << "-u, --update\t\tUpdate the package manager!" << std::endl;
+    std::cout << "-t, --testing\t\tTesting mode!" << std::endl;
+    
 
 
 }

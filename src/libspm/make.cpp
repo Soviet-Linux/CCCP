@@ -72,6 +72,7 @@ void soviet::package::make ()
         exec(make_cmd.c_str());
         //debug
         if (DEBUG) std::cout << "build done" << std::endl;
+    
 
         
     }
