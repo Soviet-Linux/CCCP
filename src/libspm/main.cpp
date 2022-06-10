@@ -39,7 +39,7 @@ std::string soviet::MAKE_DIR = soviet::WORK_DIR + "make/";
 std::string soviet::INSTALLED_FILE = soviet::DATA_DIR + "installed.json";
 std::string soviet::ALL_FILE = soviet::DATA_DIR + "all.json";
 // configuraton file
-std::string soviet::CONFIG_FILE = soviet::ROOT + "cccp.conf";
+std::string soviet::CONFIG_FILE = soviet::ROOT + "etc/cccp.conf";
 //package repos
 std::vector<std::string> soviet::REPOS;
 /*
@@ -65,16 +65,19 @@ bool soviet::TESTING;
 parameters are parameters
 option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 */
-int cccp(int option , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
+
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
+
+int cccp(actionList action , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
 {
     soviet::DEBUG = DEBUG;
     soviet::TESTING = TESTING;
     // Prepare the cccp
     soviet::init();
     //Declaring enum
-    enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
+
     // casting the int parameter to an enum for the switch
-    actionList action = (actionList)option ;
+
     switch (action)
     {   
         case INSTALL_LOCAL :
@@ -198,8 +201,8 @@ int cccp(int option , std::vector<std::string> parameters, bool DEBUG=false, boo
             soviet::help();
             break;
         default :
-            std::cout << "Action error! Terminating...\n";
-            exit(1);
+            std::cout << "Action error! ...\n";
+            break;
     }
 
 

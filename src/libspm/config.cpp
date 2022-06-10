@@ -8,6 +8,9 @@
 
 int soviet::readConfig(const std::string& configFilePath)
 {
+    //debug 
+    if (DEBUG) std::cout << "Reading config file: " << configFilePath << std::endl;
+    
     std::map<std::string, std::string> configMap;
     //open config file
     std::ifstream configFile;
@@ -30,6 +33,8 @@ int soviet::readConfig(const std::string& configFilePath)
     }
     // close config file
     configFile.close();
+
+    if (DEBUG) std::cout << "Parsing config data\n";
     // use the option on the soviet thing values
     if (configMap.count("ROOT") > 0)
     {

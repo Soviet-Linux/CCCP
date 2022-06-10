@@ -7,20 +7,27 @@
 
 void soviet::init ()
 {
-    soviet::readConfig(CONFIG_FILE);
+    readConfig(CONFIG_FILE);
 
     // verify is all the DIR exists
-    if (access(soviet::ROOT.c_str(),F_OK)) mkdir(soviet::ROOT.c_str(),0777);
-    if (access(soviet::MAIN_DIR.c_str(),F_OK)) mkdir(soviet::MAIN_DIR.c_str(),0777);
-    if (access(soviet::DATA_DIR.c_str(),F_OK)) mkdir(soviet::DATA_DIR.c_str(),0777);
-    if (access(soviet::WORK_DIR.c_str(),F_OK)) mkdir(soviet::WORK_DIR.c_str(),0777);
-    if (access(soviet::SPM_DIR.c_str(),F_OK)) mkdir(soviet::SPM_DIR.c_str(),0777);
-    if (access(soviet::LOG_DIR.c_str(),F_OK)) mkdir(soviet::LOG_DIR.c_str(),0777);
-    if (access(soviet::BUILD_DIR.c_str(),F_OK)) mkdir(soviet::BUILD_DIR.c_str(),0777);
-    if (access(soviet::MAKE_DIR.c_str(),F_OK)) mkdir(soviet::MAKE_DIR.c_str(),0777);
+    if (access(ROOT.c_str(),F_OK)) mkdir(ROOT.c_str(),0777);
+    else { if (DEBUG) std::cout << "ROOT dir exists\n";}
+    if (access(MAIN_DIR.c_str(),F_OK)) mkdir(MAIN_DIR.c_str(),0777);
+    else { if (DEBUG) std::cout << "MAIN_DIR dir exists\n";}
+    if (access(DATA_DIR.c_str(),F_OK)) mkdir(DATA_DIR.c_str(),0777);
+    else { if (DEBUG) std::cout << "DATA_DIR dir exists\n";}
+    if (access(WORK_DIR.c_str(),F_OK)) mkdir(WORK_DIR.c_str(),0777);
+    else { if (DEBUG) std::cout << "WORK_DIR dir exists\n";}
+    if (access(SPM_DIR.c_str(),F_OK)) mkdir(SPM_DIR.c_str(),0777);
+    else { if (DEBUG) std::cout << "SPM_DIR dir exists\n";}
+    if (access(LOG_DIR.c_str(),F_OK)) mkdir(LOG_DIR.c_str(),0777);
+    else { if (DEBUG) std::cout << "LOG_DIR dir exists\n";}
+    if (access(BUILD_DIR.c_str(),F_OK)) mkdir(BUILD_DIR.c_str(),0777);
+    else { if (DEBUG) std::cout << "BUILD_DIR dir exists\n";}
+    if (access(MAKE_DIR.c_str(),F_OK)) mkdir(MAKE_DIR.c_str(),0777);
 
     // init data
-    if (access(INSTALLED_FILE.c_str(),F_OK)) soviet::init_data();
+    if (access(INSTALLED_FILE.c_str(),F_OK)) init_data();
     if (access(ALL_FILE.c_str(), F_OK))
     {
         std::cout << " Global package data file not found, to download it use -s option!" << std::endl;

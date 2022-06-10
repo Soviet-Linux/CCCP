@@ -22,40 +22,40 @@ SOVIET=soviet
 function libspm()
 {
     echo "Building lib..."
-    SRCS=$(find $LIB_SRC_DIR -name *.cpp)
-    echo $SRCS
-    for FILE in $SRCS; do
-        temp=$(echo $FILE | sed "s/\.cpp/.o/")
-        OBJ_FILE="${temp/$LIB_SRC_DIR/$OBJ_DIR}"
-        if [ $FILE -nt $OBJ_FILE ]; then
-            echo "Compiling $FILE... to $OBJ_FILE"
-            $CXX $CXXFLAGS -c -o $OBJ_FILE $FILE -fPIC
+    LIB_SRCS=$(find $LIB_SRC_DIR -name *.cpp)
+    echo $LIB_SRCS
+    for LIB_FILE in $LIB_SRCS; do
+        temp=$(echo $LIB_FILE | sed "s/\.cpp/.o/")
+        LIB_OBJ_FILE="${temp/$LIB_SRC_DIR/$OBJ_DIR}"
+        if [ $LIB_FILE -nt $LIB_OBJ_FILE ]; then
+            echo "Compiling $LIB_FILE... to $LIB_OBJ_FILE"
+            $CXX $CXXFLAGS -c -o $CCCP_OBJ_FILE $LIB_FILE -fPIC
         fi
-        OBJS="$OBJS $OBJ_FILE"
+        LIB_OBJS="$LIB_OBJS $LIB_OBJ_FILE"
     done
     echo "Linking lib..."
 
-    $CXX -shared -o $BIN_DIR/libspm.so $OBJS
+    $CXX -shared -o $BIN_DIR/libspm.so $LIB_OBJS
     echo "Done."
 }
 function cccp()
 {
     echo "Building cccp..."
-    SRCS=$(find $CCCP_SRC_DIR -name *.cpp)
-    echo $SRCS
-    for FILE in $SRCS; do
-        echo $FILE
-        temp=$(echo $FILE | sed "s/\.cpp/.o/")
-        OBJ_FILE="${temp/$CCCP_SRC_DIR/$OBJ_DIR}"
-        if [ $FILE -nt $OBJ_FILE ]; then
-            echo "Compiling $FILE... to $OBJ_FILE"
-            $CXX $CXXFLAGS -c -o $OBJ_FILE $FILE 
+    CCCP_SRCS=$(find $CCCP_SRC_DIR -name *.cpp)
+    echo $CCCP_SRCS
+    for CCCP_FILE in $CCCP_SRCS; do
+        echo $CCCP_FILE
+        temp=$(echo $CCCP_FILE | sed "s/\.cpp/.o/")
+        CCCP_OBJ_FILE="${temp/$CCCP_SRC_DIR/$OBJ_DIR}"
+        if [ $CCCP_FILE -nt $CCCP_OBJ_FILE ]; then
+            echo "Compiling $CCCP_FILE... to $CCCP_OBJ_FILE"
+            $CXX $CXXFLAGS -c -o $CCCP_OBJ_FILE $CCCP_FILE 
         fi
-        OBJS="$OBJS $OBJ_FILE"
+        CCCP_OBJS="$CCCP_OBJS $CCCP_OBJ_FILE"
     done
     echo "Linking cccp..."
-    echo " $CXX $CXXFLAGS -o $BIN_DIR/cccp $OBJS -fPIC -lspm"
-    $CXX -L$LIBSPM_DIR $CXXFLAGS -o $BIN_DIR/cccp $OBJS -fPIC -lspm
+    echo " $CXX $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS -fPIC -lspm"
+    $CXX -L$LIBSPM_DIR $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS -lspm
     echo "Done."
 }
 

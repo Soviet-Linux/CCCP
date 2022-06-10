@@ -1,19 +1,24 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unistd.h>
 
 #include "cccp.h"
 
 // Main function
 int main(int argc, char *argv[])
 {
-
-    enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
-
+    // checking if cccp is run as root
+    if (getuid()) 
+    {
+        std::cout << "You need to be root to perform the operation ! " << std::endl;
+        return 1;
+    }
     //verifying if the user has entered arguments
-    if (argc < 2) {
+    if (argc < 2) 
+    {
         std::cout << "No arguments given! Terminating...\n";
-        exit(1);
+        return 1;
     }
     bool DEBUG = false;
     bool TESTING = false;
@@ -111,6 +116,8 @@ int main(int argc, char *argv[])
             }
         }
     }
+    if (DEBUG) std::cout << "calling libspm with parsed args" << std::endl;
     cccp(action,parameters,DEBUG,TESTING);
+    if (DEBUG) std::cout << "Libspm call succesfull" << std::endl;
     return 0;
 }
