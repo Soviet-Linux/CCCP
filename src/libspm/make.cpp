@@ -23,6 +23,10 @@
 */
 void soviet::package::make ()
 {
+    std::string cmd_params = "";
+    
+    //If debug is not enabled , reidrecting all command output to /dev/null
+    if (!DEBUG) cmd_params = "&> /dev/null";
     /*
         We have some problems here , because some complex packages require advanced options to be installed 
         (like glibc that wants a separate build dir )
@@ -52,24 +56,24 @@ void soviet::package::make ()
     if (!prepare_info.empty())
     {
         //formatting the prepare command
-        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s )",BUILD_DIR.c_str(),package_dir.c_str(),prepare_info.c_str());
+        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",BUILD_DIR.c_str(),package_dir.c_str(),prepare_info.c_str());
 
         //Printing the command to the terminal
         if (DEBUG) std::cout << prepare_cmd << std::endl;
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        exec(prepare_cmd.c_str());
+        system((prepare_cmd + cmd_params).c_str());
         //debug
         std::cout << "prepare command executed" << std::endl;
     }
     if (!build_info.empty())
     {
         //Formating the command
-        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s )",BUILD_DIR.c_str(),package_dir.c_str(),build_info.c_str());
+        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",BUILD_DIR.c_str(),package_dir.c_str(),build_info.c_str());
         // printing the command to standard output 
         if (DEBUG) std::cout << make_cmd << std::endl;
         //executing the command
-        exec(make_cmd.c_str());
+        system((make_cmd + cmd_params).c_str());
         //debug
         if (DEBUG) std::cout << "build done" << std::endl;
     
@@ -80,7 +84,7 @@ void soviet::package::make ()
     // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
     if (soviet::TESTING && !test_info.empty()) 
     {
-        std::string test_result  = exec(format("( cd %s  &&  %s )",package_dir.c_str(),test_info.c_str()));
+        std::string test_result  = exec(format("( cd %s  &&  %s ) ",package_dir.c_str(),test_info.c_str()));
         std::ofstream log_file;
         log_file.open(format("%s/%s.test",LOG_DIR.c_str(),name.c_str()));
         log_file << test_result << std::endl;
@@ -91,13 +95,13 @@ void soviet::package::make ()
     //installing the package in the build directory
 
     //formatting the install command
-    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s )",soviet::BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
+    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s ) ",soviet::BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
 
     //printing , for debugging purposes
     if (DEBUG) std::cout << install_cmd << std::endl; 
 
     //And finally , executing the install command
-    exec(install_cmd.c_str());
+    system((install_cmd + cmd_params).c_str());
 
     //debug
     if (DEBUG) std::cout << "install done" << std::endl;

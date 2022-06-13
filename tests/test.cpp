@@ -1,7 +1,8 @@
 
-#include "../include/cccp.hpp"
+#include "../include/libspm.hpp"
 #include <cstdio>
 #include <chrono>
+#include <unistd.h>
 // The filesystem root
 std::string soviet::ROOT = "soviet";
 // For real use it must be set to "/"
@@ -23,14 +24,12 @@ bool soviet::TESTING = true;
 
 void exec_tests();
 void cmd_perfs();
+int tests_on_childrens();
 
 int main()
 {
-    std::cout << "Testing exec functions" << std::endl;
-    exec_tests();
-    std::cout << "Testing exec functions done" << std::endl;
-    std::cout << "mesuring exec() and system() preformances" << std::endl;
-    cmd_perfs();
+    std::cout << "making experiments on childs !" << std::endl;
+
 
 
 }
@@ -75,4 +74,20 @@ void cmd_perfs()
     std::cout << "system took : " << system_duration.count() << " microseconds" << std::endl;
     std::cout << "exec took : " << exec_duration.count() << " microseconds" << std::endl;
     std::cout << "exec results took : " << exec_results_duration.count() << " microseconds" << std::endl;
+}
+int tests_on_childrens()
+{
+    int pid = fork();
+    if (pid > 0)
+    {
+        printf("I'm the parent with pid: %d, and created child with %d\n", getpid(), pid);
+    }
+    else if (pid == 0)
+    {
+        printf("I'm the daughter with pid: %d and parent is %d\n", getpid(), getppid());
+    }
+    else // pid == -1
+    {
+        printf("fork() faled\n");
+    }
 }

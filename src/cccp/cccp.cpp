@@ -5,6 +5,9 @@
 
 #include "cccp.h"
 
+// This needs to be the same than in libspm/main.cpp or it will explode 
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
+
 // Main function
 int main(int argc, char *argv[])
 {
@@ -117,7 +120,7 @@ int main(int argc, char *argv[])
         }
     }
     if (DEBUG) std::cout << "calling libspm with parsed args" << std::endl;
-    cccp(action,parameters,DEBUG,TESTING);
+    cccp(int(action),parameters,DEBUG,TESTING);
     if (DEBUG) std::cout << "Libspm call succesfull" << std::endl;
     return 0;
 }

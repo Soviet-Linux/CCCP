@@ -68,7 +68,7 @@ option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHE
 
 enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
 
-int cccp(actionList action , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
+int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
 {
     soviet::DEBUG = DEBUG;
     soviet::TESTING = TESTING;
@@ -77,6 +77,8 @@ int cccp(actionList action , std::vector<std::string> parameters, bool DEBUG=fal
     //Declaring enum
 
     // casting the int parameter to an enum for the switch
+    // this isnt optimal for c++ use but its better for compatibility with other languages like rust or python
+    actionList action = (actionList)actionInt;
 
     switch (action)
     {   
