@@ -66,7 +66,7 @@ parameters are parameters
 option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 */
 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN};
 
 int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
 {
@@ -201,6 +201,9 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
             break;
         case HELP:
             soviet::help();
+            break;
+        case CLEAN:
+            soviet::clean();
             break;
         default :
             std::cout << "Action error! ...\n";

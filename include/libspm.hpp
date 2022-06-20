@@ -137,7 +137,7 @@ namespace soviet {
             void get_locations();
             int check_dependencies ();
             void move_binaries();
-            void make ();
+            int make ();
 
             // Set of function that manipulate spm files
             nlohmann::json open_spm (const std::string& spm_path );
@@ -160,6 +160,7 @@ namespace soviet {
     int readConfig(const std::string& configFilePath);
     void init();
     void sync();
+    void clean();
     
 }
 

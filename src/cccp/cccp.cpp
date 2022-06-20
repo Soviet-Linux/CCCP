@@ -6,7 +6,7 @@
 #include "cccp.h"
 
 // This needs to be the same than in libspm/main.cpp or it will explode 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE};
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN};
 
 // Main function
 int main(int argc, char *argv[])
@@ -70,6 +70,11 @@ int main(int argc, char *argv[])
                             // Check packages
                             std::cout << "Checking packages...\n";
                             action = CHECK;
+                            break;
+                        case 'C' :
+                            // Clean packages
+                            std::cout << "Cleaning work dirs...\n";
+                            action = CLEAN;
                             break;
                         case 'l' :
                             // List packages

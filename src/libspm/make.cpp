@@ -21,7 +21,7 @@
     (I tried , but its not good enough)
 
 */
-void soviet::package::make ()
+int soviet::package::make ()
 {
     std::string cmd_params = "";
     
@@ -62,7 +62,7 @@ void soviet::package::make ()
         if (DEBUG) std::cout << prepare_cmd << std::endl;
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        system((prepare_cmd + cmd_params).c_str());
+        if (system((prepare_cmd + cmd_params).c_str())) return 1;
         //debug
         std::cout << "prepare command executed" << std::endl;
     }
@@ -73,7 +73,7 @@ void soviet::package::make ()
         // printing the command to standard output 
         if (DEBUG) std::cout << make_cmd << std::endl;
         //executing the command
-        system((make_cmd + cmd_params).c_str());
+        if (system((make_cmd + cmd_params).c_str())) return 1;
         //debug
         if (DEBUG) std::cout << "build done" << std::endl;
     
@@ -101,11 +101,13 @@ void soviet::package::make ()
     if (DEBUG) std::cout << install_cmd << std::endl; 
 
     //And finally , executing the install command
-    system((install_cmd + cmd_params).c_str());
+    if (system((install_cmd + cmd_params).c_str())) return 1;
 
     //debug
     if (DEBUG) std::cout << "install done" << std::endl;
     
+    return 0;
+
     /*
     //moving temporary spm files to build dir to match bin package look
     if (DEBUG) std::cout << rename(format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()),format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str())) << "\n";

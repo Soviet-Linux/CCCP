@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
@@ -69,7 +70,12 @@ void soviet::package::installFile()
 
         // building the package and getting the locations
         //making package
-        make();
+        if (make())
+        {
+            //an error as occured
+            std::cout << "an error has occured ! its bad , do something !" << std::endl;
+            exit(1);
+        }
 
         // I want to make a fancy auto-dection of dependencies using ldd
         // TODO: Do this later
@@ -85,7 +91,7 @@ void soviet::package::installFile()
         //executing post installation scripts
         if (!special_info.empty()) 
         {
-            system((BUILD_DIR + special_info).c_str());  
+            system(format("(cd %s && %s ) ",MAKE_DIR.c_str(),special_info.c_str()));  
         }
         else 
         {
@@ -175,7 +181,7 @@ void soviet::package::installFile()
         //executing post installation scripts
         if (!special_info.empty()) 
         {
-            system((BUILD_DIR + special_info).c_str());  
+            system(format("(cd %s && %s ) ",BUILD_DIR.c_str(),special_info.c_str())); 
         }
         else 
         {

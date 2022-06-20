@@ -9,9 +9,14 @@
 // This function will check if all dependencies of a package are installed
 int soviet::package::check_dependencies () 
 {
-    //TODO : check if the dependencies are installed
-    //
-    //Print the dependencies
+    if(DEBUG) std::cout << "Checking dependencies..." << std::endl;
+
+    if (dependencies.size() == 0)
+    {
+        if(DEBUG) std::cout << "No dependencies to check" << std::endl;
+        return 1;
+    }
+
     if (dependencies[0] == "base")
     {
         std::cout << "this packages requires the base system , no dependencies checking!\n";
@@ -22,15 +27,19 @@ int soviet::package::check_dependencies ()
         {
             // TODO: implement vesrion checking
             // is use the C function because my clangd server doesnt recognize the fucking std::filesystem thing and it bothered me 
-            if (access((DATA_DIR + dependencies[i] + ".spm").c_str(),F_OK))
+            std::string dep_spm_path = soviet::format("%s%s.spm",SPM_DIR.c_str(),dependencies[i].c_str());
+            if (DEBUG) std::cout << "Checking if dependency data file : " << dep_spm_path << " exists" << std::endl;
+
+            if (!access((dep_spm_path).c_str(),F_OK))
             {
                 std::cout << "dependency " << dependencies[i] << " is installed!\n";
             }
             else {
                 std::cout << "dependency " << dependencies[i] << " is not installed!\n";
-                //install automatically the needed dependency
-                //To do this run install_package
-                //install_package(dependencies[i]);
+                // INstall the required dependencies
+                // idk what to do 
+                // can someone find an idea ? 
+                // something cool
             }
         }
     }
