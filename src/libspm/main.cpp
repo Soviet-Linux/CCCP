@@ -95,17 +95,24 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
 
                 soviet::package pkg;
                 pkg.packagePath = parameters[i];
-                
+
+                std::string packageFile = pkg.packagePath.substr(pkg.packagePath.find_last_of("/")+1,pkg.packagePath.length());
+                if (DEBUG) std::cout << "Package file is " << packageFile << "\n";
+
                 if (pkg.packagePath.length() < 15) 
                 {
                     std::cout << "Package path is too short; maybe it's not a package? Terminating...\n";
                     exit(1);
                 }
-                std::string extension = pkg.packagePath.substr(pkg.packagePath.find_first_of("."),pkg.packagePath.length());
-                pkg.name = pkg.packagePath.substr(0,pkg.packagePath.find_first_of("."));
+                std::string extension = packageFile.substr(packageFile.find_first_of("."),packageFile.length());
+                pkg.name = packageFile.substr(0,packageFile.find_first_of("."));
                 //initialize variables
                 
                 pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
+
+                // debug extension
+                if (DEBUG) std::cout << "Extension is " << extension << "\n";
+                
                 if (extension == ".src.spm.tar.gz")
                 {
                     pkg.type = "src";
@@ -176,7 +183,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
 
                 soviet::package pkg;
                 pkg.packagePath = parameters[i];
-                
+
                 if (pkg.packagePath.length() < 15) 
                 {
                     std::cout << "Package path is too short; maybe it's not a package? Terminating...\n";

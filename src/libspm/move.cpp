@@ -11,6 +11,10 @@ void soviet::package::move_binaries()
 
     std::string move_cmd = format("cp -rfl %s/* %s",BUILD_DIR.c_str(),ROOT.c_str());
     if (DEBUG) std::cout << "Executing move cmd :" << move_cmd << std::endl;
-    system(move_cmd.c_str());
+    if (system(move_cmd.c_str()) != 0)
+    {
+        std::cout << "Error moving binaries, its is bad !" << std::endl;
+        exit(1);
+    }
 
 }
