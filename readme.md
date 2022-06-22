@@ -19,7 +19,7 @@
   </p>
 </p>
 
-![Downloads](https://img.shields.io/github/downloads/Soviet-Linux/CCCP/total) ![Contributors](https://img.shields.io/github/contributors/Soviet-Linux/CCCP?color=dark-green) ![Forks](https://img.shields.io/github/forks/Soviet-Linux/CCCP?style=social) ![Stargazers](https://img.shields.io/github/stars/Soviet-Linux/CCCP?style=social) ![Issues](https://img.shields.io/github/issues/Soviet-Linux/CCCP) ![License](https://img.shields.io/github/license/Soviet-Linux/CCCP) 
+![Contributors](https://img.shields.io/github/contributors/Soviet-Linux/CCCP?color=dark-green) ![Forks](https://img.shields.io/github/forks/Soviet-Linux/CCCP?style=social) ![Stargazers](https://img.shields.io/github/stars/Soviet-Linux/CCCP?style=social) ![Issues](https://img.shields.io/github/issues/Soviet-Linux/CCCP) ![License](https://img.shields.io/github/license/Soviet-Linux/CCCP) 
 
 ## Table Of Contents
 
