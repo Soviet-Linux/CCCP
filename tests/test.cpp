@@ -1,4 +1,5 @@
 
+#include <curl/curl.h>
 #include "../include/libspm.hpp"
 #include <cstdio>
 #include <chrono>
@@ -25,13 +26,16 @@ bool soviet::TESTING = true;
 void exec_tests();
 void cmd_perfs();
 int tests_on_childrens();
+int dowload_test();
+
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
 
 int main()
 {
-    std::cout << "making experiments on childs !" << std::endl;
-
-
-
+   dowload_test();
 }
 
 void exec_tests()
@@ -90,4 +94,27 @@ int tests_on_childrens()
     {
         printf("fork() faled\n");
     }
+    return 0;
+}
+int dowload_test()
+{
+    std::cout << "Testing dowload functions" << std::endl;
+    CURL *curl;
+    FILE *fp;
+    CURLcode res;
+    char *url = "https://github.com/Soviet-Linux/OUR/raw/main/all.json";
+    char outfilename[FILENAME_MAX] = "all.json";
+    curl = curl_easy_init();
+    if (curl) {
+        std::cout << "Downloading " << url << std::endl;
+        fp = fopen(outfilename,"wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        res = curl_easy_perform(curl);
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+        fclose(fp);
+    }
+    return 0;
 }

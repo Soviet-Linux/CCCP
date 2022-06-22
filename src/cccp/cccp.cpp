@@ -6,7 +6,7 @@
 #include "cccp.h"
 
 // This needs to be the same than in libspm/main.cpp or it will explode 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN};
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN,SYNC};
 
 // Main function
 int main(int argc, char *argv[])
@@ -51,7 +51,10 @@ int main(int argc, char *argv[])
                             action = HELP;
                             break;
                         case 's' :
+                            //debug
+                            std::cout << "Synchronizing the repositories package files from fontend\n";    
                             // Synchronize mirrors
+                            action = SYNC;
                             break;
 
                         case 'i' :
@@ -124,7 +127,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    if (DEBUG) std::cout << "calling libspm with parsed args" << std::endl;
+    if (DEBUG) std::cout << "calling libspm with parsed args "<< int(action) << std::endl;
     cccp(int(action),parameters,DEBUG,TESTING);
     if (DEBUG) std::cout << "Libspm call succesfull" << std::endl;
     return 0;

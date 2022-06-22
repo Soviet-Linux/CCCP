@@ -13,9 +13,12 @@
 
 void soviet::package::get()
 {
+    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",TMP_DIR.c_str(), name.c_str(), type.c_str());
+    
+
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
-    /*
+    
     // check if ALL_FILE exists
     if (access((ALL_FILE).c_str(),F_OK))
     {
@@ -42,6 +45,7 @@ void soviet::package::get()
 
         
     }
+    if (DEBUG) std::cout << "Loading " << ALL_FILE << std::endl;
     // verify if package exists
     // parse ALL_FILE and check if the package is there
     std::ifstream file_spm((ALL_FILE).c_str(), std::ios::in);
@@ -49,25 +53,33 @@ void soviet::package::get()
     buffer << file_spm.rdbuf();
     //parsing json data
     auto all_pkgs = json::parse(buffer.str());
+    if (DEBUG) std::cout << "Parsing " << ALL_FILE << std::endl;
     // check if the package is there
     // this solution is pretty bad
     // TODO : improve it
     for (int i = 0; i < all_pkgs["all"].size(); i++)
     {
-        std::string pkg_name = all_pkgs["package_list"][i]["name"];
+        std::string pkg_name = all_pkgs["all"][i]["name"];
         if (pkg_name  == name )
         {
-            type = all_pkgs["package_list"][i]["type"];
-            version = all_pkgs["package_list"][i]["version"];
+            type = all_pkgs["all"][i]["type"];
+            version = all_pkgs["all"][i]["version"];
             break;
         }
     }
+    if (DEBUG) std::cout << "Package " << name << " " << version << " " << type << " found" << std::endl;
     // loop through REPOS
     for (int i = 0;i < REPOS.size();i++)
     {
         // get the url
         std::string repo = REPOS[i];
-        std::string url = format("%s/ALL/%s-%s.%s.spm.tar.gz",repo.c_str(),name.c_str(),version.c_str(),type.c_str());
+        std::string url = format("%sbase/%s/%s.%s.spm.tar.gz",repo.c_str(),type.c_str(),name.c_str(),type.c_str());
+        
+        std::string download_cmd = format("wget -O %s %s --no-check-certificate",packagePath.c_str(),url.c_str());
+
+        if (!system(download_cmd.c_str())) {break;}
+
+        /*
         CURL *curl;
         FILE *fp;
         CURLcode res;
@@ -81,11 +93,17 @@ void soviet::package::get()
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
             res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
-            fclose(fp);[\u@\h \W]\$
+            fclose(fp);
 
+        }
+        */
+
+    
     }
-    */
+
+    
 }
+
 /*
 Some explanation about the ALL_FILE
 Its a file where all packages names are stored

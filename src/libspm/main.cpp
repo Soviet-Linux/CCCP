@@ -9,6 +9,7 @@ Thank you for your help :)
 #include <cstdlib>
 #include <stdexcept>
 #include <string>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
 
@@ -40,6 +41,9 @@ std::string soviet::INSTALLED_FILE = soviet::DATA_DIR + "installed.json";
 std::string soviet::ALL_FILE = soviet::DATA_DIR + "all.json";
 // configuraton file
 std::string soviet::CONFIG_FILE = soviet::ROOT + "etc/cccp.conf";
+// dir where we store temporary files
+std::string soviet::TMP_DIR ="/tmp/spm.tmp.d/";
+
 //package repos
 std::vector<std::string> soviet::REPOS;
 /*
@@ -66,10 +70,12 @@ parameters are parameters
 option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 */
 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN};
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN,SYNC};
 
 int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
 {
+
+
     soviet::DEBUG = DEBUG;
     soviet::TESTING = TESTING;
     // Prepare the cccp
@@ -79,6 +85,9 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
     // casting the int parameter to an enum for the switch
     // this isnt optimal for c++ use but its better for compatibility with other languages like rust or python
     actionList action = (actionList)actionInt;
+
+    // debug
+    if (soviet::DEBUG) std::cout << "Libspm called with action " << actionInt << std::endl;
 
     switch (action)
     {   
@@ -169,7 +178,10 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 std::cout << "Getting " << parameters[i] << "\n";
                 soviet::package pkg;
                 pkg.name = parameters[i];
+                mkdir(soviet::TMP_DIR.c_str(),0777);
                 pkg.get();
+                pkg.installFile();
+                std::filesystem::remove_all(soviet::TMP_DIR);
             }
             break;
         case CREATE:
@@ -211,6 +223,10 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
             break;
         case CLEAN:
             soviet::clean();
+            break;
+        case SYNC:
+            std::cout << "Syncing package files\n";
+            soviet::sync();
             break;
         default :
             std::cout << "Action error! ...\n";

@@ -9,7 +9,7 @@ CCCP_SRC_DIR=src/cccp
 OBJ_DIR=obj
 BIN_DIR=./bin
 
-CFLAGS="-Wall -Wextra  -pedantic -O2 -g"
+CFLAGS="-Wall -Wextra  -pedantic -O2 -g "
 CXXFLAGS="$CFLAGS -std=c++17"
 
 LIB_SRC_DIR=src/libspm
@@ -30,7 +30,7 @@ function libspm()
         LIB_OBJ_FILE="${temp/$LIB_SRC_DIR/$OBJ_DIR}"
         if [ $LIB_FILE -nt $LIB_OBJ_FILE ]; then
             echo "Compiling $LIB_FILE... to $LIB_OBJ_FILE"
-            echo "$CXX $CXXFLAGS -c -o $CCCP_OBJ_FILE $LIB_FILE -fPIC"
+            echo "$CXX $CXXFLAGS -c -o $CCCP_OBJ_FILE $LIB_FILE -fPIC "
             $CXX $CXXFLAGS -c -o $LIB_OBJ_FILE $LIB_FILE -fPIC
         fi
         LIB_OBJS="$LIB_OBJS $LIB_OBJ_FILE"

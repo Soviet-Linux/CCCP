@@ -34,6 +34,9 @@ namespace soviet {
     extern std::string BUILD_DIR;
     // Dir where the package sources are downloaded and built
     extern std::string MAKE_DIR;
+    // temp dir
+    extern std::string TMP_DIR;
+
     //The file where a lot of data are stored
     extern std::string INSTALLED_FILE;
     extern std::string ALL_FILE;
@@ -128,7 +131,6 @@ namespace soviet {
             void uninstall();
             bool check();
             void installFile();
-            void installFromRepo();
             void createBinary(const std::string& binPath);
             
         private :
