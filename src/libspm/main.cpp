@@ -4,7 +4,7 @@ My function and variables names are awful , I know.
 Good luck to everyone that will try to understand this shit.
 Thank you for your help :)
 */
-
+#define RELEASE 0.1
 
 #include <cstdlib>
 #include <stdexcept>
@@ -70,7 +70,7 @@ parameters are parameters
 option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 */
 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN,SYNC};
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
 
 int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
 {
@@ -237,6 +237,10 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
     //Returning 0 means the program ran successfully
     // 
     return 0;
+}
+float version()
+{
+    return (float)RELEASE;
 }
 
 /*

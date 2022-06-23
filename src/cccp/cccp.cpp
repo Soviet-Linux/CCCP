@@ -6,7 +6,7 @@
 #include "cccp.h"
 
 // This needs to be the same than in libspm/main.cpp or it will explode 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET,HELP,UPDATE,CLEAN,SYNC};
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
 
 // Main function
 int main(int argc, char *argv[])
@@ -38,6 +38,51 @@ int main(int argc, char *argv[])
         {
             if (option.substr(0,2) == "--")
             {
+                std::string longOption = option.substr(2,option.length());
+                // if else s
+                if (longOption == "help") { 
+                    action = HELP;
+                }
+                else if (longOption == "sync") { 
+                    action = SYNC;
+                }
+                else if (longOption == "clean") { 
+                    action = CLEAN;
+                }
+                else if (longOption == "update") { 
+                    action = UPDATE;
+                }
+                else if (longOption == "version") { 
+                    std::cout << "CCCP C++ front-end version " << RELEASE << std::endl;
+                    std::cout << "LIBSPM C++ version " << version() << std::endl;
+                    return 0;
+                }
+                else if (longOption == "debug") { 
+                    DEBUG = true;
+                }
+                else if (longOption == "testing") { 
+                    TESTING = true;
+                }
+                else if (longOption == "check") { 
+                    action = CHECK;
+                }
+                else if (longOption == "list") { 
+                    action = LIST;
+                }
+                else if (longOption == "remove") { 
+                    action = REMOVE;
+                }
+                else if (longOption == "binary") { 
+                    action = CREATE;
+                }
+                else if (longOption == "package") { 
+                    action = INSTALL_LOCAL;
+                }
+                else if (longOption == "install") {
+                     action = INSTALL_FROM_REPO;
+                }
+                else { std::cout << "Unknown option " << option << "! Terminating...\n"; return 1;}
+
 
             }
             else  
@@ -91,10 +136,6 @@ int main(int argc, char *argv[])
                             // Testing mode
                             TESTING = true;
                             break;
-                        case 'g':
-                            // Get packages
-                            action = GET;
-                            break;
                         case 'p' :
                             //install local
                             action = INSTALL_LOCAL;
@@ -103,6 +144,10 @@ int main(int argc, char *argv[])
                             //build
                             action = CREATE;
                             break;
+                        case 'v' :
+                            std::cout << "CCCP C++ front-end version " << RELEASE << std::endl;
+                            std::cout << "LIBSPM C++ version " << version() << std::endl;
+                            return 0;
                         default:
                             // Unknown option
                             std::cout << "Unknown option! Terminating...\n";
