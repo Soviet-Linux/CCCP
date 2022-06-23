@@ -87,7 +87,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
     actionList action = (actionList)actionInt;
 
     // debug
-    if (soviet::DEBUG) std::cout << "Libspm called with action " << actionInt << std::endl;
+    soviet::msg(soviet::level::DBG, "Libspm called with action %s" , std::to_string(actionInt).c_str());
 
     switch (action)
     {   
@@ -96,22 +96,21 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
             // Verify if parameters are given
             if (parameters.empty())
             {      
-                std::cout << "No packages specified! Terminating...\n";
+                soviet::msg(soviet::level::FATAL, "No packages specified! Terminating...");
             }         
             for (int i = 0;i < parameters.size();i++)
             {
-                std::cout << "Installing " << parameters[i] << "\n";
+                soviet::msg(soviet::level::INFO, "Installing %s", parameters[i].c_str());
 
                 soviet::package pkg;
                 pkg.packagePath = parameters[i];
 
                 std::string packageFile = pkg.packagePath.substr(pkg.packagePath.find_last_of("/")+1,pkg.packagePath.length());
-                if (DEBUG) std::cout << "Package file is " << packageFile << "\n";
+                soviet::msg(soviet::level::DBG, "Package file is %s", packageFile.c_str());
 
                 if (pkg.packagePath.length() < 15) 
                 {
-                    std::cout << "Package path is too short; maybe it's not a package? Terminating...\n";
-                    exit(1);
+                    soviet::msg(soviet::level::FATAL, "Package path is too short; maybe it's not a package? Terminating...");
                 }
                 std::string extension = packageFile.substr(packageFile.find_first_of("."),packageFile.length());
                 pkg.name = packageFile.substr(0,packageFile.find_first_of("."));
@@ -120,7 +119,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
 
                 // debug extension
-                if (DEBUG) std::cout << "Extension is " << extension << "\n";
+                soviet::msg(soviet::level::DBG, "Extension is %s", extension.c_str());
                 
                 if (extension == ".src.spm.tar.gz")
                 {
@@ -132,17 +131,16 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 }
                 else 
                 {
-                    std::cout << "The file is not a package. Terminating...\n";
-                    exit(1);
+                    soviet::msg(soviet::level::FATAL, "Package is not a valid package! Terminating...");
                 }
-                if (soviet::DEBUG) std::cout << "launching installation with " << pkg.packagePath << "\n";
+                soviet::msg(soviet::level::DBG, "Launching installation with %s", pkg.packagePath.c_str());
                 pkg.installFile();
             }
             break;
         case REMOVE :
             for (int i = 0;i < parameters.size();i++)
             {
-                std::cout << "Removing " << parameters[i] << "\n";
+                soviet::msg(soviet::level::INFO, "Removing %s", parameters[i].c_str());
                 soviet::package pkg;
                 pkg.name = parameters[i];
                 pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
@@ -151,20 +149,22 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
             }
             break;
         case LIST :
-            std::cout << "Listing packages\n";
+            soviet::msg(soviet::level::INFO, "Listing packages");
             soviet::listPkgs();
         case CHECK :
             for (int i = 0;i < parameters.size();i++)
             {
-                std::cout << "Checking " << parameters[i] << "\n";
+                soviet::msg(soviet::level::INFO, "Checking %s", parameters[i].c_str());
+
                 soviet::package pkg;
                 pkg.name = parameters[i];
                 pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
                 // debug
-                if (soviet::DEBUG) std::cout << "launching check for "<< pkg.name << " with " << pkg.dataSpmPath << "\n";
+                soviet::msg(soviet::level::DBG, "Launching check for %s with %s", pkg.name.c_str(), pkg.dataSpmPath.c_str());
                 if (pkg.check())
                 {
                     std::cout << "Package " << parameters[i] << " is installed and good!\n";
+
                 }
                 else 
                 {
@@ -175,7 +175,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
         case INSTALL_FROM_REPO :
             for (int i = 0;i < parameters.size();i++)
             {
-                std::cout << "Getting " << parameters[i] << "\n";
+                soviet::msg(soviet::level::INFO, "Getting %s", parameters[i].c_str());
                 soviet::package pkg;
                 pkg.name = parameters[i];
                 mkdir(soviet::TMP_DIR.c_str(),0777);
@@ -187,19 +187,19 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
         case CREATE:
             if (parameters.empty())
             {      
-                std::cout << "No packages specified! Terminating...\n";
+                soviet::msg(soviet::level::FATAL, "No packages specified! Terminating...");
             }         
             for (int i = 0;i < parameters.size();i++)
             {
-                std::cout << "Creating binary package from " << parameters[i] << "\n";
+
+                soviet::msg(soviet::level::INFO, "Creating binary package from %s", parameters[i].c_str());
 
                 soviet::package pkg;
                 pkg.packagePath = parameters[i];
 
                 if (pkg.packagePath.length() < 15) 
                 {
-                    std::cout << "Package path is too short; maybe it's not a package? Terminating...\n";
-                    exit(1);
+                    soviet::msg(soviet::level::FATAL, "Package path is too short; maybe it's not a package? Terminating...");
                 }
                 std::string extension = pkg.packagePath.substr(pkg.packagePath.find_first_of("."),pkg.packagePath.length());
                 pkg.name = pkg.packagePath.substr(0,pkg.packagePath.find_first_of("."));
@@ -211,10 +211,9 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                     pkg.type = "src";
                 }
                 else {
-                    std::cout << "The file is not a SOURCE package. Terminating...\n";
-                    exit(1);
+                    soviet::msg(soviet::level::ERROR, "The file is not a SOURCE package. Terminating...");
                 }
-                if (soviet::DEBUG) std::cout << "launching creation with " << pkg.packagePath << "\n";
+                soviet::msg(soviet::level::DBG, "Launching creation with %s", pkg.packagePath.c_str());
                 pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
             }
             break;
@@ -225,11 +224,11 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
             soviet::clean();
             break;
         case SYNC:
-            std::cout << "Syncing package files\n";
+            soviet::msg(soviet::level::INFO, "Syncing package files");
             soviet::sync();
             break;
         default :
-            std::cout << "Action error! ...\n";
+            soviet::msg(soviet::level::FATAL, "Action error! ...\n");
             break;
     }
 

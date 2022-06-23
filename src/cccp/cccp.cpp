@@ -172,8 +172,6 @@ int main(int argc, char *argv[])
             }
         }
     }
-    if (DEBUG) std::cout << "calling libspm with parsed args "<< int(action) << std::endl;
     cccp(int(action),parameters,DEBUG,TESTING);
-    if (DEBUG) std::cout << "Libspm call succesfull" << std::endl;
     return 0;
 }

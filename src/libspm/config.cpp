@@ -9,7 +9,7 @@
 int soviet::readConfig(const std::string& configFilePath)
 {
     //debug 
-    if (DEBUG) std::cout << "Reading config file: " << configFilePath << std::endl;
+    msg(level::DBG, "Reading config file: %s", configFilePath.c_str());
     
     std::map<std::string, std::string> configMap;
     //open config file
@@ -23,8 +23,7 @@ int soviet::readConfig(const std::string& configFilePath)
         std::string key, value;
         key = line.substr(0, line.find_first_of("="));
         value = line.substr(line.find_first_of("=")+1, line.length());
-        // print key and value
-        std::cout << key << ": " << value << std::endl;
+
         // add key and value to map
         configMap[key] = value;
 
@@ -34,7 +33,7 @@ int soviet::readConfig(const std::string& configFilePath)
     // close config file
     configFile.close();
 
-    if (DEBUG) std::cout << "Parsing config data\n";
+    msg(level::DBG, "Parsing config data");
     // use the option on the soviet thing values
     if (configMap.count("ROOT") > 0)
     {
@@ -84,9 +83,10 @@ int soviet::readConfig(const std::string& configFilePath)
             
         }
         REPOS.push_back(temp);
+        // debug stuff
         for (int i = 0;i < REPOS.size();i++)
         {
-            std::cout << REPOS[i] << std::endl;
+            msg(level::DBG, "REPO : " + REPOS[i]);
         }
     }
 

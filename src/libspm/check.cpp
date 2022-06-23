@@ -19,7 +19,7 @@ bool soviet::package::check ()
     }
     else
     {
-        if (soviet::DEBUG) std::cout << "Package data file exists, good!" << std::endl;    
+        msg(level::INFO, "Package data file exists, good!");  
         // Pasing data from the spm file
         var_spm(dataSpmPath);
     } 
@@ -27,7 +27,7 @@ bool soviet::package::check ()
     //it could be empty because of a failed install
     if (locations.empty())
     {
-        if (DEBUG) std::cout << "Do something, there could be some serious shit in the package!!\n";
+        msg(level::DBG, "Package data file is empty, something is wrong!");
         return false;
     }
     //check all the files in the data["locations"]
@@ -38,13 +38,14 @@ bool soviet::package::check ()
             This is a bad way to do  this but i dont have a better idea 
             Again , if you have an idea DM me on discord 
         */
-         if (DEBUG) std::cout << "Checking " << locations[i] << std::endl;
+
+         msg(level::INFO, "Checking %s", locations[i].c_str());
          if (!access(locations[i].c_str(),F_OK)) 
          {
-             if (DEBUG) std::cout << locations[i] << " exists!" << std::endl;
+             msg(level::DBG, "%s exists!", locations[i].c_str());
          }
          else {
-                std::cout << locations[i] << " does not exist!" << std::endl;
+                msg(level::ERROR, "%s does not exist!", locations[i].c_str());
                 return false;
          }
     }

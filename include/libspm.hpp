@@ -162,6 +162,16 @@ namespace soviet {
     void init();
     void sync();
     void clean();
+
+    enum level {
+        DBG,
+        INFO,
+        WARNING,
+        ERROR,
+        FATAL
+    };
+
+    int msg(level msgLevel,const std::string& msg,...);
     
 }
 
