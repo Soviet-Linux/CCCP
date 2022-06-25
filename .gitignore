@@ -4,4 +4,5 @@
 soviet/*
 .DS_Store
 obj/*
+bin/*
 all.json
