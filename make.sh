@@ -31,13 +31,13 @@ function libspm()
         if [ $LIB_FILE -nt $LIB_OBJ_FILE ]; then
             echo "Compiling $LIB_FILE... to $LIB_OBJ_FILE"
             echo "$CXX $CXXFLAGS -c -o $CCCP_OBJ_FILE $LIB_FILE -fPIC "
-            $CXX $CXXFLAGS -c -o $LIB_OBJ_FILE $LIB_FILE -fPIC
+            $CXX $CXXFLAGS -c -o $LIB_OBJ_FILE $LIB_FILE -fPIC -lcurl
         fi
         LIB_OBJS="$LIB_OBJS $LIB_OBJ_FILE"
     done
     echo "Linking lib..."
 
-    $CXX -shared -o $BIN_DIR/libspm.so $LIB_OBJS
+    $CXX -shared -o $BIN_DIR/libspm.so $LIB_OBJS -lcurl
     echo "Done."
 }
 function cccp()
@@ -56,8 +56,8 @@ function cccp()
         CCCP_OBJS="$CCCP_OBJS $CCCP_OBJ_FILE"
     done
     echo "Linking cccp..."
-    echo " $CXX $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS -fPIC -lspm"
-    $CXX -L$LIBSPM_DIR $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS -lspm
+    echo " $CXX $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS  -lspm "
+    $CXX -L$LIBSPM_DIR $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS -lspm -lcurl
     echo "Done."
 }
 
@@ -86,7 +86,7 @@ else
         sudo rm /usr/lib/libspm.so
         sudo rm /usr/bin/cccp
     elif [ $1 = "test" ]; then
-        $CXX $CXXFLAGS -o $BIN_DIR/test tests/test.cpp -lspm
+        $CXX $CXXFLAGS -o $BIN_DIR/test tests/test.cpp -lspm -lcurl
         ./$BIN_DIR/test
     else
         echo "Usage: ./make.sh [lib|cccp]"

@@ -1,10 +1,15 @@
-//#include <curl/curl.h>
+#include <curl/curl.h>
 #include <iostream>
 #include <string>
 #include <unistd.h>
 
 // class stuff
 #include "../../include/libspm.hpp"
+
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
 
 void soviet::sync ()
 {
@@ -19,26 +24,26 @@ void soviet::sync ()
         // if not , download it
         std::cout << "Downloading " << ALL_FILE << " from " << all_url << std::endl;
 
-        /*
-        curl_global_init(CURL_GLOBAL_ALL);
-        CURL *curl = curl_easy_init();
-        curl_easy_setopt(curl, CURLOPT_URL, all_url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data);
-        curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-        curl_global_cleanup();
-        // write the data to ALL_FILE
-        std::ofstream file_spm((ALL_FILE).c_str(), std::ios::out);
-        file_spm << data;
-        file_spm.close();
-
+        
+        CURL *curl;
+        FILE *fp;
+        CURLcode res;
+        curl = curl_easy_init();
+        if (curl) {
+            std::cout << "Downloading " << all_url << std::endl;
+            fp = fopen(ALL_FILE.c_str(),"wb");
+            curl_easy_setopt(curl, CURLOPT_URL, all_url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+            res = curl_easy_perform(curl);
+            /* always cleanup */
+            curl_easy_cleanup(curl);
+            fclose(fp);
+            break;
+        }
         // Idk why but it doent work
-        */
+        
 
-        // temporary solution
-        std::string download_cmd = format("wget -O %s %s --no-check-certificate",ALL_FILE.c_str(),all_url.c_str());
-        system(download_cmd.c_str());
     }
     
     

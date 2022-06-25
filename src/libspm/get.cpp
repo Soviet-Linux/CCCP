@@ -1,5 +1,6 @@
-//#include <curl/curl.h>
+#include <curl/curl.h>
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <unistd.h>
 #include <vector>
@@ -25,7 +26,7 @@ void soviet::package::get()
         // This is the first tim is use a ''' do {...} while(...) ''' loop
         do
         {
-            std::cout << "There are no package data file , do you want to download it ? [y/n]" << std::endl;
+            std::cout << "There are no package data file , do you want to download it ? [y/n]";
             std::cin >> type;
         }
         while(  type != "y" && type != "n");
@@ -73,30 +74,26 @@ void soviet::package::get()
     {
         // get the url
         std::string repo = REPOS[i];
-        std::string url = format("%sbase/%s/%s.%s.spm.tar.gz",repo.c_str(),type.c_str(),name.c_str(),type.c_str());
-        
-        std::string download_cmd = format("wget -O %s %s --no-check-certificate",packagePath.c_str(),url.c_str());
+        std::string url = format("%s/base/%s/%s.%s.spm.tar.gz",repo.c_str(),type.c_str(),name.c_str(),type.c_str());
+        std::cout << "Downloading " << url << std::endl;
 
-        if (!system(download_cmd.c_str())) {break;}
-
-        /*
         CURL *curl;
         FILE *fp;
         CURLcode res;
-        char outfilename[FILENAME_MAX] = "/tmp/test.test";
         curl = curl_easy_init();                                                                                                                                                                                                                                                           
         if (curl)
         {   
-            fp = fopen(outfilename,"wb");
+            fp = fopen(packagePath.c_str(),"wb");
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
             res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
             fclose(fp);
+            break;
 
         }
-        */
+        
 
     
     }

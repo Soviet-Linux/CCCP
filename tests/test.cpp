@@ -102,7 +102,7 @@ int dowload_test()
     CURL *curl;
     FILE *fp;
     CURLcode res;
-    char *url = "https://github.com/Soviet-Linux/OUR/raw/main/all.json";
+    char *url = "https://our.sovietlinux.ml/all.json";
     char outfilename[FILENAME_MAX] = "all.json";
     curl = curl_easy_init();
     if (curl) {
