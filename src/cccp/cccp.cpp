@@ -5,6 +5,7 @@
 
 #include "cccp.h"
 
+//
 // This needs to be the same than in libspm/main.cpp or it will explode 
 enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
 
