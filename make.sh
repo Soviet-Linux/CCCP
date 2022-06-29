@@ -18,7 +18,8 @@ CCCP_SRC_DIR=src/cccp
 LIBSPM_DIR=$BIN_DIR
 
 # This is the path to a soviet chroot
-SOVIET=soviet
+#SOVIET=soviet
+#SOVIET should be an env variable
 
 function libspm()
 {
