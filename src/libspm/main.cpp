@@ -45,7 +45,7 @@ std::string soviet::CONFIG_FILE = soviet::ROOT + "etc/cccp.conf";
 std::string soviet::TMP_DIR ="/tmp/spm.tmp.d/";
 
 //package repos
-std::vector<std::string> soviet::REPOS = {"https://our.sovietlinux.ml"};
+std::vector<std::string> soviet::REPOS;
 /*
 Here is a more detailed look of the default directory structure 
 / --> ROOT

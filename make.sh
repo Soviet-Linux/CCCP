@@ -79,9 +79,11 @@ else
     elif [ $1 = "chroot" ]; then
         cp $BIN_DIR/libspm.so $SOVIET/usr/lib/libspm.so
         cp $BIN_DIR/cccp $SOVIET/usr/bin/cccp
+	echo "REPOS=http://our.sovietlinux.ml" >> $SOVIET/etc/cccp.conf
     elif [ $1 = "install" ]; then
         cp $BIN_DIR/libspm.so /usr/lib/libspm.so
         cp $BIN_DIR/cccp /usr/bin/cccp
+	echo "REPOS=http://our.sovietlinux.ml" >> /etc/cccp.conf
     elif [ $1 = "uninstall" ]; then
         rm /usr/lib/libspm.so
         rm /usr/bin/cccp
