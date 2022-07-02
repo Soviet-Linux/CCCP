@@ -16,6 +16,7 @@ Thank you for your help :)
 #include "../../include/libspm.hpp"
 
 
+
 // The filesystem root
 std::string soviet::ROOT = "/";
 // For real use it must be set to "/"
