@@ -3,5 +3,5 @@
 
 #define RELEASE 0.1
 
-int cccp(int option , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false);
+int cccp(int option , std::vector<std::string> parameters, int DEBUG, bool TESTING=false);
 float version();

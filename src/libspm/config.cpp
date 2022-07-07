@@ -6,10 +6,14 @@
 
 #include "../../include/libspm.hpp"
 
+
+
+
 int soviet::readConfig(const std::string& configFilePath)
 {
+    
     //debug 
-    msg(level::DBG, "Reading config file: %s", configFilePath.c_str());
+    msg(level::DBG1, "Reading config file: %s", configFilePath.c_str());
     
     std::map<std::string, std::string> configMap;
     //open config file
@@ -17,8 +21,14 @@ int soviet::readConfig(const std::string& configFilePath)
     configFile.open(configFilePath);
     // read and parse config file
     std::string line;
+    // Debug int
+    int lnNum = 0;
     while (std::getline(configFile, line))
     {
+        //Debug stuff
+        lnNum++;
+        msg(DBG3, "Parsing line %s : %s", (std::to_string(lnNum)).c_str(),line.c_str());
+
         // split line into key and value
         std::string key, value;
         key = line.substr(0, line.find_first_of("="));
@@ -29,15 +39,17 @@ int soviet::readConfig(const std::string& configFilePath)
 
         // store key and value in map
         configMap[key] = value;
+
     }
     // close config file
     configFile.close();
 
-    msg(level::DBG, "Parsing config data");
+    msg(level::DBG2, "Parsing config data");
     // use the option on the soviet thing values
     if (configMap.count("ROOT") > 0)
     {
         soviet::ROOT = configMap["ROOT"];
+        msg(DBG3, "ROOT : %s", soviet::ROOT.c_str());
     }
     if (configMap.count("MAIN_DIR") > 0)
     {
@@ -86,7 +98,7 @@ int soviet::readConfig(const std::string& configFilePath)
         // debug stuff
         for (int i = 0;i < REPOS.size();i++)
         {
-            msg(level::DBG, "REPO : " + REPOS[i]);
+            msg(level::DBG3, "REPO : " + REPOS[i]);
         }
     }
 

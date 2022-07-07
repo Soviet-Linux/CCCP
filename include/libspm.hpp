@@ -12,7 +12,7 @@ using nlohmann::json;
 
 namespace soviet {
 
-    extern std::map<std::string,std::string> configMap;
+
 
     // The filesystem root
     extern std::string ROOT;
@@ -53,7 +53,7 @@ namespace soviet {
     // so i will use a global variable
     // But if one day you see that this is not enough, you can use the macros
     // Good Night
-    extern bool DEBUG;
+    extern int DEBUG;
     extern bool TESTING;
 
   /*
@@ -164,7 +164,9 @@ namespace soviet {
     void clean();
 
     enum level {
-        DBG,
+        DBG1,
+        DBG2,
+        DBG3,
         INFO,
         WARNING,
         ERROR,

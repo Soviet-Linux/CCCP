@@ -27,6 +27,9 @@ int soviet::package::make ()
     
     //If debug is not enabled , reidrecting all command output to /dev/null
     if (!DEBUG) cmd_params = "&> /dev/null";
+    // this is actually a great piece of code 
+
+    
     /*
         We have some problems here , because some complex packages require advanced options to be installed 
         (like glibc that wants a separate build dir )
@@ -60,22 +63,23 @@ int soviet::package::make ()
 
         //Printing the command to the terminal
         if (DEBUG) std::cout << prepare_cmd << std::endl;
+        msg(DBG3,"Executing prepare command : %s",prepare_cmd.c_str());
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
         if (system((prepare_cmd + cmd_params).c_str())) return 1;
         //debug
-        std::cout << "prepare command executed" << std::endl;
+        msg(DBG1,"prepare command executed !");
     }
     if (!build_info.empty())
     {
         //Formating the command
         std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",BUILD_DIR.c_str(),package_dir.c_str(),build_info.c_str());
-        // printing the command to standard output 
-        if (DEBUG) std::cout << make_cmd << std::endl;
+        // printing the command to standard output if debug is enabled
+        msg(DBG3,"executing build command : %s",make_cmd.c_str());
         //executing the command
         if (system((make_cmd + cmd_params).c_str())) return 1;
         //debug
-        if (DEBUG) std::cout << "build done" << std::endl;
+        msg(DBG1,"Build done !");
     
 
         
@@ -98,13 +102,13 @@ int soviet::package::make ()
     std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s ) ",soviet::BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
 
     //printing , for debugging purposes
-    if (DEBUG) std::cout << install_cmd << std::endl; 
+    msg(DBG3,"Executing install command : %s",install_cmd.c_str());
 
     //And finally , executing the install command
     if (system((install_cmd + cmd_params).c_str())) return 1;
 
     //debug
-    if (DEBUG) std::cout << "install done" << std::endl;
+    msg(DBG1,"Install done !");
     
     return 0;
 

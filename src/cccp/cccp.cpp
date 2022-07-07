@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
         std::cout << "No arguments given! Terminating...\n";
         return 1;
     }
-    bool DEBUG = false;
+    int DEBUG = 0;
     bool TESTING = false;
     // A way to store the action arguments 
     // This isnt optimal but i dont know how to do it better
@@ -132,6 +132,28 @@ int main(int argc, char *argv[])
                         case 'd' :
                             // Debug mode
                             DEBUG = true;
+                            switch (option[i+1]) 
+                            {
+                                case '1' :
+                                    // Debug mode 1
+                                    DEBUG = 1;
+                                    break;
+                                case '2' :  
+                                    // Debug mode 2
+                                    DEBUG = 2;
+                                    break;
+                                case '3' :
+                                    // Debug mode 3
+                                    DEBUG = 3;
+                                    break;
+                                default :
+                                    DEBUG = 1;     
+                            }
+                            //This message is ugly but i cant change it because i cant access the soviet::msg fucntion from here
+                            std::cout << "\033[1m\033[32m" << " DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " << DEBUG <<" debug mode" << std::endl;
+                            // incrementing the i to skip the next character
+                            i++;
+
                             break;
                         case 't' :
                             // Testing mode

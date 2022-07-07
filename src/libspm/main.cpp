@@ -63,7 +63,7 @@ Here is a more detailed look of the default directory structure
             └── make --> MAKE_DIR
 
 */
-bool soviet::DEBUG;
+int soviet::DEBUG;
 bool soviet::TESTING;
 
 /*
@@ -73,7 +73,7 @@ option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHE
 
 enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
 
-int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, bool TESTING=false)
+int cccp(int actionInt , std::vector<std::string> parameters, int DEBUG, bool TESTING=false)
 {
 
 
@@ -88,7 +88,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
     actionList action = (actionList)actionInt;
 
     // debug
-    soviet::msg(soviet::level::DBG, "Libspm called with action %s" , std::to_string(actionInt).c_str());
+    soviet::msg(soviet::level::DBG3, "Libspm called with action %s" , std::to_string(actionInt).c_str());
 
     switch (action)
     {   
@@ -107,7 +107,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 pkg.packagePath = parameters[i];
 
                 std::string packageFile = pkg.packagePath.substr(pkg.packagePath.find_last_of("/")+1,pkg.packagePath.length());
-                soviet::msg(soviet::level::DBG, "Package file is %s", packageFile.c_str());
+                soviet::msg(soviet::level::DBG2, "Package file is %s", packageFile.c_str());
 
                 if (pkg.packagePath.length() < 15) 
                 {
@@ -120,7 +120,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
 
                 // debug extension
-                soviet::msg(soviet::level::DBG, "Extension is %s", extension.c_str());
+                soviet::msg(soviet::level::DBG2, "Extension is %s", extension.c_str());
                 
                 if (extension == ".src.spm.tar.gz")
                 {
@@ -134,7 +134,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 {
                     soviet::msg(soviet::level::FATAL, "Package is not a valid package! Terminating...");
                 }
-                soviet::msg(soviet::level::DBG, "Launching installation with %s", pkg.packagePath.c_str());
+                soviet::msg(soviet::level::DBG1, "Launching installation with %s", pkg.packagePath.c_str());
                 pkg.installFile();
             }
             break;
@@ -161,7 +161,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 pkg.name = parameters[i];
                 pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
                 // debug
-                soviet::msg(soviet::level::DBG, "Launching check for %s with %s", pkg.name.c_str(), pkg.dataSpmPath.c_str());
+                soviet::msg(soviet::level::DBG1, "Launching check for %s with %s", pkg.name.c_str(), pkg.dataSpmPath.c_str());
                 if (pkg.check())
                 {
                     std::cout << "Package " << parameters[i] << " is installed and good!\n";
@@ -214,7 +214,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, bool DEBUG=false, 
                 else {
                     soviet::msg(soviet::level::ERROR, "The file is not a SOURCE package. Terminating...");
                 }
-                soviet::msg(soviet::level::DBG, "Launching creation with %s", pkg.packagePath.c_str());
+                soviet::msg(soviet::level::DBG1, "Launching creation with %s", pkg.packagePath.c_str());
                 pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
             }
             break;

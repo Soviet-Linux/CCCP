@@ -17,6 +17,8 @@ CCCP_SRC_DIR=src/cccp
 
 LIBSPM_DIR=$BIN_DIR
 
+REPO_STR="REPOS=http://our.sovietlinux.ml"
+
 # This is the path to a soviet chroot
 #SOVIET=soviet
 #SOVIET should be an env variable
@@ -80,11 +82,20 @@ else
     elif [ $1 = "chroot" ]; then
         cp $BIN_DIR/libspm.so $SOVIET/usr/lib/libspm.so
         cp $BIN_DIR/cccp $SOVIET/usr/bin/cccp
-	echo "REPOS=http://our.sovietlinux.ml" >> $SOVIET/etc/cccp.conf
+        if  grep -q $REPO_STR $SOVIET/etc/cccp.conf ; then
+            echo "Repo already in cccp.conf"
+        else 
+            echo $REPO_STR >> $SOVIET/etc/cccp.conf
+        fi
     elif [ $1 = "install" ]; then
         cp $BIN_DIR/libspm.so /usr/lib/libspm.so
         cp $BIN_DIR/cccp /usr/bin/cccp
-	echo "REPOS=http://our.sovietlinux.ml" >> /etc/cccp.conf
+	    if  grep -q $REPO_STR "/etc/cccp.conf" ; then
+            echo "Repo already in /etc/cccp.conf"
+        else 
+            echo $REPO_STR >> $SOVIET/etc/cccp.conf
+        fi
+
     elif [ $1 = "uninstall" ]; then
         rm /usr/lib/libspm.so
         rm /usr/bin/cccp
