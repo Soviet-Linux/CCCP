@@ -68,35 +68,20 @@ void soviet::package::get()
             break;
         }
     }
-    msg(FATAL,"Package %s %s %s found",name.c_str(),version.c_str(),type.c_str());
-    // loop through REPOS
-    for (int i = 0;i < vars.REPOS.size();i++)
+    if (type == "")
     {
-        // get the url
-        std::string repo = vars.REPOS[i];
-        std::string url = format("%s/base/%s/%s.%s.spm.tar.gz",repo.c_str(),type.c_str(),name.c_str(),type.c_str());
-        std::cout << "Downloading " << url << std::endl;
-
-        CURL *curl;
-        FILE *fp;
-        CURLcode res;
-        curl = curl_easy_init();                                                                                                                                                                                                                                                           
-        if (curl)
-        {   
-            fp = fopen(packagePath.c_str(),"wb");
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-            res = curl_easy_perform(curl);
-            curl_easy_cleanup(curl);
-            fclose(fp);
-            break;
-
-        }
-        
-
-    
+        msg(FATAL,"Package %s not found",name.c_str());
+        return;
     }
+    else {
+        msg(INFO,"Package %s %s %s found",name.c_str(),version.c_str(),type.c_str());
+    }
+    
+    
+
+    msg(DBG1,"Downloading %s %s %s",name.c_str(),version.c_str(),type.c_str());
+    // loop through REPOS
+    downloadRepo(format("base/src/%s.spm",name.c_str()), packagePath);
 
     
 }

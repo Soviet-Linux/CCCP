@@ -5,9 +5,7 @@
 
 #include "cccp.h"
 
-//
-// This needs to be the same than in libspm/main.cpp or it will explode 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
+configs FConf;
 
 // Main function
 int main(int argc, char *argv[])
@@ -24,8 +22,8 @@ int main(int argc, char *argv[])
         std::cout << "No arguments given! Terminating...\n";
         return 1;
     }
-    int DEBUG = 0;
-    bool TESTING = false;
+    FConf.DEBUG = false;
+    FConf.TESTING = false;
     // A way to store the action arguments 
     // This isnt optimal but i dont know how to do it better
     actionList action ;
@@ -59,10 +57,10 @@ int main(int argc, char *argv[])
                     return 0;
                 }
                 else if (longOption == "debug") { 
-                    DEBUG = true;
+                    FConf.DEBUG = true;
                 }
                 else if (longOption == "testing") { 
-                    TESTING = true;
+                    FConf.TESTING = true;
                 }
                 else if (longOption == "check") { 
                     action = CHECK;
@@ -130,34 +128,34 @@ int main(int argc, char *argv[])
                             action = LIST;
                             break;
                         case 'd' :
-                            // Debug mode
-                            DEBUG = true;
+                            //FConf.DEBUG mode
+                           FConf.DEBUG = true;
                             switch (option[i+1]) 
                             {
                                 case '1' :
-                                    // Debug mode 1
-                                    DEBUG = 1;
+                                    //FConf.DEBUG mode 1
+                                   FConf.DEBUG = 1;
                                     break;
                                 case '2' :  
-                                    // Debug mode 2
-                                    DEBUG = 2;
+                                    //FConf.DEBUG mode 2
+                                   FConf.DEBUG = 2;
                                     break;
                                 case '3' :
-                                    // Debug mode 3
-                                    DEBUG = 3;
+                                    //FConf.DEBUG mode 3
+                                   FConf.DEBUG = 3;
                                     break;
                                 default :
-                                    DEBUG = 1;     
+                                   FConf.DEBUG = 1;     
                             }
                             //This message is ugly but i cant change it because i cant access the soviet::msg fucntion from here
-                            std::cout << "\033[1m\033[32m" << " DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " << DEBUG <<" debug mode" << std::endl;
+                            std::cout << "\033[1m\033[32m" << "FConf.DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " <<FConf.DEBUG <<" debug mode" << std::endl;
                             // incrementing the i to skip the next character
                             i++;
 
                             break;
                         case 't' :
-                            // Testing mode
-                            TESTING = true;
+                            //FConf.TESTING mode
+                           FConf.TESTING = true;
                             break;
                         case 'p' :
                             //install local
@@ -195,6 +193,6 @@ int main(int argc, char *argv[])
             }
         }
     }
-    cccp(int(action),parameters,DEBUG,TESTING);
+    cccp(int(action),parameters,FConf);
     return 0;
 }

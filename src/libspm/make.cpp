@@ -26,7 +26,7 @@ int soviet::package::make ()
     std::string cmd_params = "";
     
     //If debug is not enabled , reidrecting all command output to /dev/null
-    if (!DEBUG) cmd_params = "&> /dev/null";
+    if (vars.QUIET) cmd_params = "&> /dev/null";
     // this is actually a great piece of code 
 
     
@@ -45,7 +45,7 @@ int soviet::package::make ()
     */
     //TODO: resolve this issue (the original TODO was "fix this shit" , but i think "resolve this issue is better")
 
-    std::string package_dir = soviet::format("%s/%s-%s", soviet::MAKE_DIR.c_str(), name.c_str(), version.c_str());
+    std::string package_dir = soviet::format("%s/%s-%s", vars.MAKE_DIR.c_str(), name.c_str(), version.c_str());
 
     /*
         So in this part we are foramtting and executing the commands to configure , compile , test and install the package.
@@ -59,11 +59,10 @@ int soviet::package::make ()
     if (!prepare_info.empty())
     {
         //formatting the prepare command
-        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",BUILD_DIR.c_str(),package_dir.c_str(),prepare_info.c_str());
+        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),prepare_info.c_str());
 
         //Printing the command to the terminal
-        if (DEBUG) std::cout << prepare_cmd << std::endl;
-        msg(DBG3,"Executing prepare command : %s",prepare_cmd.c_str());
+       msg(DBG2,"Executing prepare command : %s",prepare_cmd.c_str());
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
         if (system((prepare_cmd + cmd_params).c_str())) return 1;
@@ -73,7 +72,7 @@ int soviet::package::make ()
     if (!build_info.empty())
     {
         //Formating the command
-        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",BUILD_DIR.c_str(),package_dir.c_str(),build_info.c_str());
+        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),build_info.c_str());
         // printing the command to standard output if debug is enabled
         msg(DBG3,"executing build command : %s",make_cmd.c_str());
         //executing the command
@@ -91,7 +90,7 @@ int soviet::package::make ()
     //installing the package in the build directory
 
     //formatting the install command
-    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s ) ",soviet::BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
+    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
 
     //printing , for debugging purposes
     msg(DBG3,"Executing install command : %s",install_cmd.c_str());
@@ -104,11 +103,4 @@ int soviet::package::make ()
     
     return 0;
 
-    /*
-    //moving temporary spm files to build dir to match bin package look
-    if (DEBUG) std::cout << rename(format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()),format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str())) << "\n";
-    if (soviet::DEBUG) std::cout << "Spm file moved from " << format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) << " to " << format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str()) << "\n";
-    */
-    // WOOW I'm Happy Right Now , it finally got rid af this annying code block above.
-    // I left it as a comment because people need to know what bad code is
 }

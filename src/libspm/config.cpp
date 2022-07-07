@@ -48,36 +48,36 @@ int soviet::readConfig(const std::string& configFilePath)
     // use the option on the soviet thing values
     if (configMap.count("ROOT") > 0)
     {
-        soviet::ROOT = configMap["ROOT"];
-        msg(DBG3, "ROOT : %s", soviet::ROOT.c_str());
+       vars.ROOT = configMap["ROOT"];
+        msg(DBG3, "ROOT : %s", vars.ROOT.c_str());
     }
     if (configMap.count("MAIN_DIR") > 0)
     {
-        soviet::MAIN_DIR = configMap["MAIN_DIR"];
+        vars.MAIN_DIR = configMap["MAIN_DIR"];
     }
     if (configMap.count("DATA_DIR") > 0)
     {
-        soviet::DATA_DIR = configMap["DATA_DIR"];
+        vars.DATA_DIR = configMap["DATA_DIR"];
     }
     if (configMap.count("SPM_DIR") > 0)
     {
-        soviet::SPM_DIR = configMap["SPM_DIR"];
+        vars.SPM_DIR = configMap["SPM_DIR"];
     }
     if (configMap.count("LOG_DIR") > 0)
     {
-        soviet::LOG_DIR = configMap["LOG_DIR"];
+        vars.LOG_DIR = configMap["LOG_DIR"];
     }
     if (configMap.count("WORK_DIR") > 0)
     {
-        soviet::WORK_DIR = configMap["WORK_DIR"];
+        vars.WORK_DIR = configMap["WORK_DIR"];
     }
     if (configMap.count("BUILD_DIR") > 0)
     {
-        soviet::BUILD_DIR = configMap["BUILD_DIR"];
+        vars.BUILD_DIR = configMap["BUILD_DIR"];
     }
     if (configMap.count("MAKE_DIR") > 0)
     {
-        soviet::MAKE_DIR = configMap["MAKE_DIR"];
+        vars.MAKE_DIR = configMap["MAKE_DIR"];
     }
     if (configMap.count("REPOS") > 0)
     {
@@ -86,7 +86,7 @@ int soviet::readConfig(const std::string& configFilePath)
         for(int i=0;i<s.length();++i){
             
             if(s[i]==' '){
-                soviet::REPOS.push_back(temp);
+                vars.REPOS.push_back(temp);
                 temp = "";
             }
             else{
@@ -94,11 +94,11 @@ int soviet::readConfig(const std::string& configFilePath)
             }
             
         }
-        REPOS.push_back(temp);
+        vars.REPOS.push_back(temp);
         // debug stuff
-        for (int i = 0;i < REPOS.size();i++)
+        for (int i = 0;i < vars.REPOS.size();i++)
         {
-            msg(level::DBG3, "REPO : " + REPOS[i]);
+            msg(level::DBG3, "REPO : " + vars.REPOS[i]);
         }
     }
 

@@ -17,69 +17,53 @@ Thank you for your help :)
 #include "../../include/libspm.hpp"
 
 
+// Declaration of the libspm main variables 
+configs soviet::vars;
 
-// The filesystem root
-std::string soviet::ROOT = "/";
-// For real use it must be set to "/"
 
-// main dir where all the files and packages will be stored and where we will work
-std::string soviet::MAIN_DIR = soviet::ROOT + "var/cccp/";
-// the dir where we will be building the packages and downoading the sources
-//  TODO: proper dir names , but i dont have time to do it
-std::string soviet::WORK_DIR = soviet::MAIN_DIR + "work/";
-// the dir where the data is stored
-std::string soviet::DATA_DIR = soviet::MAIN_DIR + "data/";
-// where spm files are stored
-// TODO: urgent , impement that before release
-std::string soviet::SPM_DIR = soviet::MAIN_DIR + "spm/";
-//where we store tests and logs
-std::string soviet::LOG_DIR = soviet::MAIN_DIR + "log/";
-// Dir where built binaries are stored after making or after uncompressing
-std::string soviet::BUILD_DIR = soviet::WORK_DIR + "build/";
-// Dir where the package sources are downloaded and built
-std::string soviet::MAKE_DIR = soviet::WORK_DIR + "make/";
-//The file where a lot of data are stored
-std::string soviet::INSTALLED_FILE = soviet::DATA_DIR + "installed.json";
-std::string soviet::ALL_FILE = soviet::DATA_DIR + "all.json";
-// configuraton file
-std::string soviet::CONFIG_FILE = soviet::ROOT + "etc/cccp.conf";
-// dir where we store temporary files
-std::string soviet::TMP_DIR ="/tmp/spm.tmp.d/";
 
-//package repos
-std::vector<std::string> soviet::REPOS;
-/*
-Here is a more detailed look of the default directory structure 
-/ --> ROOT
-├──etc
-│   └── cccp.conf
-└── var
-    └── cccp --> MAIN_DIR
-        ├── data --> DATA_DIR
-        │   └── packages.json
-        ├── spm --> SPM_DIR
-        ├── log --> LOG_DIR
-        └── work --> WORK_DIR
-            ├── build --> BUILD_DIR (also called $BUILD_ROOT)
-            └── make --> MAKE_DIR
 
-*/
-int soviet::DEBUG;
-bool soviet::;
 
-/*
-parameters are parameters
-option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
-*/
-
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
 
 int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 {
+    /*
+    Here is a more detailed look of the default directory structure 
+    / --> ROOT
+    ├──temp --> TMP_DIR
+    ├──etc
+    │   └── cccp.conf
+    └── var
+        └── cccp --> MAIN_DIR
+            ├── data --> DATA_DIR
+            |   └── packages.json
+            ├── spm --> SPM_DIR
+            ├── log --> LOG_DIR
+            └── work --> WORK_DIR
+                ├── build --> BUILD_DIR (also called $BUILD_ROOT)
+                └── make --> MAKE_DIR
 
-   
-    soviet::DEBUG = spmConfig.DEBUG;
-    soviet::TESTING = spmConfig.TESTING;
+    */
+    soviet::vars.ROOT = "/";
+    soviet::vars.MAIN_DIR = soviet::vars.ROOT + "var/cccp";
+    soviet::vars.DATA_DIR = soviet::vars.MAIN_DIR + "/data";
+    soviet::vars.SPM_DIR = soviet::vars.MAIN_DIR + "/spm";
+    soviet::vars.LOG_DIR = soviet::vars.MAIN_DIR + "/log";
+    soviet::vars.WORK_DIR = soviet::vars.MAIN_DIR + "/work";
+    soviet::vars.BUILD_DIR = soviet::vars.WORK_DIR + "/build";
+    soviet::vars.MAKE_DIR = soviet::vars.WORK_DIR + "/make";
+    soviet::vars.TMP_DIR = soviet::vars.ROOT + "tmp";
+
+    soviet::vars.CONFIG_FILE = "/etc/cccp.conf";
+
+    soviet::vars.ALL_FILE = soviet::vars.DATA_DIR + "/all.json";
+    soviet::vars.INSTALLED_FILE = soviet::vars.DATA_DIR + "/installed.json";
+
+    soviet::vars.DEBUG = spmConfig.DEBUG;
+    soviet::vars.TESTING = spmConfig.TESTING;
+    soviet::vars.OVERWRITE = spmConfig.OVERWRITE;
+    soviet::vars.QUIET = spmConfig.QUIET;
+
     // Prepare the cccp
     soviet::init();
     //Declaring enum
@@ -118,7 +102,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 pkg.name = packageFile.substr(0,packageFile.find_first_of("."));
                 //initialize variables
                 
-                pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
+                pkg.dataSpmPath = soviet::vars.SPM_DIR + pkg.name + ".spm";
 
                 // debug extension
                 soviet::msg(soviet::level::DBG2, "Extension is %s", extension.c_str());
@@ -145,7 +129,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 soviet::msg(soviet::level::INFO, "Removing %s", parameters[i].c_str());
                 soviet::package pkg;
                 pkg.name = parameters[i];
-                pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
+                pkg.dataSpmPath = soviet::vars.SPM_DIR + pkg.name + ".spm";
                 pkg.uninstall();
                 
             }
@@ -160,7 +144,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 
                 soviet::package pkg;
                 pkg.name = parameters[i];
-                pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
+                pkg.dataSpmPath = soviet::vars.SPM_DIR + pkg.name + ".spm";
                 // debug
                 soviet::msg(soviet::level::DBG1, "Launching check for %s with %s", pkg.name.c_str(), pkg.dataSpmPath.c_str());
                 if (pkg.check())
@@ -180,10 +164,10 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 soviet::msg(soviet::level::INFO, "Getting %s", parameters[i].c_str());
                 soviet::package pkg;
                 pkg.name = parameters[i];
-                mkdir(soviet::TMP_DIR.c_str(),0777);
+                mkdir(soviet::vars.TMP_DIR.c_str(),0777);
                 pkg.get();
                 pkg.installFile();
-                std::filesystem::remove_all(soviet::TMP_DIR);
+                std::filesystem::remove_all(soviet::vars.TMP_DIR);
             }
             break;
         case CREATE:
@@ -207,7 +191,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 pkg.name = pkg.packagePath.substr(0,pkg.packagePath.find_first_of("."));
                 //initialize variables
                 
-                pkg.dataSpmPath = soviet::SPM_DIR + pkg.name + ".spm";
+                pkg.dataSpmPath = soviet::vars.SPM_DIR + pkg.name + ".spm";
                 if (extension == ".src.spm.tar.gz")
                 {
                     pkg.type = "src";

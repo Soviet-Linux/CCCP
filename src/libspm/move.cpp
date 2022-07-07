@@ -34,15 +34,16 @@ void soviet::package::move_binaries()
         msg(DBG3,"Checking if %s is empty",locations[i].c_str());
         if (access(locations[i].c_str(),F_OK) == 0)
         {
-            msg(DBG3, "moving %s/%s to %s", BUILD_DIR.c_str(),locations[i].c_str(),locations[i].c_str());
+            msg(DBG3, "moving %s/%s to %s", vars.BUILD_DIR.c_str(),locations[i].c_str(),locations[i].c_str());
             // now that we know it is empty , mov the stuff
-            rename(format("%s/%s",BUILD_DIR.c_str(),locations[i].c_str()),locations[i].c_str());
+            rename(format("%s/%s",vars.BUILD_DIR.c_str(),locations[i].c_str()),locations[i].c_str());
 
         }
         else 
         {
 
             msg(ERROR,"Error, %s is already here",locations[i].c_str());
+
             msg(FATAL, "Terminating the program");
 
         }
