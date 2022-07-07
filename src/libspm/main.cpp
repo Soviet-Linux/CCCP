@@ -4,6 +4,7 @@ My function and variables names are awful , I know.
 Good luck to everyone that will try to understand this shit.
 Thank you for your help :)
 */
+#include <map>
 #define RELEASE 0.1
 
 #include <cstdlib>
@@ -64,7 +65,7 @@ Here is a more detailed look of the default directory structure
 
 */
 int soviet::DEBUG;
-bool soviet::TESTING;
+bool soviet::;
 
 /*
 parameters are parameters
@@ -73,12 +74,12 @@ option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHE
 
 enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
 
-int cccp(int actionInt , std::vector<std::string> parameters, int DEBUG, bool TESTING=false)
+int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 {
 
-
-    soviet::DEBUG = DEBUG;
-    soviet::TESTING = TESTING;
+   
+    soviet::DEBUG = spmConfig.DEBUG;
+    soviet::TESTING = spmConfig.TESTING;
     // Prepare the cccp
     soviet::init();
     //Declaring enum

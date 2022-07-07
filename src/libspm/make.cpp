@@ -85,15 +85,7 @@ int soviet::package::make ()
         
     }
 
-    // executing the package test suite if TESTING is set to true and storing the tests results in the LOG_DIR
-    if (soviet::TESTING && !test_info.empty()) 
-    {
-        std::string test_result  = exec(format("( cd %s  &&  %s ) ",package_dir.c_str(),test_info.c_str()));
-        std::ofstream log_file;
-        log_file.open(format("%s/%s.test",LOG_DIR.c_str(),name.c_str()));
-        log_file << test_result << std::endl;
 
-    }
     
 
     //installing the package in the build directory

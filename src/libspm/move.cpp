@@ -42,7 +42,7 @@ void soviet::package::move_binaries()
         else 
         {
 
-            msg(ERROR,"Error, %s is already here \n",locations[i].c_str());
+            msg(ERROR,"Error, %s is already here",locations[i].c_str());
             msg(FATAL, "Terminating the program");
 
         }

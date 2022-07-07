@@ -27,32 +27,32 @@ void soviet::package::installFile()
     {
         /* All these variables are bad.*/
         //location spm file in build dir
-        std::string spm_build = soviet::format("%s/%s.spm",BUILD_DIR.c_str(),name.c_str());
+        std::string spm_build = soviet::format("%s/%s.spm",vars.BUILD_DIR.c_str(),name.c_str());
 
 
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
         if (!access(dataSpmPath.c_str(), F_OK))
         {
-            std::cout << "Package is already installed, reinstalling..." << std::endl;
+            msg(WARNING, "Package is already installed, reinstalling...");
 
             uninstall();
         }
         else
         {
-            if(soviet::DEBUG) std::cout << "Package is not installed, installing..." << std::endl;
+            msg(DBG1,"Package %s is not installed , installing...",name.c_str());
         }
 
         //comand to  uncompress the .src;spm.tar.gz archive to MAKE_DIR
-        std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),MAKE_DIR.c_str());
+        std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),vars.MAKE_DIR.c_str());
         // if debug is on , print the command
-        if (soviet::DEBUG) std::cout << cmd_uncompress << std::endl;
+        msg(DBG3,"Uncompressing package with %s",cmd_uncompress.c_str());
         //uncompressing <PName>.src.spm.tar.gz in PKG_DIR
         system(cmd_uncompress.c_str());
 
         //debug
-        if(soviet::DEBUG) std::cout << soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()) << std::endl;
+        msg(DBG3, "%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str());
         // Reading spm file in MAKE DIR
-        var_spm(soviet::format("%s/%s.spm",MAKE_DIR.c_str(),name.c_str()));
+        var_spm(soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str()));
         
         // Checking dependencies
         //This dependencies if;else system is deprecated and will be removed in the future
