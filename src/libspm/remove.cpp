@@ -49,7 +49,7 @@ void soviet::package::uninstall()
         */
         try {
             // debug
-            if (DEBUG) std::cout << "Removing " << locations[i] << std::endl;
+            msg(DBG3,"Removing %s",locations[i].c_str());
             remove(locations[i].c_str());
         }
         catch (std::exception& e)

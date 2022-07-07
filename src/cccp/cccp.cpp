@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
                                    FConf.DEBUG = 1;     
                             }
                             //This message is ugly but i cant change it because i cant access the soviet::msg fucntion from here
-                            std::cout << "\033[1m\033[32m" << "FConf.DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " <<FConf.DEBUG <<" debug mode" << std::endl;
+                            std::cout << "\033[1m\033[32m" << " DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " <<FConf.DEBUG <<" debug mode" << std::endl;
                             // incrementing the i to skip the next character
                             i++;
 
