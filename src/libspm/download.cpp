@@ -9,6 +9,9 @@
 namespace soviet {
     int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded)
     {
+        // print the cool stuff 
+        printf("")
+
         // ensure that the file to be downloaded is not empty
         // because that would cause a division by zero error later on
         if (TotalToDownload <= 0.0) {
@@ -50,10 +53,11 @@ namespace soviet {
             CURL *curl;
             FILE *fp;
             CURLcode res;
-            curl = curl_easy_init();                                                                                                                                                                                                                                                           
+            curl = curl_easy_init();      
+            msg(DBG3,"curl_easy_init() returned %p",curl);                                                                                                                                                                                                                                                     
             if (curl)
             {   
-                fp = fopen(url.c_str(),"wb");
+                fp = fopen(file_path.c_str(),"wb");
                 curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
                 curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
                 curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
