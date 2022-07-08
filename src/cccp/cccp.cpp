@@ -22,11 +22,14 @@ int main(int argc, char *argv[])
         std::cout << "No arguments given! Terminating...\n";
         return 1;
     }
+    // setting the main config variables
     FConf.DEBUG = false;
     FConf.TESTING = false;
+    FConf.QUIET = true;
+    FConf.OVERWRITE = false;
     // A way to store the action arguments 
     // This isnt optimal but i dont know how to do it better
-    actionList action ;
+    actionList action = HELP;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
 
@@ -80,6 +83,18 @@ int main(int argc, char *argv[])
                 else if (longOption == "install") {
                      action = INSTALL_FROM_REPO;
                 }
+                else if (longOption == "force" or longOption == "overwrite")
+                {
+                    FConf.OVERWRITE = true;
+                }
+                else if (longOption == "quiet")
+                {
+                    FConf.QUIET = true;
+                }
+                else if (longOption == "verbose")
+                {
+                    FConf.QUIET = false;
+                }
                 else { std::cout << "Unknown option " << option << "! Terminating...\n"; return 1;}
 
 
@@ -96,7 +111,6 @@ int main(int argc, char *argv[])
                             break;
                         case 's' :
                             //debug
-                            std::cout << "Synchronizing the repositories package files from fontend\n";    
                             // Synchronize mirrors
                             action = SYNC;
                             break;
@@ -148,7 +162,7 @@ int main(int argc, char *argv[])
                                    FConf.DEBUG = 1;     
                             }
                             //This message is ugly but i cant change it because i cant access the soviet::msg fucntion from here
-                            std::cout << "\033[1m\033[32m" << " DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " <<FConf.DEBUG <<" debug mode" << std::endl;
+                            std::cout << "\033[1m\033[32m" << " DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " << FConf.DEBUG <<" debug mode" <<  "\033[0m" << std::endl;
                             // incrementing the i to skip the next character
                             i++;
 
@@ -169,6 +183,18 @@ int main(int argc, char *argv[])
                             std::cout << "CCCP C++ front-end version " << RELEASE << std::endl;
                             std::cout << "LIBSPM C++ version " << version() << std::endl;
                             return 0;
+                        case 'f' :
+                            //overwrite
+                            FConf.OVERWRITE = true;
+                            break;
+                        case 'q' :
+                            //quiet
+                            FConf.QUIET = true;
+                            break;  
+                        case 'V' :
+                            //verbose
+                            FConf.QUIET = false;
+                            break;
                         default:
                             // Unknown option
                             std::cout << "Unknown option! Terminating...\n";

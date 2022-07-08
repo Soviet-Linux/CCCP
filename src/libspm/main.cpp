@@ -52,7 +52,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
     soviet::vars.WORK_DIR = soviet::vars.MAIN_DIR + "/work";
     soviet::vars.BUILD_DIR = soviet::vars.WORK_DIR + "/build";
     soviet::vars.MAKE_DIR = soviet::vars.WORK_DIR + "/make";
-    soviet::vars.TMP_DIR = soviet::vars.ROOT + "tmp";
+    soviet::vars.TMP_DIR = soviet::vars.ROOT + "tmp/spm.tmp.d";
 
     soviet::vars.CONFIG_FILE = "/etc/cccp.conf";
 

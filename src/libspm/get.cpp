@@ -81,7 +81,7 @@ void soviet::package::get()
 
     msg(DBG1,"Downloading %s %s %s",name.c_str(),version.c_str(),type.c_str());
     // loop through REPOS
-    downloadRepo(format("base/src/%s.spm",name.c_str()), packagePath);
+    downloadRepo(format("base/src/%s.%s.spm.tar.gz",name.c_str(),type.c_str()), packagePath);
 
     
 }
