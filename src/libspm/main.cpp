@@ -74,6 +74,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 
     // debug
     soviet::msg(soviet::level::DBG3, "Libspm called with action %s" , std::to_string(actionInt).c_str());
+    soviet::msg(soviet::level::DBG3, "DEBUG: %s , TESTING: %s , OVERWRITE: %s , QUIET: %s" , std::to_string(soviet::vars.DEBUG).c_str(), std::to_string(soviet::vars.TESTING).c_str(), std::to_string(soviet::vars.OVERWRITE).c_str(), std::to_string(soviet::vars.QUIET).c_str());
 
     switch (action)
     {   
@@ -161,9 +162,10 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
         case INSTALL_FROM_REPO :
             for (int i = 0;i < parameters.size();i++)
             {
-                soviet::msg(soviet::level::INFO, "Getting %s", parameters[i].c_str());
+                soviet::msg(soviet::level::DBG1, "Getting %s", parameters[i].c_str());
                 soviet::package pkg;
                 pkg.name = parameters[i];
+                pkg.dataSpmPath = soviet::format("%s/%s.spm", soviet::vars.SPM_DIR.c_str(), pkg.name.c_str());
                 mkdir(soviet::vars.TMP_DIR.c_str(),0777);
                 pkg.get();
                 pkg.installFile();

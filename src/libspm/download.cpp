@@ -9,8 +9,7 @@
 namespace soviet {
     int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded)
     {
-        // print the cool stuff 
-        printf("")
+        std::string barString = "";
 
         // ensure that the file to be downloaded is not empty
         // because that would cause a division by zero error later on
@@ -26,18 +25,18 @@ namespace soviet {
 
         // create the "meter"
         int ii=0;
-        printf("%3.0f%% [",fractiondownloaded*100);
+        barString += format("%3.0f%% [",fractiondownloaded*100);
         // part  that's full already
         for ( ; ii < dotz;ii++) {
-            printf("=");
+            barString += "=";
         }
         // remaining part (spaces)
         for ( ; ii < totaldotz;ii++) {
-            printf(" ");
+            barString += " ";
         }
         // and back to line begin - do not forget the fflush to avoid output buffering problems!
-        printf("]\r");
-        fflush(stdout);
+        barString += "]";
+        msg(DOWNLOAD, "%s", barString.c_str());
         // if you don't return 0, the transfer will be aborted - see the documentation
         return 0; 
     }
@@ -68,6 +67,7 @@ namespace soviet {
                 res = curl_easy_perform(curl);
                 curl_easy_cleanup(curl);
                 fclose(fp);
+                printf("\n");
                 break;
 
             }

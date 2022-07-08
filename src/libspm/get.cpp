@@ -14,9 +14,6 @@
 
 void soviet::package::get()
 {
-    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",vars.TMP_DIR.c_str(), name.c_str(), type.c_str());
-    
-
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
     
@@ -76,7 +73,8 @@ void soviet::package::get()
     else {
         msg(INFO,"Package %s %s %s found",name.c_str(),version.c_str(),type.c_str());
     }
-    
+    // Defining package path , the location where the packages will be downloaded
+    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",vars.TMP_DIR.c_str(), name.c_str(), type.c_str());
     
 
     msg(DBG1,"Downloading %s %s %s",name.c_str(),version.c_str(),type.c_str());

@@ -138,7 +138,8 @@ namespace soviet {
         INFO,
         WARNING,
         ERROR,
-        FATAL
+        FATAL,
+        DOWNLOAD
     };
 
     int msg(level msgLevel,const std::string& msg,...);

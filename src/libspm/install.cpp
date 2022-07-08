@@ -29,9 +29,9 @@ void soviet::package::installFile()
         //location spm file in build dir
         std::string spm_build = soviet::format("%s/%s.spm",vars.BUILD_DIR.c_str(),name.c_str());
 
-
+        msg(DBG2,"Checking is %s exists",dataSpmPath.c_str());
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
-        if (!access(dataSpmPath.c_str(), F_OK))
+        if (access(dataSpmPath.c_str(), F_OK) == 0)
         {
             msg(WARNING, "Package is already installed, reinstalling...");
 
@@ -41,6 +41,8 @@ void soviet::package::installFile()
         {
             msg(DBG1,"Package %s is not installed , installing...",name.c_str());
         }
+
+        msg(INFO, "Uncompressing %s", packagePath.c_str());
 
         //comand to  uncompress the .src;spm.tar.gz archive to MAKE_DIR
         std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),vars.MAKE_DIR.c_str());

@@ -68,6 +68,9 @@ int soviet::msg(level msgLevel, const std::string& message,...)
         case level::FATAL:
             std::cout << BOLDRED << "FATAL: " << RESET  << RED << FmtMsg <<  RESET << std::endl;
             exit(1);
+        case level::DOWNLOAD:
+            std::cout << BOLDCYAN << "DOWNLOAD: " << RESET  << CYAN << FmtMsg << RESET << "\r" << std::flush;
+            break;
         default:
             std::cout << "UNKNOWN: " << FmtMsg << std::endl;
             break;
