@@ -27,43 +27,9 @@ configs soviet::vars;
 
 int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 {
-    /*
-    Here is a more detailed look of the default directory structure 
-    / --> ROOT
-    ├──temp --> TMP_DIR
-    ├──etc
-    │   └── cccp.conf
-    └── var
-        └── cccp --> MAIN_DIR
-            ├── data --> DATA_DIR
-            |   └── packages.json
-            ├── spm --> SPM_DIR
-            ├── log --> LOG_DIR
-            └── work --> WORK_DIR
-                ├── build --> BUILD_DIR (also called $BUILD_ROOT)
-                └── make --> MAKE_DIR
-
-    */
-    soviet::vars.ROOT = "/";
-    soviet::vars.MAIN_DIR = soviet::vars.ROOT + "var/cccp";
-    soviet::vars.DATA_DIR = soviet::vars.MAIN_DIR + "/data";
-    soviet::vars.SPM_DIR = soviet::vars.MAIN_DIR + "/spm";
-    soviet::vars.LOG_DIR = soviet::vars.MAIN_DIR + "/log";
-    soviet::vars.WORK_DIR = soviet::vars.MAIN_DIR + "/work";
-    soviet::vars.BUILD_DIR = soviet::vars.WORK_DIR + "/build";
-    soviet::vars.MAKE_DIR = soviet::vars.WORK_DIR + "/make";
-    soviet::vars.TMP_DIR = soviet::vars.ROOT + "tmp/spm.tmp.d";
-
-    soviet::vars.CONFIG_FILE = "/etc/cccp.conf";
-
-    soviet::vars.ALL_FILE = soviet::vars.DATA_DIR + "/all.json";
-    soviet::vars.INSTALLED_FILE = soviet::vars.DATA_DIR + "/installed.json";
-
-    soviet::vars.DEBUG = spmConfig.DEBUG;
-    soviet::vars.TESTING = spmConfig.TESTING;
-    soviet::vars.OVERWRITE = spmConfig.OVERWRITE;
-    soviet::vars.QUIET = spmConfig.QUIET;
-
+    
+    // pass the config to the libspm main variables
+    soviet::vars = spmConfig;
     // Prepare the cccp
     soviet::init();
     //Declaring enum

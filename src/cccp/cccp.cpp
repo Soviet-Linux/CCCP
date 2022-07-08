@@ -3,13 +3,55 @@
 #include <vector>
 #include <unistd.h>
 
-#include "cccp.h"
+#include "../../include/shared.h"
+
+#define RELEASE 0.1
 
 configs FConf;
 
 // Main function
 int main(int argc, char *argv[])
 {
+
+    // configurring the default dir structure
+    /*
+    Here is a more detailed look of the default directory structure 
+    / --> ROOT
+    ├──temp --> TMP_DIR
+    ├──etc
+    │   └── cccp.conf
+    └── var
+        └── cccp --> MAIN_DIR
+            ├── data --> DATA_DIR
+            |   └── packages.json
+            ├── spm --> SPM_DIR
+            ├── log --> LOG_DIR
+            └── work --> WORK_DIR
+                ├── build --> BUILD_DIR (also called $BUILD_ROOT)
+                └── make --> MAKE_DIR
+
+    */
+    FConf.ROOT = "/";
+    FConf.MAIN_DIR = FConf.ROOT + "var/cccp";
+    FConf.DATA_DIR = FConf.MAIN_DIR + "/data";
+    FConf.SPM_DIR = FConf.MAIN_DIR + "/spm";
+    FConf.LOG_DIR = FConf.MAIN_DIR + "/log";
+    FConf.WORK_DIR = FConf.MAIN_DIR + "/work";
+    FConf.BUILD_DIR = FConf.WORK_DIR + "/build";
+    FConf.MAKE_DIR = FConf.WORK_DIR + "/make";
+    FConf.TMP_DIR = FConf.ROOT + "tmp/spm.tmp.d";
+
+    FConf.CONFIG_FILE = "/etc/cccp.conf";
+
+    FConf.ALL_FILE = FConf.DATA_DIR + "/all.json";
+    FConf.INSTALLED_FILE = FConf.DATA_DIR + "/installed.json";
+    // setting the main config variables
+    FConf.DEBUG = false;
+    FConf.TESTING = false;
+    FConf.QUIET = true;
+    FConf.OVERWRITE = false;
+
+
     // checking if cccp is run as root
     if (getuid()) 
     {
@@ -22,11 +64,7 @@ int main(int argc, char *argv[])
         std::cout << "No arguments given! Terminating...\n";
         return 1;
     }
-    // setting the main config variables
-    FConf.DEBUG = false;
-    FConf.TESTING = false;
-    FConf.QUIET = true;
-    FConf.OVERWRITE = false;
+
     // A way to store the action arguments 
     // This isnt optimal but i dont know how to do it better
     actionList action = HELP;
@@ -219,6 +257,7 @@ int main(int argc, char *argv[])
             }
         }
     }
+
     cccp(int(action),parameters,FConf);
     return 0;
 }

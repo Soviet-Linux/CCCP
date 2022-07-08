@@ -44,8 +44,13 @@ void soviet::package::move_binaries()
 
             msg(ERROR,"Error, %s is already here",locations[i].c_str());
 
-            msg(FATAL, "Terminating the program");
-
+            if (vars.OVERWRITE) 
+            {
+                rename(format("%s/%s",vars.BUILD_DIR.c_str(),locations[i].c_str()),locations[i].c_str());
+            }
+            else {
+                msg(FATAL, "Terminating the program");
+            }
         }
     }
 

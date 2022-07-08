@@ -47,3 +47,6 @@ parameters are parameters
 option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 */
 enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
+// shared function to be called by external programs
+int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig);
+float version();
