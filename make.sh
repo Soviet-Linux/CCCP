@@ -25,8 +25,8 @@ REPO_STR="REPOS=http://our.sovietlinux.ml"
 
 function libspm()
 {
-    mkdir obj
-    mkdir bin
+    mkdir $OBJ_DIR
+    mkdir $BIN_DIR
     echo "Building lib..."
     LIB_SRCS=$(find $LIB_SRC_DIR -name *.cpp)
     echo $LIB_SRCS
