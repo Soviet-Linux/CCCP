@@ -14,14 +14,11 @@
 
 void soviet::package::get()
 {
-    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",TMP_DIR.c_str(), name.c_str(), type.c_str());
-    
-
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
     
     // check if ALL_FILE exists
-    if (access((ALL_FILE).c_str(),F_OK))
+    if (access((vars.ALL_FILE).c_str(),F_OK))
     {
         // This is the first tim is use a ''' do {...} while(...) ''' loop
         do
@@ -46,15 +43,15 @@ void soviet::package::get()
 
         
     }
-    if (DEBUG) std::cout << "Loading " << ALL_FILE << std::endl;
+    if (vars.DEBUG) std::cout << "Loading " << vars.ALL_FILE << std::endl;
     // verify if package exists
     // parse ALL_FILE and check if the package is there
-    std::ifstream file_spm((ALL_FILE).c_str(), std::ios::in);
+    std::ifstream file_spm((vars.ALL_FILE).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     //parsing json data
     auto all_pkgs = json::parse(buffer.str());
-    if (DEBUG) std::cout << "Parsing " << ALL_FILE << std::endl;
+    msg(DBG1,"Parsing %s" ,vars.ALL_FILE.c_str());
     // check if the package is there
     // this solution is pretty bad
     // TODO : improve it
@@ -68,35 +65,21 @@ void soviet::package::get()
             break;
         }
     }
-    if (DEBUG) std::cout << "Package " << name << " " << version << " " << type << " found" << std::endl;
-    // loop through REPOS
-    for (int i = 0;i < REPOS.size();i++)
+    if (type == "")
     {
-        // get the url
-        std::string repo = REPOS[i];
-        std::string url = format("%s/base/%s/%s.%s.spm.tar.gz",repo.c_str(),type.c_str(),name.c_str(),type.c_str());
-        std::cout << "Downloading " << url << std::endl;
-
-        CURL *curl;
-        FILE *fp;
-        CURLcode res;
-        curl = curl_easy_init();                                                                                                                                                                                                                                                           
-        if (curl)
-        {   
-            fp = fopen(packagePath.c_str(),"wb");
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-            res = curl_easy_perform(curl);
-            curl_easy_cleanup(curl);
-            fclose(fp);
-            break;
-
-        }
-        
-
-    
+        msg(FATAL,"Package %s not found",name.c_str());
+        return;
     }
+    else {
+        msg(INFO,"Package %s %s %s found",name.c_str(),version.c_str(),type.c_str());
+    }
+    // Defining package path , the location where the packages will be downloaded
+    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",vars.TMP_DIR.c_str(), name.c_str(), type.c_str());
+    
+
+    msg(DBG1,"Downloading %s %s %s",name.c_str(),version.c_str(),type.c_str());
+    // loop through REPOS
+    downloadRepo(format("base/src/%s.%s.spm.tar.gz",name.c_str(),type.c_str()), packagePath);
 
     
 }

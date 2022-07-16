@@ -32,8 +32,8 @@ nlohmann::json soviet::package::open_spm (const std::string& PPath)
 // This function is very important , it will store the install location data to the "DB"
 void soviet::package::store_spm (const std::string& spm_path,const std::string& spm_out)
 {
-    if (DEBUG) std::cout << "Storing package spm to " << spm_out << std::endl;
-    if (DEBUG) std::cout << "parsing : " << spm_path << std::endl;
+    msg(DBG1,"Storing package spm to %s",spm_out.c_str());
+    msg(DBG2,"Parsing %s",spm_path.c_str());
     auto pkg_info = open_spm(spm_path);
     //change package type if its a binary
 
@@ -73,6 +73,6 @@ int soviet::package::var_spm(const std::string& spm_path)
     {
         locations.push_back(pkg_info["locations"][i]);
     }
-    if (soviet::DEBUG) std::cout << "Package " << name << " initialized successfully !" << std::endl;
+    msg(DBG1,"Package %s initialized successfully !",name.c_str());
     return 1;
 }

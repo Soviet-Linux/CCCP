@@ -27,7 +27,7 @@ bool soviet::package::check ()
     //it could be empty because of a failed install
     if (locations.empty())
     {
-        msg(level::DBG, "Package data file is empty, something is wrong!");
+        msg(level::DBG1, "Package data file is empty, something is wrong!");
         return false;
     }
     //check all the files in the data["locations"]
@@ -42,7 +42,7 @@ bool soviet::package::check ()
          msg(level::INFO, "Checking %s", locations[i].c_str());
          if (!access(locations[i].c_str(),F_OK)) 
          {
-             msg(level::DBG, "%s exists!", locations[i].c_str());
+             msg(level::DBG3, "%s exists!", locations[i].c_str());
          }
          else {
                 msg(level::ERROR, "%s does not exist!", locations[i].c_str());

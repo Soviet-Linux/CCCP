@@ -27,13 +27,14 @@ void soviet::package::uninstall()
         return;
     }
     //small message , its uselless but i'll leave it there
-    std::cout << "Uninstalling package " << name << std::endl;
+    msg(INFO, "Uninstalling package %s", name.c_str());
 
     // Initializing soviet::package class values using var_spm
     var_spm(dataSpmPath);
 
-    if (DEBUG) std::cout << "Uninstalling package " << name << " from " << dataSpmPath << std::endl;
-    std::cout << locations.size() << " locations found" << std::endl;
+    msg(DBG2,"Uninstalling package %s from %s", name.c_str(), dataSpmPath.c_str());
+
+    msg(DBG3,"Found %d locations",locations.size());
     //remove all the files in the data["locations"]
     for (int i = 0; i < locations.size(); i++)
     {
@@ -48,7 +49,7 @@ void soviet::package::uninstall()
         */
         try {
             // debug
-            if (DEBUG) std::cout << "Removing " << locations[i] << std::endl;
+            msg(DBG3,"Removing %s",locations[i].c_str());
             remove(locations[i].c_str());
         }
         catch (std::exception& e)

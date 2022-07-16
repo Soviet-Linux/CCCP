@@ -9,17 +9,17 @@
 // This function will check if all dependencies of a package are installed
 int soviet::package::check_dependencies () 
 {
-    if(DEBUG) std::cout << "Checking dependencies..." << std::endl;
+    msg(DBG1,"Checking dependencies...");
 
     if (dependencies.size() == 0)
     {
-        if(DEBUG) std::cout << "No dependencies to check" << std::endl;
+        msg(DBG1,"No dependencies to check");
         return 1;
     }
 
     if (dependencies[0] == "base")
     {
-        std::cout << "this packages requires the base system , no dependencies checking!\n";
+        msg(INFO,"this packages requires the base system , no dependencies checking!");
         return 1;
     }
     else {
@@ -27,15 +27,15 @@ int soviet::package::check_dependencies ()
         {
             // TODO: implement vesrion checking
             // is use the C function because my clangd server doesnt recognize the fucking std::filesystem thing and it bothered me 
-            std::string dep_spm_path = soviet::format("%s%s.spm",SPM_DIR.c_str(),dependencies[i].c_str());
-            if (DEBUG) std::cout << "Checking if dependency data file : " << dep_spm_path << " exists" << std::endl;
+            std::string dep_spm_path = soviet::format("%s%s.spm",vars.SPM_DIR.c_str(),dependencies[i].c_str());
+            msg(DBG2,"Checking if dependency data file : %s exists",dep_spm_path.c_str());
 
             if (!access((dep_spm_path).c_str(),F_OK))
             {
-                std::cout << "dependency " << dependencies[i] << " is installed!\n";
+                msg(DBG2,"dependency %s is installed",dependencies[i].c_str());
             }
             else {
-                std::cout << "dependency " << dependencies[i] << " is not installed!\n";
+                msg(DBG2,"dependency %s is not installed",dependencies[i].c_str());
                 // INstall the required dependencies
                 // idk what to do 
                 // can someone find an idea ? 

@@ -3,15 +3,55 @@
 #include <vector>
 #include <unistd.h>
 
-#include "cccp.h"
+#include "../../include/shared.h"
 
-//
-// This needs to be the same than in libspm/main.cpp or it will explode 
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC};
+#define RELEASE 0.1
+
+configs FConf;
 
 // Main function
 int main(int argc, char *argv[])
 {
+
+    // configurring the default dir structure
+    /*
+    Here is a more detailed look of the default directory structure 
+    / --> ROOT
+    ├──temp --> TMP_DIR
+    ├──etc
+    │   └── cccp.conf
+    └── var
+        └── cccp --> MAIN_DIR
+            ├── data --> DATA_DIR
+            |   └── packages.json
+            ├── spm --> SPM_DIR
+            ├── log --> LOG_DIR
+            └── work --> WORK_DIR
+                ├── build --> BUILD_DIR (also called $BUILD_ROOT)
+                └── make --> MAKE_DIR
+
+    */
+    FConf.ROOT = "/";
+    FConf.MAIN_DIR = FConf.ROOT + "var/cccp";
+    FConf.DATA_DIR = FConf.MAIN_DIR + "/data";
+    FConf.SPM_DIR = FConf.MAIN_DIR + "/spm";
+    FConf.LOG_DIR = FConf.MAIN_DIR + "/log";
+    FConf.WORK_DIR = FConf.MAIN_DIR + "/work";
+    FConf.BUILD_DIR = FConf.WORK_DIR + "/build";
+    FConf.MAKE_DIR = FConf.WORK_DIR + "/make";
+    FConf.TMP_DIR = FConf.ROOT + "tmp/spm.tmp.d";
+
+    FConf.CONFIG_FILE = "/etc/cccp.conf";
+
+    FConf.ALL_FILE = FConf.DATA_DIR + "/all.json";
+    FConf.INSTALLED_FILE = FConf.DATA_DIR + "/installed.json";
+    // setting the main config variables
+    FConf.DEBUG = false;
+    FConf.TESTING = false;
+    FConf.QUIET = true;
+    FConf.OVERWRITE = false;
+
+
     // checking if cccp is run as root
     if (getuid()) 
     {
@@ -19,17 +59,18 @@ int main(int argc, char *argv[])
         return 1;
     }
     //verifying if the user has entered arguments
-    bool DEBUG = false;
-    bool TESTING = false;
+    if (argc < 2) 
+    {
+        std::cout << "No arguments given! Terminating...\n";
+        return 1;
+    }
+
     // A way to store the action arguments 
     // This isnt optimal but i dont know how to do it better
-    actionList action ;
+    actionList action = HELP;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
-    if (argc < 2)
-    {
-        cccp(6,parameters,DEBUG,TESTING);
-    }
+
     for (int i = 1;i < argc;i++)
     {
         std::string option = argv[i];
@@ -57,10 +98,10 @@ int main(int argc, char *argv[])
                     return 0;
                 }
                 else if (longOption == "debug") { 
-                    DEBUG = true;
+                    FConf.DEBUG = true;
                 }
                 else if (longOption == "testing") { 
-                    TESTING = true;
+                    FConf.TESTING = true;
                 }
                 else if (longOption == "check") { 
                     action = CHECK;
@@ -80,6 +121,18 @@ int main(int argc, char *argv[])
                 else if (longOption == "install") {
                      action = INSTALL_FROM_REPO;
                 }
+                else if (longOption == "force" or longOption == "overwrite")
+                {
+                    FConf.OVERWRITE = true;
+                }
+                else if (longOption == "quiet")
+                {
+                    FConf.QUIET = true;
+                }
+                else if (longOption == "verbose")
+                {
+                    FConf.QUIET = false;
+                }
                 else { std::cout << "Unknown option " << option << "! Terminating...\n"; return 1;}
 
 
@@ -96,7 +149,6 @@ int main(int argc, char *argv[])
                             break;
                         case 's' :
                             //debug
-                            std::cout << "Synchronizing the repositories package files from fontend\n";    
                             // Synchronize mirrors
                             action = SYNC;
                             break;
@@ -128,12 +180,34 @@ int main(int argc, char *argv[])
                             action = LIST;
                             break;
                         case 'd' :
-                            // Debug mode
-                            DEBUG = true;
+                            //FConf.DEBUG mode
+                           FConf.DEBUG = true;
+                            switch (option[i+1]) 
+                            {
+                                case '1' :
+                                    //FConf.DEBUG mode 1
+                                   FConf.DEBUG = 1;
+                                    break;
+                                case '2' :  
+                                    //FConf.DEBUG mode 2
+                                   FConf.DEBUG = 2;
+                                    break;
+                                case '3' :
+                                    //FConf.DEBUG mode 3
+                                   FConf.DEBUG = 3;
+                                    break;
+                                default :
+                                   FConf.DEBUG = 1;     
+                            }
+                            //This message is ugly but i cant change it because i cant access the soviet::msg fucntion from here
+                            std::cout << "\033[1m\033[32m" << " DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " << FConf.DEBUG <<" debug mode" <<  "\033[0m" << std::endl;
+                            // incrementing the i to skip the next character
+                            i++;
+
                             break;
                         case 't' :
-                            // Testing mode
-                            TESTING = true;
+                            //FConf.TESTING mode
+                           FConf.TESTING = true;
                             break;
                         case 'p' :
                             //install local
@@ -147,6 +221,18 @@ int main(int argc, char *argv[])
                             std::cout << "CCCP C++ front-end version " << RELEASE << std::endl;
                             std::cout << "LIBSPM C++ version " << version() << std::endl;
                             return 0;
+                        case 'f' :
+                            //overwrite
+                            FConf.OVERWRITE = true;
+                            break;
+                        case 'q' :
+                            //quiet
+                            FConf.QUIET = true;
+                            break;  
+                        case 'V' :
+                            //verbose
+                            FConf.QUIET = false;
+                            break;
                         default:
                             // Unknown option
                             std::cout << "Unknown option! Terminating...\n";
@@ -171,6 +257,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    cccp(int(action),parameters,DEBUG,TESTING);
+
+    cccp(int(action),parameters,FConf);
     return 0;
 }
