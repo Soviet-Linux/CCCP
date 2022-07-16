@@ -23,6 +23,8 @@ LIBSPM_DIR=$BIN_DIR
 
 function libspm()
 {
+    mkdir $OBJ_DIR
+    mkdir $BIN_DIR
     echo "Building lib..."
     LIB_SRCS=$(find $LIB_SRC_DIR -name *.cpp)
     echo $LIB_SRCS
