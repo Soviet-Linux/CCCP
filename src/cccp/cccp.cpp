@@ -19,11 +19,6 @@ int main(int argc, char *argv[])
         return 1;
     }
     //verifying if the user has entered arguments
-    if (argc < 2) 
-    {
-        std::cout << "No arguments given! Terminating...\n";
-        return 1;
-    }
     bool DEBUG = false;
     bool TESTING = false;
     // A way to store the action arguments 
@@ -31,7 +26,10 @@ int main(int argc, char *argv[])
     actionList action ;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
-
+    if (argc < 2)
+    {
+        cccp(6,parameters,DEBUG,TESTING);
+    }
     for (int i = 1;i < argc;i++)
     {
         std::string option = argv[i];
