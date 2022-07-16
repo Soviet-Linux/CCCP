@@ -11,10 +11,10 @@ void soviet::clean()
     */
 
     //cleaning the build dir 
-    std::string cmd_clean = format("rm -rf %s/*",vars.BUILD_DIR.c_str());
+    std::string cmd_clean = format("rm -rf %s/*",soviet::BUILD_DIR.c_str());
     system(cmd_clean.c_str());
     // cleaning make dir
-    cmd_clean = format("rm -rf %s/*",vars.MAKE_DIR.c_str());
+    cmd_clean = format("rm -rf %s/*",soviet::MAKE_DIR.c_str());
     system(cmd_clean.c_str());
 
 

@@ -11,25 +11,26 @@
 void soviet::package::get_locations()
 {
     //Get package file location
-    std::string files_location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- ) ", vars.BUILD_DIR.c_str());
-    /*
-    This way of getting locations is pretty bad , i should wite a proper way to do it
-    But it works so its ok for now 
-    */    
-    msg(DBG2, "Getting files locations with %s ", files_location_cmd.c_str());
-
-   
+    std::string files_location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- ) ", BUILD_DIR.c_str());
+    std::string dirs_location_cmd = soviet::format("( cd %s && find . -type d | cut -c2- | tac | sed '/^$/d')", BUILD_DIR.c_str());
+    if (soviet::DEBUG) std::cout << files_location_cmd << dirs_location_cmd << std::endl;
     // execute the commands
     std::string files_locations = soviet::exec(files_location_cmd.c_str());
+    std::string dirs_locations = soviet::exec(dirs_location_cmd.c_str());
     // print the locations
-    msg(DBG3, "Package locations : \n Files : %s ", files_location_cmd.c_str());
+    if (soviet::DEBUG) std::cout << "Files locations : " << files_locations << std::endl;
+    if (soviet::DEBUG) std::cout << "Dirs locations : " << dirs_locations << std::endl;
 
     // Parsing everything ad storing it in a vector
     std::string line;
     std::stringstream files_ss(files_locations);  
+    std::stringstream dirs_ss(dirs_locations);
     while (std::getline(files_ss, line)) {
         locations.push_back(line);
     } 
+    while ( getline (dirs_ss,line) ) {
+        locations.push_back(line);
+    }
 
 
 }

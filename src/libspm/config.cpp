@@ -6,14 +6,10 @@
 
 #include "../../include/libspm.hpp"
 
-
-
-
 int soviet::readConfig(const std::string& configFilePath)
 {
-    
     //debug 
-    msg(level::DBG1, "Reading config file: %s", configFilePath.c_str());
+    msg(level::DBG, "Reading config file: %s", configFilePath.c_str());
     
     std::map<std::string, std::string> configMap;
     //open config file
@@ -21,14 +17,8 @@ int soviet::readConfig(const std::string& configFilePath)
     configFile.open(configFilePath);
     // read and parse config file
     std::string line;
-    // Debug int
-    int lnNum = 0;
     while (std::getline(configFile, line))
     {
-        //Debug stuff
-        lnNum++;
-        msg(DBG3, "Parsing line %s : %s", (std::to_string(lnNum)).c_str(),line.c_str());
-
         // split line into key and value
         std::string key, value;
         key = line.substr(0, line.find_first_of("="));
@@ -39,45 +29,43 @@ int soviet::readConfig(const std::string& configFilePath)
 
         // store key and value in map
         configMap[key] = value;
-
     }
     // close config file
     configFile.close();
 
-    msg(level::DBG2, "Parsing config data");
+    msg(level::DBG, "Parsing config data");
     // use the option on the soviet thing values
     if (configMap.count("ROOT") > 0)
     {
-       vars.ROOT = configMap["ROOT"];
-        msg(DBG3, "ROOT : %s", vars.ROOT.c_str());
+        soviet::ROOT = configMap["ROOT"];
     }
     if (configMap.count("MAIN_DIR") > 0)
     {
-        vars.MAIN_DIR = configMap["MAIN_DIR"];
+        soviet::MAIN_DIR = configMap["MAIN_DIR"];
     }
     if (configMap.count("DATA_DIR") > 0)
     {
-        vars.DATA_DIR = configMap["DATA_DIR"];
+        soviet::DATA_DIR = configMap["DATA_DIR"];
     }
     if (configMap.count("SPM_DIR") > 0)
     {
-        vars.SPM_DIR = configMap["SPM_DIR"];
+        soviet::SPM_DIR = configMap["SPM_DIR"];
     }
     if (configMap.count("LOG_DIR") > 0)
     {
-        vars.LOG_DIR = configMap["LOG_DIR"];
+        soviet::LOG_DIR = configMap["LOG_DIR"];
     }
     if (configMap.count("WORK_DIR") > 0)
     {
-        vars.WORK_DIR = configMap["WORK_DIR"];
+        soviet::WORK_DIR = configMap["WORK_DIR"];
     }
     if (configMap.count("BUILD_DIR") > 0)
     {
-        vars.BUILD_DIR = configMap["BUILD_DIR"];
+        soviet::BUILD_DIR = configMap["BUILD_DIR"];
     }
     if (configMap.count("MAKE_DIR") > 0)
     {
-        vars.MAKE_DIR = configMap["MAKE_DIR"];
+        soviet::MAKE_DIR = configMap["MAKE_DIR"];
     }
     if (configMap.count("REPOS") > 0)
     {
@@ -86,7 +74,7 @@ int soviet::readConfig(const std::string& configFilePath)
         for(int i=0;i<s.length();++i){
             
             if(s[i]==' '){
-                vars.REPOS.push_back(temp);
+                soviet::REPOS.push_back(temp);
                 temp = "";
             }
             else{
@@ -94,11 +82,11 @@ int soviet::readConfig(const std::string& configFilePath)
             }
             
         }
-        vars.REPOS.push_back(temp);
+        REPOS.push_back(temp);
         // debug stuff
-        for (int i = 0;i < vars.REPOS.size();i++)
+        for (int i = 0;i < REPOS.size();i++)
         {
-            msg(level::DBG3, "REPO : " + vars.REPOS[i]);
+            msg(level::DBG, "REPO : " + REPOS[i]);
         }
     }
 

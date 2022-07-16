@@ -5,9 +5,23 @@
 #include <chrono>
 #include <unistd.h>
 // The filesystem root
+std::string soviet::ROOT = "soviet";
+// For real use it must be set to "/"
 
+std::string soviet::MAIN_DIR = soviet::ROOT + "var/cccp/";
+std::string soviet::WORK_DIR = soviet::MAIN_DIR + "work";
+std::string soviet::DATA_DIR = soviet::MAIN_DIR + "data/";
+std::string soviet::SPM_DIR = soviet::MAIN_DIR + "spm/";
+std::string soviet::LOG_DIR = soviet::MAIN_DIR + "log/";
+std::string soviet::BUILD_DIR = soviet::WORK_DIR + "build/";
+std::string soviet::MAKE_DIR = soviet::WORK_DIR + "make/";
+std::string soviet::INSTALLED_FILE = soviet::DATA_DIR + "installed.json";
+std::string soviet::ALL_FILE = soviet::DATA_DIR + "all.json";
+std::string soviet::CONFIG_FILE = soviet::ROOT + "cccp.conf";
+std::vector<std::string> soviet::REPOS;
 
-
+bool soviet::DEBUG = true;
+bool soviet::TESTING = true;
 
 void exec_tests();
 void cmd_perfs();
@@ -24,26 +38,9 @@ int main()
    dowload_test();
 }
 
-void init_vars()
+void exec_tests()
 {
-
-
-    std::string ROOT = "soviet";
-    // For real use it must be set to "/"
-
-    std::string soviet::vars.MAIN_DIR = soviet::ROOT + "var/cccp/";
-    std::string soviet::WORK_DIR = soviet::MAIN_DIR + "work";
-    std::string soviet::DATA_DIR = soviet::MAIN_DIR + "data/";
-    std::string soviet::SPM_DIR = soviet::MAIN_DIR + "spm/";
-    std::string soviet::LOG_DIR = soviet::MAIN_DIR + "log/";
-    std::string soviet::BUILD_DIR = soviet::WORK_DIR + "build/";
-    std::string soviet::MAKE_DIR = soviet::WORK_DIR + "make/";
-    std::string soviet::INSTALLED_FILE = soviet::DATA_DIR + "installed.json";
-    std::string soviet::ALL_FILE = soviet::DATA_DIR + "all.json";
-    std::string soviet::CONFIG_FILE = soviet::ROOT + "cccp.conf";
-    std::vector<std::string> soviet::REPOS;
-
-    bool soviet::DEBUG = true;
+    std::cout << "Testing cmd functions" << std::endl;
     std::string cmd = "ls -l";
     std::string result = soviet::exec(cmd.c_str());
     std::cout << result << std::endl;
@@ -84,7 +81,6 @@ void cmd_perfs()
 }
 int tests_on_childrens()
 {
-    // Here we are forking a child
     int pid = fork();
     if (pid > 0)
     {
@@ -93,8 +89,6 @@ int tests_on_childrens()
     else if (pid == 0)
     {
         printf("I'm the daughter with pid: %d and parent is %d\n", getpid(), getppid());
-        // here we are killing the child
-        exit(0);
     }
     else // pid == -1
     {

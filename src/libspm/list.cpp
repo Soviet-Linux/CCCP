@@ -6,7 +6,7 @@
 #include "../../include/libspm.hpp"
 void soviet::listPkgs() {
     //open DATA_FILE
-    std::ifstream file_spm((vars.INSTALLED_FILE).c_str(), std::ios::in);
+    std::ifstream file_spm((INSTALLED_FILE).c_str(), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     file_spm.close();

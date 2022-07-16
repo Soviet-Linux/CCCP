@@ -44,18 +44,9 @@ int soviet::msg(level msgLevel, const std::string& message,...)
 
     switch (msgLevel)
     {
-        // different debug levels
-        case level::DBG1:
-            if (vars.DEBUG >= 1) std::cout << BOLDGREEN << " DEBUG: " << RESET << GREEN << FmtMsg << RESET << std::endl;
+        case level::DBG:
+            if (DEBUG) std::cout << BOLDGREEN << " DEBUG: " << RESET << GREEN << FmtMsg << RESET << std::endl;
             break;
-        case level::DBG2:
-            if (vars.DEBUG >= 2) std::cout << BOLDGREEN << " DEBUG: " << RESET << GREEN << FmtMsg << RESET << std::endl;
-            break;
-        case level::DBG3:
-            if (vars.DEBUG >= 3) std::cout << BOLDGREEN << " DEBUG: " << RESET << GREEN << FmtMsg << RESET << std::endl;
-            break;
-        
-
         case level::INFO:
             std::cout << BOLDBLUE << "INFO: " << RESET  << BLUE << FmtMsg << RESET << std::endl;
             break;
@@ -68,9 +59,6 @@ int soviet::msg(level msgLevel, const std::string& message,...)
         case level::FATAL:
             std::cout << BOLDRED << "FATAL: " << RESET  << RED << FmtMsg <<  RESET << std::endl;
             exit(1);
-        case level::DOWNLOAD:
-            std::cout << BOLDCYAN << "DOWNLOAD: " << RESET  << CYAN << FmtMsg << RESET << "\r" << std::flush;
-            break;
         default:
             std::cout << "UNKNOWN: " << FmtMsg << std::endl;
             break;
