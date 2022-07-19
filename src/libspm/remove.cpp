@@ -21,9 +21,12 @@ So dont touch this , except if there are a critical bug or an important missing 
 void soviet::package::uninstall()
 {       
     // verify if the package is installed
+    msg(DBG3, "Verifying if the package is installed with %s" , dataSpmPath.c_str());
     // check if SPM_FILE exists
-    if (access(dataSpmPath.c_str(),F_OK)) {
+    if (!(access(dataSpmPath.c_str(),F_OK) == 0)) {
         std::cout << "Package " << name << " is not installed!" << std::endl;
+        msg(ERROR, "Package %s is not installed!", name.c_str());
+        msg(INFO,"Use cccp -i to install the package");
         return;
     }
     //small message , its uselless but i'll leave it there
@@ -50,7 +53,7 @@ void soviet::package::uninstall()
         try {
             // debug
             msg(DBG3,"Removing %s",locations[i].c_str());
-            remove(locations[i].c_str());
+            msg(DBG3,"Remove exited with code %d",remove(locations[i].c_str()));
         }
         catch (std::exception& e)
         {

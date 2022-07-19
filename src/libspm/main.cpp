@@ -55,39 +55,10 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
             {
                 soviet::msg(soviet::level::INFO, "Installing %s", parameters[i].c_str());
 
-                soviet::package pkg;
-                pkg.packagePath = parameters[i];
-
-                std::string packageFile = pkg.packagePath.substr(pkg.packagePath.find_last_of("/")+1,pkg.packagePath.length());
-                soviet::msg(soviet::level::DBG2, "Package file is %s", packageFile.c_str());
-
-                if (pkg.packagePath.length() < 15) 
-                {
-                    soviet::msg(soviet::level::FATAL, "Package path is too short; maybe it's not a package? Terminating...");
-                }
-                std::string extension = packageFile.substr(packageFile.find_first_of("."),packageFile.length());
-                pkg.name = packageFile.substr(0,packageFile.find_first_of("."));
-                //initialize variables
+                soviet::package pkg = soviet::parseFileName(parameters[i]);
                 
-                pkg.dataSpmPath = soviet::vars.SPM_DIR + pkg.name + ".spm";
-
-                // debug extension
-                soviet::msg(soviet::level::DBG2, "Extension is %s", extension.c_str());
-                
-                if (extension == ".src.spm.tar.gz")
-                {
-                    pkg.type = "src";
-                }
-                else if (extension == ".bin.spm.tar.gz") 
-                {
-                    pkg.type = "bin";
-                }
-                else 
-                {
-                    soviet::msg(soviet::level::FATAL, "Package is not a valid package! Terminating...");
-                }
                 soviet::msg(soviet::level::DBG1, "Launching installation with %s", pkg.packagePath.c_str());
-                pkg.installFile();
+                pkg.installArchive();
             }
             break;
         case REMOVE :
@@ -96,7 +67,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 soviet::msg(soviet::level::INFO, "Removing %s", parameters[i].c_str());
                 soviet::package pkg;
                 pkg.name = parameters[i];
-                pkg.dataSpmPath = soviet::vars.SPM_DIR + pkg.name + ".spm";
+                pkg.dataSpmPath = soviet::format("%s/%s.spm",soviet::vars.SPM_DIR.c_str(),pkg.name.c_str());
                 pkg.uninstall();
                 
             }
@@ -134,7 +105,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 pkg.dataSpmPath = soviet::format("%s/%s.spm", soviet::vars.SPM_DIR.c_str(), pkg.name.c_str());
                 mkdir(soviet::vars.TMP_DIR.c_str(),0777);
                 pkg.get();
-                pkg.installFile();
+                pkg.installArchive();
                 std::filesystem::remove_all(soviet::vars.TMP_DIR);
             }
             break;
@@ -148,26 +119,10 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 
                 soviet::msg(soviet::level::INFO, "Creating binary package from %s", parameters[i].c_str());
 
-                soviet::package pkg;
-                pkg.packagePath = parameters[i];
+                soviet::package pkg = soviet::parseFileName(parameters[i]);
 
-                if (pkg.packagePath.length() < 15) 
-                {
-                    soviet::msg(soviet::level::FATAL, "Package path is too short; maybe it's not a package? Terminating...");
-                }
-                std::string extension = pkg.packagePath.substr(pkg.packagePath.find_first_of("."),pkg.packagePath.length());
-                pkg.name = pkg.packagePath.substr(0,pkg.packagePath.find_first_of("."));
-                //initialize variables
-                
-                pkg.dataSpmPath = soviet::vars.SPM_DIR + pkg.name + ".spm";
-                if (extension == ".src.spm.tar.gz")
-                {
-                    pkg.type = "src";
-                }
-                else {
-                    soviet::msg(soviet::level::ERROR, "The file is not a SOURCE package. Terminating...");
-                }
                 soviet::msg(soviet::level::DBG1, "Launching creation with %s", pkg.packagePath.c_str());
+                
                 pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
             }
             break;

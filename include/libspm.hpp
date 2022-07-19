@@ -46,7 +46,7 @@ namespace soviet {
 	 - The path of the package archive (.spm.tar.gz) : package::packagePath
 	 - The path of the file contaning all the informations about the package when its installed : package::data:SpmPath
 	Some function that need to be called :
-	- The function used to install a package from a package archive file (.spm.tar.gz) : package::installFile
+	- The function used to install a package from a package archive file (.spm.tar.gz) : package::installArchive
 	- The function used to download a package from the repo and install it : package::installFromRepo
 	- The function used to remove a package from the system : package::uninstall
 	- The function used to check if a package is installed and not corrupted : package::check
@@ -75,29 +75,41 @@ namespace soviet {
             into a list of directory used by the package 
             you understand ?
             It's not very useful , but it may be better for performance
+
+            NEW ME :
+            I think its areally bad idea , 
+            the current way of doing it is better
+            for more advanced functionality
+            also most packages mont need it 
+            its a useless optimization for the moment
+            
+            If i realize that the current way of doing is too slow i'll try other systems
+            but i think all distro do this 
             */
             std::vector<std::string> locations;
 
             // commands to prepare , build , test and install the package 
             // It can be a script 
-            std::string prepare_info;
-            std::string build_info;
-            std::string test_info;
-            std::string install_info;
+            std::map <std::string, std::string> info;
 
-            std::string special_info;
+
+             // optional field : url to dowload sources
+            std::string url;
+
+
 
             //Where the package is stored, This is used just for installing package 
             std::string packagePath;
             // where the spm file in data is stored
             std::string dataSpmPath ;
 
+           
             
             // main functions that will be called from main.cpp
             void get();
             void uninstall();
             bool check();
-            void installFile();
+            void installArchive();
             void createBinary(const std::string& binPath);
             
         private :
@@ -106,7 +118,7 @@ namespace soviet {
             void get_locations();
             int check_dependencies ();
             void move_binaries();
-            int make ();
+            int make (const std::string& package_dir);
 
             // Set of function that manipulate spm files
             nlohmann::json open_spm (const std::string& spm_path );
@@ -116,6 +128,8 @@ namespace soviet {
             int add_data ();
             int remove_data ();
 
+            void getSources ();
+
 
                   
     };
@@ -123,6 +137,7 @@ namespace soviet {
     char* format( const char* strFmtString, ... );
     int init_data ();
     std::string exec(const char* cmd);
+    package parseFileName (const std::string& Path);
 
     void help () ;
     void listPkgs ();

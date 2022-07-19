@@ -21,7 +21,7 @@
     (I tried , but its not good enough)
 
 */
-int soviet::package::make ()
+int soviet::package::make (const std::string& package_dir)
 {
     std::string cmd_params = "";
     
@@ -45,7 +45,6 @@ int soviet::package::make ()
     */
     //TODO: resolve this issue (the original TODO was "fix this shit" , but i think "resolve this issue is better")
 
-    std::string package_dir = soviet::format("%s/%s-%s", vars.MAKE_DIR.c_str(), name.c_str(), version.c_str());
 
     /*
         So in this part we are foramtting and executing the commands to configure , compile , test and install the package.
@@ -56,10 +55,10 @@ int soviet::package::make ()
     // TODO: find someone intelligent to ameliorate this code
 
     //checking is the command are used and formatting and executing them
-    if (!prepare_info.empty())
+    if (!info["prepare"].empty())
     {
         //formatting the prepare command
-        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),prepare_info.c_str());
+        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["prepare"].c_str());
 
         //Printing the command to the terminal
        msg(DBG2,"Executing prepare command : %s",prepare_cmd.c_str());
@@ -69,10 +68,10 @@ int soviet::package::make ()
         //debug
         msg(DBG1,"prepare command executed !");
     }
-    if (!build_info.empty())
+    if (!info["build"].empty())
     {
         //Formating the command
-        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),build_info.c_str());
+        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["build"].c_str());
         // printing the command to standard output if debug is enabled
         msg(DBG3,"executing build command : %s",make_cmd.c_str());
         //executing the command
@@ -90,7 +89,7 @@ int soviet::package::make ()
     //installing the package in the build directory
 
     //formatting the install command
-    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),install_info.c_str());
+    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["install"].c_str());
 
     //printing , for debugging purposes
     msg(DBG3,"Executing install command : %s",install_cmd.c_str());

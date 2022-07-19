@@ -14,14 +14,14 @@
 
 
 /*
-In this file we are installing source or binary packages.
+In this function we are installing source or binary packages.
 Source packages are archive files containing the source code of the package ,the post install script and an .spm file for the install commands.
 Binary packages are archive files containing the compiled binary files of the package , the post install script and an .spm file for the install commands.
 */
 
 
-// parsing data and installing package
-void soviet::package::installFile()
+// parsing data and installing package archive (with sources)
+void soviet::package::installArchive()
 {
     if (type == "src")
     {
@@ -42,19 +42,30 @@ void soviet::package::installFile()
             msg(DBG1,"Package %s is not installed , installing...",name.c_str());
         }
 
-        msg(INFO, "Uncompressing %s", packagePath.c_str());
+        // Check is its a .spm.tar.gz or an .spm file
+        // TODO: improve this because it can cause error in some edge cases
+        // for example , if the user has a directory called ".spm.tar.gz" , with the package inside 
+        // it woud crash the program
+        if (packagePath.find(".spm.tar.gz") != std::string::npos)
+        {
+            msg(INFO, "Uncompressing %s", packagePath.c_str());
 
-        //comand to  uncompress the .src;spm.tar.gz archive to MAKE_DIR
-        std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),vars.MAKE_DIR.c_str());
-        // if debug is on , print the command
-        msg(DBG3,"Uncompressing package with %s",cmd_uncompress.c_str());
-        //uncompressing <PName>.src.spm.tar.gz in PKG_DIR
-        system(cmd_uncompress.c_str());
+            //comand to  uncompress the .src;spm.tar.gz archive to MAKE_DIR
+            std::string cmd_uncompress = soviet::format("tar -xf %s -C %s ",packagePath.c_str(),vars.MAKE_DIR.c_str());
+            // if debug is on , print the command
+            msg(DBG3,"Uncompressing package with %s",cmd_uncompress.c_str());
+            //uncompressing <PName>.src.spm.tar.gz in PKG_DIR
+            system(cmd_uncompress.c_str());
 
-        //debug
-        msg(DBG3, "%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str());
-        // Reading spm file in MAKE DIR
-        var_spm(soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str()));
+            //debug
+            msg(DBG3, "%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str());
+            // Reading spm file in MAKE DIR
+            var_spm(soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str()));
+        }
+        else
+        {
+            getSources();
+        }
         
         // Checking dependencies
         //This dependencies if;else system is deprecated and will be removed in the future
@@ -69,9 +80,12 @@ void soviet::package::installFile()
             exit(1);
         }
 
+        // dir where the sources are located
+        std::string package_dir = soviet::format("%s/%s-%s", vars.MAKE_DIR.c_str(), name.c_str(), version.c_str());
+        
         // building the package and getting the locations
         //making package
-        if (make())
+        if (make(package_dir))
         {
             //an error as occured
             std::cout << "an error has occured ! its bad , do something !" << std::endl;
@@ -90,9 +104,9 @@ void soviet::package::installFile()
         move_binaries();
 
         //executing post installation scripts
-        if (!special_info.empty()) 
+        if (!info["special"].empty()) 
         {
-            system(format("(cd %s && %s ) ",vars.MAKE_DIR.c_str(),special_info.c_str()));  
+            system(format("(cd %s && %s ) ",vars.MAKE_DIR.c_str(),info["special"].c_str()));  
         }
         else 
         {
@@ -180,9 +194,9 @@ void soviet::package::installFile()
         move_binaries();
 
         //executing post installation scripts
-        if (!special_info.empty()) 
+        if (!info["special"].empty()) 
         {
-            system(format("(cd %s && %s ) ",vars.BUILD_DIR.c_str(),special_info.c_str())); 
+            system(format("(cd %s && %s ) ",vars.BUILD_DIR.c_str(),info["special"].c_str())); 
         }
         else 
         {
@@ -222,5 +236,8 @@ void soviet::package::installFile()
 
 
 }
+
+
+
 
 

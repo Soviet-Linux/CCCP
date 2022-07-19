@@ -2,9 +2,13 @@
     "name" : "<package name>",
     "type" : "src,bin",
     "version" : "<version>",
+    "maintainer" : "<pkd , theholy, trevor...>",
+    "description" : "a cool little package",
     "dependencies" : ["<a dependencie>","<other dependencie>"],
+    "url" : "https://website.com/archive.tar.gz",
     "info" : 
     {
+        "download" : "<command to download sources  , using the $URL variable >",
         "prepare" : "<prepare command>",
         "make" : "<build command>",
         "test" : "<commend to test the package>",
@@ -13,4 +17,4 @@
         
     },
     "locations" : ["<location>","<other location>"]
-}
+} 

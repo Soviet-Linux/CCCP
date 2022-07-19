@@ -19,6 +19,10 @@ void soviet::help()
     std::cout << "-d, --debug\t\tPrint debug messages!" << std::endl;
     std::cout << "-u, --update\t\tUpdate the package manager!" << std::endl;
     std::cout << "-t, --testing\t\tTesting mode!" << std::endl;
+    std::cout << "-b, --build\t\tBuild a package!" << std::endl;
+    std::cout << "-m, --make\t\tMake a package!" << std::endl;
+    // this is actually a good idea , we shoudl implement it in the future
+    // std::cout << "-e, --edit\t\tEdit a package!" << std::endl;
     
 
 

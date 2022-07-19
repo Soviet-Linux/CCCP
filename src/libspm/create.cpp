@@ -18,7 +18,7 @@ void soviet::package::createBinary(const std::string& binPath)
     // Reading spm file in MAKE DIR
     var_spm(soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str()));
     //making package
-    make();
+    make(format("%s/%s-%s",vars.MAKE_DIR.c_str(),name.c_str(),version.c_str()));
     // fancy output
     std::cout << "☭ Package built! ☭"<< "\n";
     //changing type to bin 

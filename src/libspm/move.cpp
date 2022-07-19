@@ -32,7 +32,7 @@ void soviet::package::move_binaries()
     for (int i = 0; i < locations.size(); i++)
     {
         msg(DBG3,"Checking if %s is empty",locations[i].c_str());
-        if (access(locations[i].c_str(),F_OK) == 0)
+        if (!(access(locations[i].c_str(),F_OK) == 0))
         {
             msg(DBG3, "moving %s/%s to %s", vars.BUILD_DIR.c_str(),locations[i].c_str(),locations[i].c_str());
             // now that we know it is empty , mov the stuff
@@ -42,7 +42,7 @@ void soviet::package::move_binaries()
         else 
         {
 
-            msg(ERROR,"Error, %s is already here",locations[i].c_str());
+            msg(WARNING,"%s is already here",locations[i].c_str());
 
             if (vars.OVERWRITE) 
             {

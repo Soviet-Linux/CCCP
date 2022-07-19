@@ -60,19 +60,35 @@ int soviet::package::var_spm(const std::string& spm_path)
     name = pkg_info["name"];
     type = pkg_info["type"];
     version = pkg_info["version"];
-    special_info = pkg_info["info"]["special"];
+    info["special"] = pkg_info["info"]["special"];
     for (int i = 0; i < pkg_info["dependencies"].size(); i++)
     {
         dependencies.push_back(pkg_info["dependencies"][i]);
     }
-    prepare_info = pkg_info["info"]["prepare"];
-    build_info = pkg_info["info"]["make"];
-    test_info = pkg_info["info"]["test"];
-    install_info = pkg_info["info"]["install"];
+    if (!pkg_info["url"].is_null())
+    {
+        url = pkg_info["url"];
+    }
+    // im really proud of the code below , it looks like some professional  stuff
+    std::vector<std::string> infos {"download","prepare","make","test","install"};
+    for (int i = 0; i < infos.size(); i++)
+    {
+        if (pkg_info["info"][infos[i]].is_null())
+        {
+            continue;
+        }
+        else
+        {
+            info[infos[i]] = pkg_info["info"][infos[i]];
+        }
+    }
+    // end of the cool code -^
+
     for (int i = 0; i < pkg_info["locations"].size(); i++)
     {
         locations.push_back(pkg_info["locations"][i]);
     }
+    
     msg(DBG1,"Package %s initialized successfully !",name.c_str());
     return 1;
 }

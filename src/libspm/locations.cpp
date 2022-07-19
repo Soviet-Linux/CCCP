@@ -10,6 +10,8 @@
 
 void soviet::package::get_locations()
 {
+    // clearing the locations vector in case there are duplicate 
+    locations.clear();
     //Get package file location
     std::string files_location_cmd = soviet::format("( cd %s && find . -type f | cut -c2- ) ", vars.BUILD_DIR.c_str());
     /*
@@ -22,7 +24,7 @@ void soviet::package::get_locations()
     // execute the commands
     std::string files_locations = soviet::exec(files_location_cmd.c_str());
     // print the locations
-    msg(DBG3, "Package locations : \n Files : %s ", files_location_cmd.c_str());
+    msg(DBG3, "Package locations : \n Files : %s ", files_locations.c_str());
 
     // Parsing everything ad storing it in a vector
     std::string line;
