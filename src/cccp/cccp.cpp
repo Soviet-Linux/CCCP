@@ -133,7 +133,11 @@ int main(int argc, char *argv[])
                 {
                     FConf.QUIET = false;
                 }
-                else { std::cout << "Unknown option " << option << "! Terminating...\n"; return 1;}
+                else if (longOption == "print")
+                {
+                    action = PRINT;
+                }
+                else std::cout << "Unknown option " << option << "! Terminating...\n";
 
 
             }
@@ -233,9 +237,13 @@ int main(int argc, char *argv[])
                             //verbose
                             FConf.QUIET = false;
                             break;
+                        case 'P' :
+                            // print
+                            action = PRINT;
+                            break;
                         default:
                             // Unknown option
-                            std::cout << "Unknown option! Terminating...\n";
+                            std::cout << "Unknown option!\n";
                             break;
 
                 

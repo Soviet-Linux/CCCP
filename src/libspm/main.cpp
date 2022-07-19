@@ -136,6 +136,41 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
             soviet::msg(soviet::level::INFO, "Syncing package files");
             soviet::sync();
             break;
+        case PRINT :
+            // here we are printing the content of a package data file
+            // first we need to loop over the parameters and find the package we want to print
+            for (int i = 0;i < parameters.size();i++)
+            {
+                soviet::msg(soviet::level::INFO, "Printing %s", parameters[i].c_str());
+                /* 
+                 here i could have used an OOP implementation , 
+                 With a package object and stuff , but its complicated , really ineficcient
+                */
+                // wee ned to check if the parameter is a file or a package name
+                // if it is a file we need to get the package name from the file name
+                // if it is a package name we need to get the package file name from the package name
+                // if the package name is not found we need to print an error message
+                // if the package name is found we need to print the package data file
+                // if the package file is not found we need to print an error message
+                
+                std::string packageName = parameters[i];
+                std::string packageFileName = soviet::format("%s/%s.spm",soviet::vars.SPM_DIR.c_str(),packageName.c_str());
+                if (std::filesystem::exists(packageFileName))
+                {
+                        std::ifstream f(packageFileName);
+                        if (f.is_open()) {
+                            std::cout << f.rdbuf();
+                        }
+                        std::cout << "\n";
+                            
+                }
+                else
+                {
+                    soviet::msg(soviet::level::FATAL, "Package %s not found!", packageName.c_str());
+                }
+
+            }
+            break;
         default :
             soviet::msg(soviet::level::FATAL, "Action error! ...\n");
             break;

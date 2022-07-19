@@ -23,6 +23,8 @@ void soviet::help()
     std::cout << "-m, --make\t\tMake a package!" << std::endl;
     // this is actually a good idea , we shoudl implement it in the future
     // std::cout << "-e, --edit\t\tEdit a package!" << std::endl;
+    std::cout << "-C, --clean\t\tClean the work dirs!" << std::endl;
+    std::cout << "-P, --print\t\tPrint the package file!" << std::endl;
     
 
 
