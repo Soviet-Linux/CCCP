@@ -241,6 +241,10 @@ int main(int argc, char *argv[])
                             // print
                             action = PRINT;
                             break;
+                        case 'T' :
+                            // testing dev mode 
+                            action = TEST;
+                            break;
                         default:
                             // Unknown option
                             std::cout << "Unknown option!\n";

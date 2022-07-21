@@ -138,6 +138,8 @@ namespace soviet {
     int init_data ();
     std::string exec(const char* cmd);
     package parseFileName (const std::string& Path);
+    package arch2spm (const std::string& arch_file);
+
 
     void help () ;
     void listPkgs ();

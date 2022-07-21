@@ -17,7 +17,7 @@
     - 
     -
     -
-    I prefer simple solution that deosnt include to write a timestamp based install-log thing from scratch
+    I prefer simple solution that doesnt include to write a timestamp based install-log thing from scratch
     (I tried , but its not good enough)
 
 */

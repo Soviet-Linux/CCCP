@@ -23,19 +23,19 @@ int soviet::package::check_dependencies ()
         return 1;
     }
     else {
-        for (int i = 0; i < dependencies.size(); i++)
+        for (auto & dep : dependencies)
         {
             // TODO: implement vesrion checking
             // is use the C function because my clangd server doesnt recognize the fucking std::filesystem thing and it bothered me 
-            std::string dep_spm_path = soviet::format("%s%s.spm",vars.SPM_DIR.c_str(),dependencies[i].c_str());
+            std::string dep_spm_path = soviet::format("%s%s.spm",vars.SPM_DIR.c_str(),dep.c_str());
             msg(DBG2,"Checking if dependency data file : %s exists",dep_spm_path.c_str());
 
             if (!access((dep_spm_path).c_str(),F_OK))
             {
-                msg(DBG2,"dependency %s is installed",dependencies[i].c_str());
+                msg(DBG2,"dependency %s is installed",dep.c_str());
             }
             else {
-                msg(DBG2,"dependency %s is not installed",dependencies[i].c_str());
+                msg(DBG2,"dependency %s is not installed",dep.c_str());
                 // INstall the required dependencies
                 // idk what to do 
                 // can someone find an idea ? 

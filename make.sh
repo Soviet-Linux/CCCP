@@ -9,7 +9,7 @@ CCCP_SRC_DIR=src/cccp
 OBJ_DIR=obj
 BIN_DIR=./bin
 
-CFLAGS="-Wall -Wextra  -pedantic -O2 -g "
+CFLAGS="-Wall -Wextra  -pedantic -O2   "
 CXXFLAGS="$CFLAGS -std=c++17"
 
 LIB_SRC_DIR=src/libspm
@@ -40,7 +40,7 @@ function libspm()
     done
     echo "Linking lib..."
 
-    $CXX -shared -o $BIN_DIR/libspm.so $LIB_OBJS -lcurl
+    $CXX $CXXFLAGS -shared -o $BIN_DIR/libspm.so $LIB_OBJS -lcurl -lpython3.10
     echo "Done."
 }
 function cccp()
@@ -60,7 +60,7 @@ function cccp()
     done
     echo "Linking cccp..."
     echo " $CXX $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS  -lspm "
-    $CXX -L$LIBSPM_DIR $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS -lspm -lcurl
+    $CXX -L$LIBSPM_DIR $CXXFLAGS -o $BIN_DIR/cccp $CCCP_OBJS -lspm -lcurl -lpython3.10
     echo "Done."
 }
 
