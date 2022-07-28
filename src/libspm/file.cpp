@@ -12,7 +12,7 @@ soviet::package soviet::parseFileName (const std::string& Path)
     std::string packageFile = pkg.packagePath.substr(pkg.packagePath.find_last_of("/")+1,pkg.packagePath.length());
     msg(level::DBG2, "Package file is %s", packageFile.c_str());
 
-    if (pkg.packagePath.length() < 15) 
+    if (pkg.packagePath.length() < 5) 
     {
         msg(level::FATAL, "Package path is too short; maybe it's not a package? Terminating...");
     }

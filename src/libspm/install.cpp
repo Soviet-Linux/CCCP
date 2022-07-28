@@ -64,6 +64,7 @@ void soviet::package::installArchive()
         }
         else
         {
+            msg(DBG2, "Reading spm file in %s", packagePath.c_str());
             getSources();
         }
         

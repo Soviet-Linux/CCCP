@@ -1,10 +1,13 @@
 {
     "name" : "<package name>",
-    "type" : "src,bin",
+    "type" : "<src,bin>",
     "version" : "<version>",
+    "license" : "<MIT,GPL,Apache,BSD,Public Domain,Other>",
     "maintainer" : "<pkd , theholy, trevor...>",
     "description" : "a cool little package",
     "dependencies" : ["<a dependencie>","<other dependencie>"],
+    "makedependencies" : ["<a dependencie>","<other dependencie>"],
+    "optionaldependencies" : ["<a dependencie>","<other dependencie>"],
     "url" : "https://website.com/archive.tar.gz",
     "info" : 
     {

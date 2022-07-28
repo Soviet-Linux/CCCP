@@ -1,8 +1,12 @@
- 
+#include <sys/stat.h> 
+
+
 // class stuff
 #include "../../include/libspm.hpp"
-#include <python3.10/Python.h>
 
+// json stuff
+#include "../../lib/nlohmann/json.hpp"
+using namespace nlohmann;
 
 const std::string PARSER = R"python(
 #!/usr/bin/env python3
@@ -25,6 +29,7 @@ const std::string PARSER = R"python(
 
 import sys
 import re
+import json 
 
 args = sys.argv[1:]
 
@@ -237,13 +242,13 @@ while i < len(lines):
         print ("Syntax error, continuing")
         continue
 
-print (symbols)
+print (json.dumps(symbols,indent = 4))
 
 
 
 )python";
 
-soviet::package soviet::arch2spm (const std::string& arch_file)
+json soviet::arch2spm (const std::string& arch_file)
 {
     mkdir(vars.TMP_DIR.c_str(), 0755);
     // i tried to make something good , but im desperate , so it will be realllly bad
@@ -252,6 +257,72 @@ soviet::package soviet::arch2spm (const std::string& arch_file)
     py_open.open(tmp_python_file.c_str());
     py_open << PARSER.c_str();
     py_open.close();
-    std::cout << exec(format("python3 %s %s",tmp_python_file.c_str(),arch_file.c_str())) << std::endl;
+    std::string arch_json_string = exec(format("python3 %s %s",tmp_python_file.c_str(),arch_file.c_str()));
+    std::cout << arch_json_string << std::endl;
+    json archParsed = json::parse(arch_json_string);
+
+    json spmJson = json::parse(PATTERN);
+    
+
+
+    spmJson["name"] = archParsed["pkgname"].get<std::string>();
+    spmJson["version"] = archParsed["pkgver"].get<std::string>();
+    for (int i = 0; i < archParsed["optdepends"].size(); i++)
+    {
+        std::string optdepends = archParsed["optdepends"][i];
+        std::string::size_type pos = optdepends.find(":");
+        if (pos != std::string::npos)
+        {
+            optdepends = optdepends.substr(0, pos);
+        }
+        spmJson["optionaldependencies"].push_back(optdepends);
+    }
+    msg(DBG2,"New spm json opdepends is : %s",spmJson["optionaldependencies"].dump(4).c_str());
+    for (int i = 0; i < archParsed["makedepends"].size(); i++)
+    {
+        spmJson["makedependencies"].push_back(archParsed["makedepends"][i]);
+    }
+    msg(DBG2,"New spm json makedepends is : %s",spmJson["makedependencies"].dump(4).c_str());
+    for (int i = 0; i < archParsed["depends"].size(); i++)
+    {
+        spmJson["dependencies"].push_back(archParsed["depends"][i]);
+    }
+    spmJson["url"] = archParsed["url"].get<std::string>();
+
+    // convert json array to json string
+    std::string licenseString = "";
+    for (int i = 0; i < archParsed["license"].size(); i++)
+    {
+        licenseString.append(archParsed["license"][i].get<std::string>());
+    }
+    spmJson["license"] = licenseString;
+
+    msg(DBG2,"New spm json license is : %s",spmJson["license"].dump(4).c_str());
+
+    spmJson["description"] = archParsed["pkgdesc"].get<std::string>();
+
+    // we nned to parse the commands now
+    std::string archSource = "";
+    
+    for (int i = 0; i < archParsed["source"]; i++)
+    {
+        archSource = archParsed["source"][i].get<std::string>();
+        std::string vcsFolder = archSource.substr(0, archSource.find_first_of(":"));
+        std::string vcsType = archSource.substr(archSource.find_first_of(":") + 1, archSource.find_first_of("+") - archSource.find_first_of(":") - 1);
+        std::string vcsUrl = archSource.substr(archSource.find_first_of("+") + 1, archSource.size());
+        // cout all the info
+        msg(DBG2,"vcsFolder is : %s",vcsFolder.c_str());
+        msg(DBG2,"vcsType is : %s",vcsType.c_str());
+        msg(DBG2,"vcsUrl is : %s",vcsUrl.c_str());
+    }
+
+    msg(DBG3,"New spm json: %s",spmJson.dump(4).c_str());
+
+
+
+
+
+
+
 
 }

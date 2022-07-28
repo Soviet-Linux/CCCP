@@ -6,6 +6,8 @@
 #include <iostream>
 #include <map>
 
+
+
 //json lib 
 #include "../lib/nlohmann/json.hpp"
 using nlohmann::json;
@@ -21,6 +23,7 @@ namespace soviet {
         I dont know how to do it yet but inshallah i will learn
         The result may be cool !
     */
+    
 
     extern configs vars;
 
@@ -68,6 +71,11 @@ namespace soviet {
             std::string type;
             // Package dependencies
             std::vector<std::string> dependencies;
+            // make dependencies
+            std::vector<std::string> makedependencies;
+            // opt dependencies
+            std::vector<std::string> optionaldependencies;
+
             // Package location (Post install)
             /*
             Guys , im thinking about a better way to do this
@@ -124,6 +132,7 @@ namespace soviet {
             nlohmann::json open_spm (const std::string& spm_path );
             void store_spm (const std::string &spm_path,const std::string& spm_out);
             int var_spm(const std::string& spm_path);
+            void create_spm(const std::string& spm_path);
 
             int add_data ();
             int remove_data ();
@@ -138,7 +147,7 @@ namespace soviet {
     int init_data ();
     std::string exec(const char* cmd);
     package parseFileName (const std::string& Path);
-    package arch2spm (const std::string& arch_file);
+    json arch2spm (const std::string& arch_file);
 
 
     void help () ;
@@ -162,6 +171,7 @@ namespace soviet {
     int msg(level msgLevel,const std::string& msg,...);
 
     int downloadRepo(const std::string& url_path,const std::string& file_path);
+
     
 }
 

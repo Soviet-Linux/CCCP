@@ -57,33 +57,39 @@ void soviet::package::store_spm (const std::string& spm_path,const std::string& 
 int soviet::package::var_spm(const std::string& spm_path)
 {
     auto pkg_info = open_spm(spm_path);
+    msg(DBG2,"Parsing %s",spm_path.c_str());
     name = pkg_info["name"];
     type = pkg_info["type"];
     version = pkg_info["version"];
-    info["special"] = pkg_info["info"]["special"];
+    msg(DBG3,"Adding dependencies");
     for (int i = 0; i < pkg_info["dependencies"].size(); i++)
     {
         dependencies.push_back(pkg_info["dependencies"][i]);
     }
+    msg(DBG3,"adding url");
     if (!pkg_info["url"].is_null())
     {
         url = pkg_info["url"];
     }
+    msg(DBG3,"launching cool code");
     // im really proud of the code below , it looks like some professional  stuff
-    std::vector<std::string> infos {"download","prepare","make","test","install"};
+    std::vector<std::string> infos {"download","prepare","make","test","install","special"};
     for (int i = 0; i < infos.size(); i++)
     {
         if (pkg_info["info"][infos[i]].is_null())
         {
+            msg(DBG3,"%s is null",infos[i].c_str());
             continue;
         }
         else
         {
-            info[infos[i]] = pkg_info["info"][infos[i]];
+            info.insert(std::pair<std::string,std::string>(infos[i],pkg_info["info"][infos[i]]));
+            msg(DBG3,"setting %s , to %s",info[infos[i]].c_str(),pkg_info["info"][infos[i]].dump().c_str());
         }
     }
+    msg(DBG3,"ending cool code");
     // end of the cool code -^
-
+    msg(DBG3,"adding locations");
     for (int i = 0; i < pkg_info["locations"].size(); i++)
     {
         locations.push_back(pkg_info["locations"][i]);

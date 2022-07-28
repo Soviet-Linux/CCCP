@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#define PATTERN "{\"name\":\"\",\"type\":\"\",\"version\":\"\",\"arch\":\"\",\"license\":\"\",\"maintainer\":\"\",\"description\":\"\",\"dependencies\":[],\"makedependencies\":[],\"optionaldependencies\":[],\"url\":\"\",\"info\":{\"download\":\"\",\"prepare\":\"\",\"make\":\"\",\"test\":\"\",\"install\":\"\",\"special\":\"\"},\"locations\":[]}"
+
 struct configs
 {
     int DEBUG;
