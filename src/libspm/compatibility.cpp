@@ -15,7 +15,7 @@ const std::string PARSER = R"python(
 # It fully (?) supports the syntax w/o braces, the ${}-syntax
 # is implemented very hackish.
 
-# As aur/opera uses an 'if'-clause outside build(), I am going to
+# As aur/opera uses an 'if'-clause outside create(), I am going to
 # implement basic 'if'-support, too. But, thinking further
 # about this, that 'if' used $CARCH, so parsing that 'if' makes no
 # sense anyway, because its hard to find a good default for $CARCH:
@@ -248,7 +248,7 @@ print (json.dumps(symbols,indent = 4))
 
 )python";
 
-json soviet::arch2spm (const std::string& arch_file)
+json soviet::arch2spm (const std::string& arch_file,const std::string& arch_url)
 {
     mkdir(vars.TMP_DIR.c_str(), 0755);
     // i tried to make something good , but im desperate , so it will be realllly bad
@@ -301,22 +301,20 @@ json soviet::arch2spm (const std::string& arch_file)
 
     spmJson["description"] = archParsed["pkgdesc"].get<std::string>();
 
-    // we nned to parse the commands now
-    std::string archSource = "";
-    
-    for (int i = 0; i < archParsed["source"]; i++)
-    {
-        archSource = archParsed["source"][i].get<std::string>();
-        std::string vcsFolder = archSource.substr(0, archSource.find_first_of(":"));
-        std::string vcsType = archSource.substr(archSource.find_first_of(":") + 1, archSource.find_first_of("+") - archSource.find_first_of(":") - 1);
-        std::string vcsUrl = archSource.substr(archSource.find_first_of("+") + 1, archSource.size());
-        // cout all the info
-        msg(DBG2,"vcsFolder is : %s",vcsFolder.c_str());
-        msg(DBG2,"vcsType is : %s",vcsType.c_str());
-        msg(DBG2,"vcsUrl is : %s",vcsUrl.c_str());
-    }
 
     msg(DBG3,"New spm json: %s",spmJson.dump(4).c_str());
+
+    /* Here i have a problem : i could parse the command used to build the package and basically rewrite libalpm myself 
+    of i could just all makepkg. I choose to call makepkg , but it causes a little problem , what shoudl we do with the fucking PKGBUILD ? 
+    If we had the url (from the aur for example) we could download it a install time.
+    For now i will pack it into a source archive. 
+    I'll leave an if(){...} else 
+    */
+
+    if (arch_url[0] != '\0')
+    {
+        // do stuff to download 
+    }
 
 
 

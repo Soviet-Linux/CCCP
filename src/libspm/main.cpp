@@ -109,7 +109,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 std::filesystem::remove_all(soviet::vars.TMP_DIR);
             }
             break;
-        case CREATE:
+        case BUILD:
             if (parameters.empty())
             {      
                 soviet::msg(soviet::level::FATAL, "No packages specified! Terminating...");
@@ -126,6 +126,29 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
             }
             break;
+        case CREATE:
+                        if (parameters.empty())
+            {      
+                soviet::msg(soviet::level::FATAL, "No packages specified! Terminating...");
+            }         
+            for (auto & param : parameters)
+            {
+
+                soviet::msg(soviet::level::INFO, "Creating binary package from %s", param.c_str());
+
+                soviet::msg(soviet::level::DBG1, "Launching creation with %s", pkg.packagePath.c_str());
+                
+                soviet::package pkg;
+                
+                if (param.substr(mparam.end()-3,param.end()) != "spm")
+                {
+                    msg(soviet::FATAL,"")
+                } 
+
+                pkg.packagePath = param;
+
+                pkg.createArchive(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
+            }
         case HELP:
             soviet::help();
             break;
@@ -169,7 +192,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
         case TEST :
             // This is just for testing purposes
             // it wont be used in the final version
-            soviet::arch2spm ("../neofetch-git/PKGBUILD");
+            soviet::arch2spm ("../neofetch/PKGBUILD","");
             break;
         default :
             soviet::msg(soviet::level::FATAL, "Action error! ...\n");
