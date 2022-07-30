@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#define PATTERN "{\"name\":\"\",\"type\":\"\",\"version\":\"\",\"arch\":\"\",\"license\":\"\",\"maintainer\":\"\",\"description\":\"\",\"dependencies\":[],\"makedependencies\":[],\"optionaldependencies\":[],\"url\":\"\",\"info\":{\"download\":\"\",\"prepare\":\"\",\"make\":\"\",\"test\":\"\",\"install\":\"\",\"special\":\"\"},\"locations\":[]}"
+#define PATTERN "{\"name\":\"\",\"type\":\"\",\"version\":\"\",\"license\":\"\",\"maintainer\":\"\",\"description\":\"\",\"dependencies\":[],\"makedependencies\":[],\"optionaldependencies\":[],\"url\":\"\",\"info\":{\"download\":\"\",\"prepare\":\"\",\"make\":\"\",\"test\":\"\",\"install\":\"\",\"special\":\"\"},\"locations\":[]}"
 
 struct configs
 {
@@ -48,7 +48,7 @@ struct configs
 parameters are parameters
 option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 */
-enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC,PRINT,TEST};
+enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,HELP,UPDATE,CLEAN,SYNC,PRINT,TEST,BUILD,INSTALL_COMPATIBLE};
 // shared function to be called by external programs
 int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig);
 float version();

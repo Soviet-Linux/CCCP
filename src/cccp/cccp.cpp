@@ -112,7 +112,11 @@ int main(int argc, char *argv[])
                 else if (longOption == "remove") { 
                     action = REMOVE;
                 }
-                else if (longOption == "binary") { 
+                else if (longOption == "build" or longOption == "binary") { 
+                    action = BUILD;
+                }
+                else if (longOption == "create" or longOption == "archive")
+                {
                     action = CREATE;
                 }
                 else if (longOption == "package") { 
@@ -136,6 +140,10 @@ int main(int argc, char *argv[])
                 else if (longOption == "print")
                 {
                     action = PRINT;
+                }
+                else if (longOption == "compatibility" or longOption == "extra")
+                {
+                    action = INSTALL_COMPATIBLE;
                 }
                 else std::cout << "Unknown option " << option << "! Terminating...\n";
 
@@ -179,6 +187,9 @@ int main(int argc, char *argv[])
                             std::cout << "Cleaning work dirs...\n";
                             action = CLEAN;
                             break;
+                        case 'a' :
+                            action = CREATE;
+                            break;
                         case 'l' :
                             // List packages
                             action = LIST;
@@ -219,7 +230,7 @@ int main(int argc, char *argv[])
                             break;
                         case 'b' :
                             //build
-                            action = CREATE;
+                            action = BUILD;
                             break;
                         case 'v' :
                             std::cout << "CCCP C++ front-end version " << RELEASE << std::endl;
@@ -244,6 +255,10 @@ int main(int argc, char *argv[])
                         case 'T' :
                             // testing dev mode 
                             action = TEST;
+                            break;
+                        case 'E' :
+                            // compatibility
+                            action = INSTALL_COMPATIBLE;
                             break;
                         default:
                             // Unknown option

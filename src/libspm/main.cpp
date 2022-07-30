@@ -21,13 +21,12 @@ Thank you for your help :)
 configs soviet::vars;
 
 
-
+std::string cwd = getcwd(NULL,0);
 
 
 
 int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 {
-    
     // pass the config to the libspm main variables
     soviet::vars = spmConfig;
     // Prepare the cccp
@@ -58,7 +57,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 soviet::package pkg = soviet::parseFileName(param);
                 
                 soviet::msg(soviet::level::DBG1, "Launching installation with %s", pkg.packagePath.c_str());
-                pkg.installArchive();
+                pkg.install();
             }
             break;
         case REMOVE :
@@ -105,7 +104,7 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 pkg.dataSpmPath = soviet::format("%s/%s.spm", soviet::vars.SPM_DIR.c_str(), pkg.name.c_str());
                 mkdir(soviet::vars.TMP_DIR.c_str(),0777);
                 pkg.get();
-                pkg.installArchive();
+                pkg.install();
                 std::filesystem::remove_all(soviet::vars.TMP_DIR);
             }
             break;
@@ -120,34 +119,37 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
                 soviet::msg(soviet::level::INFO, "Creating binary package from %s", param.c_str());
 
                 soviet::package pkg = soviet::parseFileName(param);
+                
+                // check if package is source
+                if (pkg.type != "src") soviet::msg(soviet::FATAL,"Specified package isn't a source spm package !" );
 
                 soviet::msg(soviet::level::DBG1, "Launching creation with %s", pkg.packagePath.c_str());
                 
-                pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
+                pkg.createBinary(soviet::format("%s/%s.bin.spm.tar.gz",cwd.c_str(),pkg.name.c_str()));
             }
             break;
         case CREATE:
-                        if (parameters.empty())
+            if (parameters.empty())
             {      
                 soviet::msg(soviet::level::FATAL, "No packages specified! Terminating...");
             }         
             for (auto & param : parameters)
             {
 
-                soviet::msg(soviet::level::INFO, "Creating binary package from %s", param.c_str());
-
-                soviet::msg(soviet::level::DBG1, "Launching creation with %s", pkg.packagePath.c_str());
+                soviet::msg(soviet::level::INFO, "Creating source package archive from %s", param.c_str());
                 
                 soviet::package pkg;
                 
-                if (param.substr(mparam.end()-3,param.end()) != "spm")
+                if (param.substr(param.size() -3 ,param.size()) != "spm")
                 {
-                    msg(soviet::FATAL,"")
+                    msg(soviet::FATAL,"This is not a valid package.");
                 } 
 
                 pkg.packagePath = param;
 
-                pkg.createArchive(soviet::format("%s/%s.bin.spm.tar.gz",std::filesystem::current_path().c_str(),pkg.name.c_str()));
+                soviet::msg(soviet::level::DBG1, "Launching creation with %s", pkg.packagePath.c_str());
+
+                pkg.createArchive(soviet::format("%s/%s.bin.spm.tar.gz",cwd.c_str(),pkg.name.c_str()),{});
             }
         case HELP:
             soviet::help();
@@ -189,10 +191,26 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
 
             }
             break;
+        case INSTALL_COMPATIBLE:
+            for (auto & param : parameters)
+            {
+                std::string FileName = param.substr(param.find_last_of("/")+1,param.size());
+                if (FileName == "PKGBUILD")
+                {
+                    soviet::msg(soviet::INFO, "Installing %s in ARCHLINUX compatibility mode", param.c_str());
+                    soviet::arch2spm ("STD_TMP",param,"");
+
+                }
+                else
+                {
+                    soviet::msg(soviet::level::FATAL, "%s files  arent compatible , sorry", FileName.c_str());
+                }
+            }
+            break;
         case TEST :
             // This is just for testing purposes
             // it wont be used in the final version
-            soviet::arch2spm ("../neofetch/PKGBUILD","");
+            
             break;
         default :
             soviet::msg(soviet::level::FATAL, "Action error! ...\n");

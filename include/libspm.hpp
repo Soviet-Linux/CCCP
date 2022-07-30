@@ -27,6 +27,12 @@ namespace soviet {
 
     extern configs vars;
 
+    // this is used by some function to know if its a package archive ar an spm file
+    enum spmType {
+    SPM_ARCHIVE,
+    SPM_FILE
+    };
+
     /*
     How the package class and the soviet function are designed :
 
@@ -81,7 +87,7 @@ namespace soviet {
             Guys , im thinking about a better way to do this
             We could find a system to transform this long list of file locations
             into a list of directory used by the package 
-            you understand ?
+          sed -i 's/old-text/new-text/g'  you understand ?
             It's not very useful , but it may be better for performance
 
             NEW ME :
@@ -111,14 +117,17 @@ namespace soviet {
             // where the spm file in data is stored
             std::string dataSpmPath ;
 
-           
+           spmType FileType;
             
             // main functions that will be called from main.cpp
             void get();
-            void uninstall();
             bool check();
-            void installArchive();
+            
+            void install();
+            void uninstall();
+
             void createBinary(const std::string& binPath);
+            void createArchive (const std::string& archive_path , std::vector<std::string> add_files );
             
         private :
 
@@ -132,7 +141,7 @@ namespace soviet {
             nlohmann::json open_spm (const std::string& spm_path );
             void store_spm (const std::string &spm_path,const std::string& spm_out);
             int var_spm(const std::string& spm_path);
-            void create_spm(const std::string& spm_path);
+
 
             int add_data ();
             int remove_data ();
@@ -147,7 +156,7 @@ namespace soviet {
     int init_data ();
     std::string exec(const char* cmd);
     package parseFileName (const std::string& Path);
-    json arch2spm (const std::string& arch_file);
+    void arch2spm (std::string spm_file,const std::string& arch_file,const std::string& arch_download);
 
 
     void help () ;

@@ -18,6 +18,9 @@
 
 import sys
 import re
+import json 
+
+args = sys.argv[1:]
 
 reName = re.compile(r"([\w_][\w\d_]*)")
 reAssignment = re.compile(r"([\w_][\w\d_]*)=")
@@ -25,56 +28,16 @@ reAssignment = re.compile(r"([\w_][\w\d_]*)=")
 lines = [""]
 symbols = {}
 
-def main(file_path):
+
+file = open(args[0], "r")
 
 
-    file = open(file_path, "r")
-
-
-   
-
-    for line in file:
-        line = line[:-1]
-        if not line: continue
-        lines[-1] += line
-        if line[-1] != "\\":
-            lines.append("")
-    
-
-    i = 0
-    while i < len(lines):
-        line = lines[i]
-        i += 1
-        
-        assignment = reAssignment.match(line)
-        if not assignment:
-            continue
-        ptr = assignment.end()
-        
-        # the parser relys on proper syntax. syntax errors are catched here
-        try:
-            if line[ptr] == "(":
-                symbols[assignment.group(1)] = []
-                ptr += 1
-                while True:
-                    while (ptr < len(line)) and (line[ptr] != ")"):
-                        if not line[ptr] in [" ", "\t"]:
-                            ptr, val = parseStr(line, ptr)
-                            symbols[assignment.group(1)].append(val)
-                        else:
-                            ptr += 1
-                    if (ptr < len(line)) and (line[ptr] == ")"): break
-                    if len(lines) == i: break
-                    line = lines[i]
-                    i += 1
-                    ptr = 0
-            else:
-                ptr, symbols[assignment.group(1)] = parseStr(line, ptr)
-        except IndexError:
-            print ("Syntax error, continuing")
-            continue
-
-    print (symbols)
+for line in file:
+    line = line[:-1]
+    if not line: continue
+    lines[-1] += line
+    if line[-1] != "\\":
+        lines.append("")
 
 def bashGlobToRegex(glob):
     # Reference: bash(1) "Pathname Expansion"
@@ -234,3 +197,38 @@ def parseStr(line, ptr):
             ptr += 1
         res = expandParams(res)
     return ptr, res
+
+i = 0
+while i < len(lines):
+    line = lines[i]
+    i += 1
+    
+    assignment = reAssignment.match(line)
+    if not assignment:
+        continue
+    ptr = assignment.end()
+    
+    # the parser relys on proper syntax. syntax errors are catched here
+    try:
+        if line[ptr] == "(":
+            symbols[assignment.group(1)] = []
+            ptr += 1
+            while True:
+                while (ptr < len(line)) and (line[ptr] != ")"):
+                    if not line[ptr] in [" ", "\t"]:
+                        ptr, val = parseStr(line, ptr)
+                        symbols[assignment.group(1)].append(val)
+                    else:
+                        ptr += 1
+                if (ptr < len(line)) and (line[ptr] == ")"): break
+                if len(lines) == i: break
+                line = lines[i]
+                i += 1
+                ptr = 0
+        else:
+            ptr, symbols[assignment.group(1)] = parseStr(line, ptr)
+    except IndexError:
+        print ("Syntax error, continuing")
+        continue
+
+print (json.dumps(symbols,indent = 4))

@@ -21,7 +21,7 @@ Binary packages are archive files containing the compiled binary files of the pa
 
 
 // parsing data and installing package archive (with sources)
-void soviet::package::installArchive()
+void soviet::package::install()
 {
     if (type == "src")
     {
@@ -46,7 +46,7 @@ void soviet::package::installArchive()
         // TODO: improve this because it can cause error in some edge cases
         // for example , if the user has a directory called ".spm.tar.gz" , with the package inside 
         // it woud crash the program
-        if (packagePath.find(".spm.tar.gz") != std::string::npos)
+        if (FileType == SPM_ARCHIVE)
         {
             msg(INFO, "Uncompressing %s", packagePath.c_str());
 
@@ -62,11 +62,12 @@ void soviet::package::installArchive()
             // Reading spm file in MAKE DIR
             var_spm(soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str()));
         }
-        else
+        else  
         {
             msg(DBG2, "Reading spm file in %s", packagePath.c_str());
             getSources();
         }
+
         
         // Checking dependencies
         //This dependencies if;else system is deprecated and will be removed in the future
@@ -86,7 +87,7 @@ void soviet::package::installArchive()
         
         // building the package and getting the locations
         //making package
-        if (make(package_dir))
+        if (make(package_dir) != 0 )
         {
             //an error as occured
             std::cout << "an error has occured ! its bad , do something !" << std::endl;

@@ -28,14 +28,17 @@ soviet::package soviet::parseFileName (const std::string& Path)
     if (extension == ".src.spm.tar.gz")
     {
         pkg.type = "src";
+        pkg.FileType = SPM_ARCHIVE;
     }
     else if (extension == ".bin.spm.tar.gz") 
     {
         pkg.type = "bin";
+        pkg.FileType = SPM_ARCHIVE;
     }
     else if (extension == ".spm")
     {
         pkg.type = "src";
+        pkg.FileType = SPM_FILE;
     }
     else 
     {

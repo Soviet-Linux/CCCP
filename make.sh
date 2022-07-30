@@ -90,6 +90,7 @@ else
     elif [ $1 = "install" ]; then
         cp $BIN_DIR/libspm.so /usr/lib/libspm.so
         cp $BIN_DIR/cccp /usr/bin/cccp
+        cp scripts/* /usr/bin
 	    if  grep -q $REPO_STR "/etc/cccp.conf" ; then
             echo "Repo already in /etc/cccp.conf"
         else 
