@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -17,8 +18,7 @@ nlohmann::json soviet::package::open_spm (const std::string& PPath)
 {
     if (access(PPath.c_str(), F_OK))
     {
-        std::cout << "SPM file not found!" << std::endl;
-        return json();
+        msg(FATAL, "PPath not found !");
     }
     std::ifstream file_spm((PPath).c_str(), std::ios::in);
     std::stringstream buffer;
@@ -41,6 +41,7 @@ void soviet::package::store_spm (const std::string& spm_path,const std::string& 
     {
         for (int i = 0; i < locations.size(); i++)
         {
+            msg(DBG3,"Pushing %s to locations",locations[i].c_str());
             pkg_info["locations"].push_back(locations[i]);
         }
     }
@@ -58,6 +59,7 @@ int soviet::package::var_spm(const std::string& spm_path)
 {
     auto pkg_info = open_spm(spm_path);
     msg(DBG2,"Parsing %s",spm_path.c_str());
+    msg(DBG3,pkg_info.dump(4).c_str());
     name = pkg_info["name"];
     type = pkg_info["type"];
     version = pkg_info["version"];

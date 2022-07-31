@@ -23,7 +23,9 @@ namespace soviet {
         I dont know how to do it yet but inshallah i will learn
         The result may be cool !
     */
-    
+
+    // idk if it is a good solution or not 
+    extern std::string cwd;
 
     extern configs vars;
 
@@ -117,7 +119,7 @@ namespace soviet {
             // where the spm file in data is stored
             std::string dataSpmPath ;
 
-           spmType FileType;
+            spmType FileType;
             
             // main functions that will be called from main.cpp
             void get();
@@ -128,6 +130,8 @@ namespace soviet {
 
             void createBinary(const std::string& binPath);
             void createArchive (const std::string& archive_path , std::vector<std::string> add_files );
+
+            int make (const std::string& package_dir);
             
         private :
 
@@ -135,7 +139,6 @@ namespace soviet {
             void get_locations();
             int check_dependencies ();
             void move_binaries();
-            int make (const std::string& package_dir);
 
             // Set of function that manipulate spm files
             nlohmann::json open_spm (const std::string& spm_path );
@@ -156,7 +159,11 @@ namespace soviet {
     int init_data ();
     std::string exec(const char* cmd);
     package parseFileName (const std::string& Path);
-    void arch2spm (std::string spm_file,const std::string& arch_file,const std::string& arch_download);
+
+    std::string arch2spm (const std::string& arch_file,const std::string& arch_download);
+    json arch2json(const std::string& PKGBUILD);
+
+    int installArch(const std::string PKGBUILD);
 
 
     void help () ;

@@ -30,7 +30,7 @@ int soviet::package::make (const std::string& package_dir)
     // this is actually a great piece of code 
 
     
-    
+
     /*
         We have some problems here , because some complex packages require advanced options to be installed 
         (like glibc that wants a separate build dir )
@@ -69,10 +69,10 @@ int soviet::package::make (const std::string& package_dir)
         //debug
         msg(DBG1,"prepare command executed !");
     }
-    if (!info["build"].empty())
+    if (!info["make"].empty())
     {
         //Formating the command
-        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["build"].c_str());
+        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["make"].c_str());
         // printing the command to standard output if debug is enabled
         msg(DBG3,"executing build command : %s",make_cmd.c_str());
         //executing the command

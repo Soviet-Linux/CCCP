@@ -27,7 +27,7 @@ void soviet::package::install()
     {
         /* All these variables are bad.*/
         //location spm file in build dir
-        std::string spm_build = soviet::format("%s/%s.spm",vars.BUILD_DIR.c_str(),name.c_str());
+        std::string spm_make = soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str());
 
         msg(DBG2,"Checking is %s exists",dataSpmPath.c_str());
         // this access function is weird , the return is 0 if it works and -1 if it doesnt 
@@ -58,14 +58,16 @@ void soviet::package::install()
             system(cmd_uncompress.c_str());
 
             //debug
-            msg(DBG3, "%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str());
+            msg(DBG3, spm_make.c_str());
             // Reading spm file in MAKE DIR
-            var_spm(soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str()));
+            var_spm(spm_make);
         }
         else  
         {
             msg(DBG2, "Reading spm file in %s", packagePath.c_str());
             getSources();
+            msg(DBG2,"Moving SPM file to make DIR");
+            std::filesystem::copy(packagePath.c_str(),spm_make.c_str());
         }
 
         

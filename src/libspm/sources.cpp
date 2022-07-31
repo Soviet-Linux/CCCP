@@ -11,6 +11,7 @@ void soviet::package::getSources ()
         msg(DBG2,"Downloading sources with %s",sources_cmd.c_str());
         system(sources_cmd.c_str());
         msg(DBG2,"Downloading sources finished");
+
         
 
 

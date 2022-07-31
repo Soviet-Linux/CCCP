@@ -9,8 +9,7 @@
 
 using namespace nlohmann;
 
-
-void soviet::arch2spm (std::string spm_file,const std::string& arch_file,const std::string& arch_download)
+std::string soviet::arch2spm (const std::string& arch_file,const std::string& arch_download)
 {
 
     
@@ -19,10 +18,67 @@ void soviet::arch2spm (std::string spm_file,const std::string& arch_file,const s
 
     mkdir(vars.TMP_DIR.c_str(), 0755);
 
-    std::string arch_json_string = exec(format("arch-parser %s",arch_file.c_str()));
+    json spmJson = arch2json(arch_file);
+
+    std::string SpmName = spmJson["name"].get<std::string>();
+
+    /* Here i have a problem : i could parse the command used to build the package and basically rewrite libalpm myself 
+    of i could just all makepkg. I choose to call makepkg , but it causes a little problem , what shoudl we do with the fucking PKGBUILD ? 
+    If we had the url (from the aur for example) we could download it a install time.
+    For now i will pack it into a source archive. 
+    I'll leave an if(){...} else 
+    */
+    msg(DBG2,"Creating install and make commands");
+    spmJson["info"]["prepare"] = "mv ../PKGBUILD .";
+    spmJson["info"]["make"] = "cccp-makepkg";
+    spmJson["info"]["install"] = format("mv pkg/%s/* $BUILD_ROOT",SpmName.c_str());
 
 
-    std::cout << arch_json_string << std::endl;
+    std::string spm_file = format("%s/%s.spm",cwd.c_str(),SpmName.c_str()); 
+
+
+    if (withDownload)
+    {
+        msg(INFO,"Writing to spm file with download info!");
+        spmJson["info"]["download"] = arch_download;
+        msg(DBG3,"New spm json: %s",spmJson.dump(4).c_str());
+
+        std::ofstream FinalSpm;
+        FinalSpm.open(spm_file.c_str());
+        FinalSpm << spmJson.dump(4);
+        FinalSpm.close();
+        msg(DBG3,"spm file is closed !");
+
+
+    }
+    else
+    {
+        msg(WARNING,"You gave no download command , i'll try to build without");
+        msg(INFO,"Launching creation of an src.spm.tar.gz package archive with the PKGBUILD");
+
+        std::string tar_spm_file = format("%s.src.spm.tar.gz",spm_file.substr(0,spm_file.find_last_of(".")).c_str());  
+        msg(DBG3,"New tar file name is : %s",tar_spm_file.c_str());
+        std::string tmp_spm = vars.TMP_DIR + "/arch_spm.tmp";
+
+        std::ofstream spm;
+        spm.open(tmp_spm.c_str());
+        spm << spmJson.dump(4);
+        spm.close();
+        package archPkg;
+        archPkg.packagePath = tmp_spm;
+        archPkg.createArchive(tar_spm_file, {arch_file});
+        
+    }
+    return SpmName;
+
+}
+
+
+json soviet::arch2json(const std::string& PKGBUILD)
+{
+    std::string arch_json_string = exec(format("arch-parser %s",PKGBUILD.c_str()));
+
+
     json archParsed = json::parse(arch_json_string);
 
     json spmJson = json::parse(PATTERN);
@@ -30,6 +86,8 @@ void soviet::arch2spm (std::string spm_file,const std::string& arch_file,const s
 
 
     spmJson["name"] = archParsed["pkgname"].get<std::string>();
+    // ading type for compatibility with old spm files
+    spmJson["type"] = "src";
     spmJson["version"] = archParsed["pkgver"].get<std::string>();
     for (int i = 0; i < archParsed["optdepends"].size(); i++)
     {
@@ -65,69 +123,7 @@ void soviet::arch2spm (std::string spm_file,const std::string& arch_file,const s
 
     spmJson["description"] = archParsed["pkgdesc"].get<std::string>();
 
-
-    /* Here i have a problem : i could parse the command used to build the package and basically rewrite libalpm myself 
-    of i could just all makepkg. I choose to call makepkg , but it causes a little problem , what shoudl we do with the fucking PKGBUILD ? 
-    If we had the url (from the aur for example) we could download it a install time.
-    For now i will pack it into a source archive. 
-    I'll leave an if(){...} else 
-    */
-    msg(DBG2,"Creating install and make commands");
-    spmJson["info"]["prepare"] = "mv ../PKGBUILD .";
-    spmJson["info"]["make"] = "cccp-makepkg ";
-    spmJson["info"]["install"] = format("mv pkg/%s/* $BUILD_ROOT",spmJson["name"].get<std::string>().c_str());
-
-    // this is a really bad soviettion , but fuck it 
-    if (spm_file == "STD_TMP")
-    {
-       spm_file = format("%s/%s.spm",vars.TMP_DIR.c_str(),spmJson["name"].get<std::string>().c_str()); 
-    }
-
-    if (withDownload)
-    {
-        msg(INFO,"Writing to spm file with download info!");
-        spmJson["info"]["download"] = arch_download;
-        msg(DBG3,"New spm json: %s",spmJson.dump(4).c_str());
-
-        std::ofstream FinalSpm;
-        FinalSpm.open(spm_file.c_str());
-        FinalSpm << spmJson.dump(4);
-        FinalSpm.close();
-
-        return;
-
-    }
-    else
-    {
-        msg(WARNING,"You gave no download command , i'll try to build without");
-        msg(INFO,"Launching creation of an src.spm.tar.gz package archive with the PKGBUILD");
-
-        std::string tar_spm_file = format("%s.src.spm.tar.gz",spm_file.substr(0,spm_file.find_last_of(".")).c_str());  
-        msg(DBG3,"New tar file name is : %s",tar_spm_file.c_str());
-        std::string tmp_spm = vars.TMP_DIR + "/arch_spm.tmp";
-
-        std::ofstream spm;
-        spm.open(tmp_spm.c_str());
-        spm << spmJson.dump(4);
-        spm.close();
-        package archPkg;
-        archPkg.packagePath = tmp_spm;
-        archPkg.createArchive(tar_spm_file,{arch_file});
-    }
-    
-
-            
-    
-
-
-
-
-
-
-
-
-
-
+    return spmJson;
 }
 
 

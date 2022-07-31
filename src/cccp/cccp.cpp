@@ -1,7 +1,10 @@
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 #include <unistd.h>
+#include <map>
+
 
 #include "../../include/shared.h"
 
@@ -65,8 +68,28 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // A way to store the action arguments 
-    // This isnt optimal but i dont know how to do it better
+    // new argument system
+    std::map<std::string,actionList> long2action =
+    {
+        {"help", HELP},
+        {"print",PRINT},
+        {"package",INSTALL_LOCAL},
+        {"install",INSTALL_FROM_REPO},
+        {"check",CHECK},
+        {"list",LIST},
+        {"remove",REMOVE},
+        {"archive",CREATE_ARCHIVE},
+        {"update",UPDATE},
+        {"clean",CLEAN},
+        {"sync",SYNC},
+        {"test",TEST},
+        {"build",CREATE_BINARY},
+        {"compatible",INSTALL_COMPATIBLE},
+        {"convert",TO_SPM}
+
+
+
+    };
     actionList action = HELP;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
@@ -79,197 +102,35 @@ int main(int argc, char *argv[])
             if (option.substr(0,2) == "--")
             {
                 std::string longOption = option.substr(2,option.length());
-                // if else s
-                if (longOption == "help") { 
-                    action = HELP;
-                }
-                else if (longOption == "sync") { 
-                    action = SYNC;
-                }
-                else if (longOption == "clean") { 
-                    action = CLEAN;
-                }
-                else if (longOption == "update") { 
-                    action = UPDATE;
-                }
-                else if (longOption == "version") { 
-                    std::cout << "CCCP C++ front-end version " << RELEASE << std::endl;
-                    std::cout << "LIBSPM C++ version " << version() << std::endl;
-                    return 0;
-                }
-                else if (longOption == "debug") { 
-                    FConf.DEBUG = true;
-                }
-                else if (longOption == "testing") { 
-                    FConf.TESTING = true;
-                }
-                else if (longOption == "check") { 
-                    action = CHECK;
-                }
-                else if (longOption == "list") { 
-                    action = LIST;
-                }
-                else if (longOption == "remove") { 
-                    action = REMOVE;
-                }
-                else if (longOption == "build" or longOption == "binary") { 
-                    action = BUILD;
-                }
-                else if (longOption == "create" or longOption == "archive")
+                if (longOption == "debug")
                 {
-                    action = CREATE;
-                }
-                else if (longOption == "package") { 
-                    action = INSTALL_LOCAL;
-                }
-                else if (longOption == "install") {
-                     action = INSTALL_FROM_REPO;
-                }
-                else if (longOption == "force" or longOption == "overwrite")
-                {
-                    FConf.OVERWRITE = true;
-                }
-                else if (longOption == "quiet")
-                {
-                    FConf.QUIET = true;
+                    FConf.DEBUG = 3;
                 }
                 else if (longOption == "verbose")
                 {
                     FConf.QUIET = false;
                 }
-                else if (longOption == "print")
+                else if (longOption == "overwrite")
                 {
-                    action = PRINT;
+                    FConf.OVERWRITE = true;
                 }
-                else if (longOption == "compatibility" or longOption == "extra")
-                {
-                    action = INSTALL_COMPATIBLE;
+                else {
+                    action = long2action[longOption];
                 }
-                else std::cout << "Unknown option " << option << "! Terminating...\n";
-
+                
 
             }
             else  
             {
+                std::cout << "Sorry , you cant use [-?] args for now , but we are working on it ." << std::endl;
+                /*
                 for (int i = 1;i < option.size();i++)
                 {
-                    switch (option[i]) 
-                    {
-                        case 'h' :
-                            // print a real help message ( TODO: improve the message)
-                            action = HELP;
-                            break;
-                        case 's' :
-                            //debug
-                            // Synchronize mirrors
-                            action = SYNC;
-                            break;
 
-                        case 'i' :
-                            // Install packages
-                            action = INSTALL_FROM_REPO;
-                            break;
-                        case 'r' :
-                            // Remove packages
-                            action = REMOVE;
-                            break;
-                        case 'u' :
-                            // Update packages
-                            // We are very far from an update system so i wont touch this in a while
-                            break;
-                        case 'c' :
-                            // Check packages
-                            std::cout << "Checking packages...\n";
-                            action = CHECK;
-                            break;
-                        case 'C' :
-                            // Clean packages
-                            std::cout << "Cleaning work dirs...\n";
-                            action = CLEAN;
-                            break;
-                        case 'a' :
-                            action = CREATE;
-                            break;
-                        case 'l' :
-                            // List packages
-                            action = LIST;
-                            break;
-                        case 'd' :
-                            //FConf.DEBUG mode
-                           FConf.DEBUG = true;
-                            switch (option[i+1]) 
-                            {
-                                case '1' :
-                                    //FConf.DEBUG mode 1
-                                   FConf.DEBUG = 1;
-                                    break;
-                                case '2' :  
-                                    //FConf.DEBUG mode 2
-                                   FConf.DEBUG = 2;
-                                    break;
-                                case '3' :
-                                    //FConf.DEBUG mode 3
-                                   FConf.DEBUG = 3;
-                                    break;
-                                default :
-                                   FConf.DEBUG = 1;     
-                            }
-                            //This message is ugly but i cant change it because i cant access the soviet::msg fucntion from here
-                            std::cout << "\033[1m\033[32m" << " DEBUG: " << "\033[0m" << "\033[32m" <<"Enabling level " << FConf.DEBUG <<" debug mode" <<  "\033[0m" << std::endl;
-                            // incrementing the i to skip the next character
-                            i++;
-
-                            break;
-                        case 't' :
-                            //FConf.TESTING mode
-                           FConf.TESTING = true;
-                            break;
-                        case 'p' :
-                            //install local
-                            action = INSTALL_LOCAL;
-                            break;
-                        case 'b' :
-                            //build
-                            action = BUILD;
-                            break;
-                        case 'v' :
-                            std::cout << "CCCP C++ front-end version " << RELEASE << std::endl;
-                            std::cout << "LIBSPM C++ version " << version() << std::endl;
-                            return 0;
-                        case 'f' :
-                            //overwrite
-                            FConf.OVERWRITE = true;
-                            break;
-                        case 'q' :
-                            //quiet
-                            FConf.QUIET = true;
-                            break;  
-                        case 'V' :
-                            //verbose
-                            FConf.QUIET = false;
-                            break;
-                        case 'P' :
-                            // print
-                            action = PRINT;
-                            break;
-                        case 'T' :
-                            // testing dev mode 
-                            action = TEST;
-                            break;
-                        case 'E' :
-                            // compatibility
-                            action = INSTALL_COMPATIBLE;
-                            break;
-                        default:
-                            // Unknown option
-                            std::cout << "Unknown option!\n";
-                            break;
-
-                
-                    }
                 }
+                */
             }
-        }
+        }    
         else
         {
             if (i > 1)

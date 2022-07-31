@@ -12,9 +12,8 @@
 bool soviet::package::check ()
 {
     // checkinig if package data file exists
-    std::cout << dataSpmPath << std::endl;
-    if (access(dataSpmPath.c_str(),F_OK)){
-        std::cout << "Package data file found!" << std::endl;
+    if (access(dataSpmPath.c_str(),F_OK) != 0){
+        msg(ERROR,"Package data file not found!");
         return false;
     }
     else
