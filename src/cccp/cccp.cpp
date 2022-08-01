@@ -115,6 +115,12 @@ int main(int argc, char *argv[])
                 {
                     FConf.OVERWRITE = true;
                 }
+                else if (longOption == "version")
+                {
+                    std::cout << "CCCP C++ Frontend v" << RELEASE << std::endl;
+                    std::cout << "Libspm C++ Library v" << version() << std::endl;
+                    return 0;
+                }
                 else {
                     action = long2action[longOption];
                 }
