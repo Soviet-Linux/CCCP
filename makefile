@@ -1,7 +1,7 @@
 
 all:
-	mkdir bin
-	mkdir obj
+	mkdir bin &
+	mkdir obj &
 	./make.sh lib
 	./make.sh cccp
 libspm:

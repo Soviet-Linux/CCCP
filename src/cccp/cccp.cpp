@@ -85,7 +85,8 @@ int main(int argc, char *argv[])
         {"test",TEST},
         {"build",CREATE_BINARY},
         {"compatible",INSTALL_COMPATIBLE},
-        {"convert",TO_SPM}
+        {"convert",TO_SPM},
+        {"aur",INSTALL_FROM_AUR}
 
 
 
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
                     action = long2action[longOption];
                 }
                 
+
 
             }
             else  

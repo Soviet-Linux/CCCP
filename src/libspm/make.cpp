@@ -1,5 +1,7 @@
 #include <fstream>
 #include <string>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <vector>
 #include <iostream>
 //I hate this , and i dont know why , but im forced to use  it because there is no other good alternative
@@ -23,6 +25,11 @@
 */
 int soviet::package::make (const std::string& package_dir)
 {
+    if (access(package_dir.c_str(),F_OK) != 0)
+    {
+        mkdir(package_dir.c_str(),0777);
+    }
+
     std::string cmd_params = "";
     
     //If debug is not enabled , reidrecting all command output to /dev/null

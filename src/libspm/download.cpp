@@ -48,33 +48,39 @@ int soviet::downloadRepo(const std::string& url_path,const std::string& file_pat
         std::string repo = vars.REPOS[i];
         std::string url = format("%s/%s",repo.c_str(),url_path.c_str());
         msg(INFO, "Downloading %s", url.c_str());
-
-        CURL *curl;
-        FILE *fp;
-        CURLcode res;
-        curl = curl_easy_init();      
-        msg(DBG3,"curl_easy_init() returned %p",curl);                                                                                                                                                                                                                                                     
-        if (curl)
-        {   
-            fp = fopen(file_path.c_str(),"wb");
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-            // Internal CURL progressmeter must be disabled if we provide our own callback
-            curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
-            // Install the callback function
-            curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func); 
-            res = curl_easy_perform(curl);
-            curl_easy_cleanup(curl);
-            fclose(fp);
-            printf("\n");
-            break;
-
-        }
         
-
+        downloadFile(url,file_path);
     
     }
     return 0;
 } 
+int soviet::downloadFile(const std::string& url,const std::string file_path)
+{
+    CURL *curl;
+    FILE *fp;
+    CURLcode res;
+    curl = curl_easy_init();      
+    msg(DBG3,"curl_easy_init() returned %p",curl);                                                                                                                                                                                                                                                     
+    if (curl)
+    {   
+        fp = fopen(file_path.c_str(),"wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        // Internal CURL progressmeter must be disabled if we provide our own callback
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
+        // Install the callback function
+        msg(DBG3,"launching progress func");
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func); 
+        
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        fclose(fp);
+        printf("\n");
+    }
+    else {
+        msg(ERROR,"curl_easy_init() failed");
+    }
+    return 0;
+}
 

@@ -211,24 +211,13 @@ int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig)
         case INSTALL_COMPATIBLE :
             for (auto & param : parameters)
             {
-                std::string FileName = param.substr(param.find_last_of("/")+1,param.size());
-                if (FileName == "PKGBUILD")
-                {
-                    std::string AbsPath = soviet::format("%s/%s",soviet::cwd.c_str(),param.c_str());
-                    soviet::msg(soviet::INFO, "installing %s in archlinux compatibility mode", param.c_str());
-                    soviet::package ArchPkg;
-                    ArchPkg.type = "src";
-                    ArchPkg.name = soviet::arch2spm(param, soviet::format("mkdir $NAME-$VERSION && cp %s .",AbsPath.c_str()));
-                    msg(soviet::INFO,"PKGBUILD succesfully converted !");
-                    ArchPkg.packagePath = soviet::format("%s/%s.spm",soviet::cwd.c_str(),ArchPkg.name.c_str());
-                    ArchPkg.dataSpmPath = soviet::format("%s/%s.spm",soviet::vars.SPM_DIR.c_str(),ArchPkg.name.c_str());
-                    ArchPkg.install();
-
-                }
-                else
-                {
-                    soviet::msg(soviet::level::FATAL, "%s files  arent compatible , sorry", FileName.c_str());
-                }
+                soviet::installCompatible(param);
+            }
+            break;
+        case INSTALL_FROM_AUR :
+            for (auto & param : parameters)
+            {
+                soviet::installAur(param);
             }
         case TEST :
             // This is just for testing purposes

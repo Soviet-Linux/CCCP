@@ -48,7 +48,7 @@ struct configs
 parameters are parameters
 option is cast to an enum : enum actionList {INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE,GET};
 */
-enum actionList {HELP,INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE_ARCHIVE,UPDATE,CLEAN,SYNC,PRINT,TEST,CREATE_BINARY,INSTALL_COMPATIBLE,TO_SPM};
+enum actionList {HELP,INSTALL_LOCAL,INSTALL_FROM_REPO,CHECK,LIST,REMOVE,CREATE_ARCHIVE,UPDATE,CLEAN,SYNC,PRINT,TEST,CREATE_BINARY,INSTALL_COMPATIBLE,TO_SPM,INSTALL_FROM_AUR};
 // shared function to be called by external programs
 int cccp(int actionInt , std::vector<std::string> parameters, configs spmConfig);
 float version();

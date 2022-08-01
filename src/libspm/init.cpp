@@ -24,7 +24,7 @@ void soviet::init ()
     {
         msg(level::ERROR, "Global package data file not found, to download it use -s option!");
     }
-
+    mkdir(vars.TMP_DIR.c_str(),0777);
     // Do other stuff if you want
 
 

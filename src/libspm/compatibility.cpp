@@ -9,14 +9,56 @@
 
 using namespace nlohmann;
 
+int soviet::installAur(const std::string& pkg_name)
+{
+    mkdir(format("%s/%s",vars.TMP_DIR.c_str(),pkg_name.c_str()),0777);
+
+    std::string PBUrl = format("https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=%s",pkg_name.c_str());
+    std::string tmp_path = format("%s/%s/PKGBUILD",vars.TMP_DIR.c_str(),pkg_name.c_str());
+    msg(DBG2,"Downloading %s to %s",PBUrl.c_str(),tmp_path.c_str());
+    downloadFile(PBUrl, tmp_path);
+    std::string download_cmd = format("curl -o PKGBUILD %s ",PBUrl.c_str());
+    installCompatible(tmp_path,download_cmd);
+    return 0;
+
+}
+int soviet::installCompatible(const std::string& file_path,const std::string& OptDownload)
+{
+   
+    std::string FileName = file_path.substr(file_path.find_last_of("/")+1,file_path.size());
+    if (FileName == "PKGBUILD")
+    {
+        std::string AbsPath = soviet::format("%s/%s",soviet::cwd.c_str(),file_path.c_str());
+        soviet::msg(soviet::INFO, "installing %s in archlinux compatibility mode", file_path.c_str());
+        package ArchPkg;
+        ArchPkg.type = "src";
+        std::string download_cmd;
+        if (OptDownload ==  "")
+        {
+            download_cmd = soviet::format("mkdir $NAME-$VERSION && cp %s .",AbsPath.c_str());
+        }
+        else {
+            download_cmd = OptDownload;
+        }
+        ArchPkg.name = soviet::arch2spm(file_path,download_cmd);
+        msg(soviet::INFO,"PKGBUILD succesfully converted !");
+        ArchPkg.packagePath = soviet::format("%s/%s.spm",soviet::cwd.c_str(),ArchPkg.name.c_str());
+        ArchPkg.dataSpmPath = soviet::format("%s/%s.spm",soviet::vars.SPM_DIR.c_str(),ArchPkg.name.c_str());
+        ArchPkg.install();
+
+    }
+    else
+    {
+        soviet::msg(soviet::level::FATAL, "%s files  arent compatible , sorry", FileName.c_str());
+    }
+}
+
 std::string soviet::arch2spm (const std::string& arch_file,const std::string& arch_download)
 {
 
     
 
     bool withDownload = (arch_download.length() > 0);
-
-    mkdir(vars.TMP_DIR.c_str(), 0755);
 
     json spmJson = arch2json(arch_file);
 
@@ -125,6 +167,7 @@ json soviet::arch2json(const std::string& PKGBUILD)
 
     return spmJson;
 }
+
 
 
 // This is some shit i implemented to create a download command from url

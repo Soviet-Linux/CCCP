@@ -164,7 +164,8 @@ namespace soviet {
     json arch2json(const std::string& PKGBUILD);
 
     int installArch(const std::string PKGBUILD);
-
+    int installCompatible(const std::string& file_path,const std::string& OptDownload = "");
+    int installAur(const std::string& pkg_name);
 
     void help () ;
     void listPkgs ();
@@ -187,6 +188,7 @@ namespace soviet {
     int msg(level msgLevel,const std::string& msg,...);
 
     int downloadRepo(const std::string& url_path,const std::string& file_path);
+    int downloadFile(const std::string& url,const std::string file_path);
 
     
 }

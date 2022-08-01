@@ -1,0 +1,38 @@
+{
+    "dependencies": [
+        "bash"
+    ],
+    "description": "A CLI system information tool written in BASH that supports displaying images.",
+    "info": {
+        "download": "curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=neofetch-git ",
+        "install": "mv pkg/neofetch-git/* $BUILD_ROOT",
+        "make": "cccp-makepkg",
+        "prepare": "mv ../PKGBUILD .",
+        "special": "",
+        "test": ""
+    },
+    "license": "MIT",
+    "locations": [],
+    "maintainer": "",
+    "makedependencies": [
+        "git"
+    ],
+    "name": "neofetch-git",
+    "optionaldependencies": [
+        "feh",
+        "imagemagick",
+        "nitrogen",
+        "w3m",
+        "catimg",
+        "jp2a",
+        "libcaca",
+        "xdotool",
+        "xorg-xdpyinfo",
+        "xorg-xprop",
+        "xorg-xrandr",
+        "xorg-xwininfo"
+    ],
+    "type": "src",
+    "url": "https://github.com/dylanaraps/neofetch",
+    "version": "3.2.0.r47.gc3c6404"
+}
