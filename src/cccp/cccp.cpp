@@ -8,7 +8,7 @@
 
 #include "../../include/shared.h"
 
-#define RELEASE 0.1
+#define RELEASE 0.25
 
 configs FConf;
 

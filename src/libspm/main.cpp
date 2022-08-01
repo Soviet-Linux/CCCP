@@ -5,7 +5,7 @@ Good luck to everyone that will try to understand this shit.
 Thank you for your help :)
 */
 #include <map>
-#define RELEASE 0.1
+#define RELEASE 0.31
 
 #include <cstdlib>
 #include <stdexcept>
