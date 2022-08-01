@@ -11,6 +11,6 @@ jobs:
     - name: Mirror
       run: |
         git clone --mirror git@sovietlinux.ml:/srv/git/dev/CCCP
-        cd CCCP/
+        cd CCCP.git/
         git remote add github https://github.com/Soviet-Linux/CCCP
         git push --mirror github
