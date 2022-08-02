@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Mirror
       run: |
-        echo -e "Host sovietlinux.ml\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+        ssh-keyscan sovietlinux.ml >> ~/.ssh/known_hosts
         git clone git@sovietlinux.ml:/srv/git/dev/CCCP
         cd CCCP/
         git remote add github https://github.com/Soviet-Linux/CCCP
