@@ -10,9 +10,9 @@ jobs:
     steps:
     - name: Mirror
       run: |
-      gt clone git@sovietlinux.ml:/srv/git/dev/CCCP
+        echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+        git clone git@sovietlinux.ml:/srv/git/dev/CCCP
         cd CCCP/
         git remote add github https://github.com/Soviet-Linux/CCCP
         git push github
-      env:
-        GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+
