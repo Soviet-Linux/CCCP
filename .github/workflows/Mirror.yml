@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Mirror
       run: |
-        if [ ! -n "$(grep "^sovietlinux.ml " ~/.ssh/known_hosts)" ]; then ssh-keyscan sovietlinux.ml >> ~/.ssh/known_hosts 2>/dev/null; fi
+        ssh-keyscan -t rsa sovietlinux.ml >> ~/.ssh/known_hosts
         git clone git@sovietlinux.ml:/srv/git/dev/CCCP
         cd CCCP/
         git remote add github https://github.com/Soviet-Linux/CCCP
