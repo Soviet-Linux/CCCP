@@ -7,6 +7,7 @@
 
 void soviet::init ()
 {
+    clean();
     readConfig(vars.CONFIG_FILE);
     // verify is all the DIR exists
     if (access(vars.ROOT.c_str(),F_OK)) mkdir(vars.ROOT.c_str(),0777);

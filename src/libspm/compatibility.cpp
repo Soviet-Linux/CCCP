@@ -14,10 +14,13 @@ int soviet::installAur(const std::string& pkg_name)
     mkdir(format("%s/%s",vars.TMP_DIR.c_str(),pkg_name.c_str()),0777);
 
     std::string PBUrl = format("https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=%s",pkg_name.c_str());
+    std::string RepoUrl = format("https://aur.archlinux.org/%s.git",pkg_name.c_str());
+
     std::string tmp_path = format("%s/%s/PKGBUILD",vars.TMP_DIR.c_str(),pkg_name.c_str());
     msg(DBG2,"Downloading %s to %s",PBUrl.c_str(),tmp_path.c_str());
     downloadFile(PBUrl, tmp_path);
-    std::string download_cmd = format("curl -o PKGBUILD %s ",PBUrl.c_str());
+
+    std::string download_cmd = format("git clone %s && mkdir $NAME-$VERSION && mv %s/* $NAME-$VERSION",RepoUrl.c_str(),pkg_name.c_str());
     installCompatible(tmp_path,download_cmd);
     return 0;
 
@@ -32,6 +35,7 @@ int soviet::installCompatible(const std::string& file_path,const std::string& Op
         soviet::msg(soviet::INFO, "installing %s in archlinux compatibility mode", file_path.c_str());
         package ArchPkg;
         ArchPkg.type = "src";
+        ArchPkg.FileType = SPM_FILE;
         std::string download_cmd;
         if (OptDownload ==  "")
         {
@@ -56,7 +60,7 @@ int soviet::installCompatible(const std::string& file_path,const std::string& Op
 std::string soviet::arch2spm (const std::string& arch_file,const std::string& arch_download)
 {
 
-    
+    msg(DBG2,"Converting %s to spm",arch_file.c_str());
 
     bool withDownload = (arch_download.length() > 0);
 
@@ -71,7 +75,6 @@ std::string soviet::arch2spm (const std::string& arch_file,const std::string& ar
     I'll leave an if(){...} else 
     */
     msg(DBG2,"Creating install and make commands");
-    spmJson["info"]["prepare"] = "mv ../PKGBUILD .";
     spmJson["info"]["make"] = "cccp-makepkg";
     spmJson["info"]["install"] = format("mv pkg/%s/* $BUILD_ROOT",SpmName.c_str());
 
@@ -97,6 +100,7 @@ std::string soviet::arch2spm (const std::string& arch_file,const std::string& ar
     {
         msg(WARNING,"You gave no download command , i'll try to build without");
         msg(INFO,"Launching creation of an src.spm.tar.gz package archive with the PKGBUILD");
+        spmJson["info"]["prepare"] = "mv ../PKGBUILD .";
 
         std::string tar_spm_file = format("%s.src.spm.tar.gz",spm_file.substr(0,spm_file.find_last_of(".")).c_str());  
         msg(DBG3,"New tar file name is : %s",tar_spm_file.c_str());
@@ -125,9 +129,15 @@ json soviet::arch2json(const std::string& PKGBUILD)
 
     json spmJson = json::parse(PATTERN);
     
-
-
-    spmJson["name"] = archParsed["pkgname"].get<std::string>();
+    // this is a weird hack , it may not work
+    if (archParsed["pkgname"].is_array())
+    {
+        spmJson["name"] = archParsed["pkgname"][0];
+    }
+    else {
+        spmJson["name"] = archParsed["pkgname"].get<std::string>();
+    }
+    
     // ading type for compatibility with old spm files
     spmJson["type"] = "src";
     spmJson["version"] = archParsed["pkgver"].get<std::string>();

@@ -5,7 +5,7 @@
 void soviet::clean()
 {
     /*
-        If you are  young dev looking at this code tryng to understand it , you will see that it is not very clean
+        If you are  a young dev looking at this code tryng to understand it , you will see that it is not very clean
         it is in fact very bad code , so dont look at it and goo see something better.
         dont learn my bad pactices
     */

@@ -25,10 +25,7 @@
 */
 int soviet::package::make (const std::string& package_dir)
 {
-    if (access(package_dir.c_str(),F_OK) != 0)
-    {
-        mkdir(package_dir.c_str(),0777);
-    }
+
 
     std::string cmd_params = "";
     
