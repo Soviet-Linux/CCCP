@@ -10,6 +10,8 @@ jobs:
     steps:
     - name: Mirror
       run: |
+        mkdir ~/.ssh
+        touch ~/.shh/known_hosts
         ssh-keyscan -t rsa sovietlinux.ml >> ~/.ssh/known_hosts
         git clone git@sovietlinux.ml:/srv/git/dev/CCCP
         cd CCCP/
