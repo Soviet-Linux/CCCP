@@ -2,7 +2,7 @@
 
 
 // class stuff
-#include "../../include/libspm.hpp"
+#include "../../include/libspm.h"
 
 // json stuff
 #include "../../lib/nlohmann/json.hpp"

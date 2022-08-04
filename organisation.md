@@ -1,42 +1,58 @@
-In this file the functionement of the CCCP and the LIBSPM is detailled :
+This file describes how the CCCP and the LibSPM work:
 
-# Libspm
+# LibSPM
+
+
 ## Presentation
-The libspm is a shared library (.so) that contains all of the major function of the Soviet Package Manager
-It's written in C++.  
-You can find the source in the ```src/libspm``` dir.
-## Functionement
-All the function of the lib are regrouped in the `soviet` namespace.
-> `soviet::exec` 
+The LibSPM is a shared library (.so) that contains all of the major functions of the Soviet Package Manager.
 
-All package manipulation function are contained in the `soviet::package`  class? They are called from a package object.
+It's written in C++.
+The source code is in the `src/libspm` directory.
+
+
+## Functioning
+
+The functions of the library have been reorganized in the `soviet` namespace.
+> `soviet::exec` 
+
+The `soviet::package` class contains all package manipulation functions. They are accessed through a package object.
 ```cpp
 #include "../../include/libspm.so"
 
 soviet::package pkg;\
 pkg.name = "neofetch";\
-pkg.install();```
+pkg.install();
 ```
-Package object most of the time are created with data contained in .spm files.  
-The libspm also provides some utilities function like ` soviet::msg()`, `soviet::exec()` or `soviet::downloadFile()`.
+The majority of the time, package objects are created using data from.spm files.
+The libspm also includes utility functions such as `soviet::msg()`, `soviet::exec()`, and `soviet::downloadFile()`.
+
+
+
+
 
 ## Issues
-This Object Oriented approach isn't optimal (but it works), because it reduces overall modularity (From other languages , you cant just use `soviet::package` , you need to pass through help function like `cccp` that takes an action arguments and do all the work).  
-It also gretly increases code complexity since everything must pass through the same function.
-I think that a more functional approach would be better and simpler to refactor.
+This object-oriented approach isn't ideal (but it works), because it reduces overall modularity (in other languages, you can't just use `soviet::package`, you have to pass through a help function like 'cccp' that takes action arguments and does all the work). Because everything must pass through the same function, it greatly increases code complexity. A more functional approach, in my opinion, would be better and easier to refactor.
+
+
+
+
 
 ### TODO
-Our team is working on a new version of the libspm that would use pure C and a completely functional organisation.
+Our team is working on a new version of the LibSPM that will be written in pure C and will have a fully functional organization.
+
+
+
+
 
 # CCCP
 
-Here we call "cccp" the executable called from the command-line that parse agruments and send action to the libspm.  
+Here, "cccp" refers to the command-line executable that parses agruments and sends action to the libspm.
 ```bash
 cccp --install neofetch
-``` 
-> (sends INSTALL action to the libspm and neofetch parameter )   
+``` 
+> (INSTALL action is sent to the libspm and neofetch as parameter)
 
---> _libspm_ 
+--> _libspm_
 ```cpp
 soviet::package pkg;
 pkg.name = "neofetch"
@@ -44,8 +60,4 @@ pkg.install();
 return 1;
 ```
 
-This part is basically useless , we could have implemented it in the libspm , but we chose to keep it separate for modularity (This way we could push an update the the libspm without changing the executable).
-
-We are working on other version of this program in other language to demonsrate the flexibility of the libspm.
-
-
+We could have implemented this section in the libspm, but we chose to keep it separate for modularity (this way we could push an update the libspm without changing the executable). We're working on another version of this program in another language to demonstrate the libspm's flexibility.

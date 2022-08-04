@@ -5,10 +5,9 @@ Good luck to everyone that will try to understand this shit.
 Thank you for your help :)
 */
 #include <map>
-#define RELEASE 0.31
+#define RELEASE 0.32
 
-#include <cstdlib>
-#include <stdexcept>
+
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>

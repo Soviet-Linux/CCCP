@@ -3,9 +3,9 @@
 #include <iostream>
 
 // class stuff
-#include "../../include/libspm.hpp"
+#include "../../include/libspm.h"
 
-char* soviet::format( const char* strFmtString, ... )
+char* format( const char* strFmtString, ... )
 {
     //declare char* strDest
     char* strDest;
