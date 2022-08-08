@@ -98,6 +98,7 @@ Contributions are what make the open source community such an amazing place to b
 * Please also read through the [Code Of Conduct](https://github.com/Soviet-Linux/CCCP/blob/main/CODE_OF_CONDUCT.md) before posting your first idea as well.
 
 ### Creating A Pull Request
+For contributing please switch to the [rewrite branch](https://github.com/Soviet-Linux/CCCP/tree/rewrite)
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
