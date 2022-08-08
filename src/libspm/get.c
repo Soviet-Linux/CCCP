@@ -1,57 +1,57 @@
 #include <curl/curl.h>
-#include <iostream>
-#include <ostream>
-#include <string>
 #include <unistd.h>
-#include <vector>
 #include <stdlib.h>
 #include <stdio.h>
 //include json lib
-#include "../../lib/nlohmann/json.hpp"
+
 
  // class stuff
-#include "../../include/libspm.hpp"
+#include "../../include/libspm.h"
+#include "../../include/globals.h"
 
-void soviet::package::get()
+void get()
 {
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
     
     // check if ALL_FILE exists
-    if (access((vars.ALL_FILE).c_str(),F_OK))
+    if (access((ALL_FILE),F_OK))
     {
         // This is the first tim is use a ''' do {...} while(...) ''' loop
+        char input;
         do
         {
-            std::cout << "There are no package data file , do you want to download it ? [y/n]";
-            std::cin >> type;
+            printf("There are no package data file , do you want to download it ? [y/n]");
+            
+            scanf("%c",&input);
+            
         }
-        while(  type != "y" && type != "n");
-        if (type == "n")
+        while(  input != 'y' && input != 'n');
+        if (input == 'n')
         {
-            std::cout << "Exiting" << std::endl;
+            msg(ERROR, "No package data file found, to download it use -s option!");
             return;
         }  
-        else if (type == "y")
+        else if (input == 'y')
         {
             sync();
         } 
         else 
         {
-            std::cout << "something went wrong" << std::endl;
+            msg(FATAL,"Invalid input");
         }
 
         
     }
-    if (vars.DEBUG) std::cout << "Loading " << vars.ALL_FILE << std::endl;
+    msg(DBG1,"Loading %s",  ALL_FILE);
     // verify if package exists
     // parse ALL_FILE and check if the package is there
-    std::ifstream file_spm((vars.ALL_FILE).c_str(), std::ios::in);
+    std::ifstream file_spm((ALL_FILE), std::ios::in);
     std::stringstream buffer;
     buffer << file_spm.rdbuf();
     //parsing json data
     auto all_pkgs = json::parse(buffer.str());
-    msg(DBG1,"Parsing %s" ,vars.ALL_FILE.c_str());
+    msg(DBG1,"Parsing %s" ,ALL_FILE);
     // check if the package is there
     // this solution is pretty bad
     // TODO : improve it
@@ -67,19 +67,19 @@ void soviet::package::get()
     }
     if (type == "")
     {
-        msg(FATAL,"Package %s not found",name.c_str());
+        msg(FATAL,"Package %s not found",name);
         return;
     }
     else {
-        msg(INFO,"Package %s %s %s found",name.c_str(),version.c_str(),type.c_str());
+        msg(INFO,"Package %s %s %s found",name,version,type);
     }
     // Defining package path , the location where the packages will be downloaded
-    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",vars.TMP_DIR.c_str(), name.c_str(), type.c_str());
+    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",TMP_DIR, name, type);
     
 
-    msg(DBG1,"Downloading %s %s %s",name.c_str(),version.c_str(),type.c_str());
+    msg(DBG1,"Downloading %s %s %s",name,version,type);
     // loop through REPOS
-    downloadRepo(format("base/src/%s.%s.spm.tar.gz",name.c_str(),type.c_str()), packagePath);
+    downloadRepo(format("base/src/%s.%s.spm.tar.gz",name,type), packagePath);
 
     
 }

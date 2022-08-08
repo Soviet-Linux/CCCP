@@ -32,5 +32,5 @@ extern char* INSTALLED_FILE;
 extern char* ALL_FILE;
 // configuraton file
 extern char* CONFIG_FILE;
-
-extern char*  REPOS[];
+// This is a fucking string array..., i know
+extern char** REPOS;

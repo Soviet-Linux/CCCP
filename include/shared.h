@@ -1,8 +1,8 @@
 #pragma once
 
 
-#define PATTERN "{\"name\":\"\",\"type\":\"\",\"version\":\"\",\"license\":\"\",\"maintainer\":\"\",\"description\":\"\",\"dependencies\":[],\"makedependencies\":[],\"optionaldependencies\":[],\"url\":\"\",\"info\":{\"download\":\"\",\"prepare\":\"\",\"make\":\"\",\"test\":\"\",\"install\":\"\",\"special\":\"\"},\"locations\":[]}"
-#define VERSION 0.401
+
+#define LIBSPM_VERSION 0.401
 
 
 // package info

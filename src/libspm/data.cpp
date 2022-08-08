@@ -2,11 +2,10 @@
 #include <fstream>
 #include <iostream>
 
-#include "../../lib/nlohmann/json.hpp"
-using nlohmann::json;
+
 
 //class thing
-#include "../../include/libspm.hpp"
+#include "../../include/libspm.h"
 
 /*
 This file contains several functions that are used to store , remove and manipulate installed package data.
