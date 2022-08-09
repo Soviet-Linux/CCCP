@@ -1,10 +1,12 @@
 #include "string.h"
 #include "stdlib.h"
 #include "stdio.h"
-
+#include <malloc.h>
 
 #include "../../include/libspm.h"
-#include <malloc.h>
+
+
+#include "utils.h"
 
 int strcpa(char** dest,const char* value)
 {
@@ -96,3 +98,31 @@ int strinarr( char* val, char** arr,long arrsize)
     }
     return -1;
 }
+enum packageType strtype(char* t_str)
+{
+    if (strcmp(t_str,"src") == 0) return ARCHIVE;
+    else if (strcmp(t_str,"bin") == 0) return BINARY;
+    else if (strcmp(t_str,"ssf") == 0) return SPM_FILE;
+    else return -1;
+}
+char* typestr(enum packageType type)
+{
+    char* str_type;
+    switch (type)
+    {
+        case ARCHIVE:
+            str_type = "src";
+            break;
+        case BINARY:
+            str_type = "bin";
+            break;
+        case SPM_FILE:
+            str_type = "ssf";
+            break;
+        default:
+            str_type = NULL;
+            break;
+    }
+    return str_type;
+}
+    

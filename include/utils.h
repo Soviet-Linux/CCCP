@@ -1,5 +1,7 @@
 #pragma once
 
+#include "libspm.h"
+
 enum level {
     DBG1,
     DBG2,
@@ -29,4 +31,16 @@ long rdfile(const char* filePath,char** buffer);
 int wrfile(const char* filePath,char* buffer,long size);
 //get position in array
 int strinarr( char* val, char** arr,long arrsize);
+// find a package from an all file in json
+int findall(char *ALL_PATH,struct package* a_pkg);
+// Make a curl progress bar
+int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded);
+// donwnload a file 
+int downloadFile(const char* url,const char* file_path);
+//type to string (i shoud use type string but its better like this)
+enum packageType strtype(char* t_str);
+// String to type
+char* typestr(enum packageType type);
+//download package from repo
+int downloadRepo(const char* url_path,const char* file_path);
 

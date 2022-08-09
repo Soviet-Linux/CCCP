@@ -1,31 +1,42 @@
+#include "stdio.h"
 
-// class stuff
-#include "../../include/libspm.hpp"
 
-void soviet::help()
+void help()
 {
-    //Print a cli help message
-    std::cout << "CCCP - A package manager for Soviet linux distro" << std::endl;
-    std::cout << "Usage: cccp [options] [arguments]" << std::endl;
-    std::cout << "Options:" << std::endl;
-    std::cout << "-i, --install\t\tInstall a package from the repos!" << std::endl;
-    std::cout << "-p, --package\t\tInstall a package file!" << std::endl;
-    std::cout << "-r, --remove\t\tUninstall a package!" << std::endl;
-    std::cout << "-l, --list\t\tList all packages!" << std::endl;
-    std::cout << "-c, --check\t\tCheck if a package is installed!" << std::endl;
-    std::cout << "-h, --help\t\tPrint this help message!" << std::endl;
-    std::cout << "-s, --sync\t\tSynchronize package file!" << std::endl;
-    std::cout << "-v, --version\t\tPrint the version of the package manager!" << std::endl;
-    std::cout << "-d, --debug\t\tPrint debug messages!" << std::endl;
-    std::cout << "-u, --update\t\tUpdate the package manager!" << std::endl;
-    std::cout << "-t, --testing\t\tTesting mode!" << std::endl;
-    std::cout << "-b, --build\t\tBuild a package!" << std::endl;
-    std::cout << "-m, --make\t\tMake a package!" << std::endl;
-    // this is actually a good idea , we shoudl implement it in the future
-    // std::cout << "-e, --edit\t\tEdit a package!" << std::endl;
-    std::cout << "-C, --clean\t\tClean the work dirs!" << std::endl;
-    std::cout << "-P, --print\t\tPrint the package file!" << std::endl;
-    
-
+    //Print a cli help message for the CCCP Package manager
+    printf("\n");
+    printf("CCCP  - A Package Manager for Soviet Linux distros\n");
+    printf("\n");
+    printf("Usage: cccp [options] (parameters)\n");
+    printf("\n");
+    printf("Options:\n");
+    printf("\n");
+    printf("-h, --help\n");
+    printf("\tPrint this help message\n");
+    printf("\n");
+    printf("-v, --version\n");
+    printf("\tPrint the version of the CCCP Package Manager\n");
+    printf("\n");
+    printf("-l, --list\n");
+    printf("\tList all available packages\n");
+    printf("\n");
+    printf("-i, --install\n");
+    printf("\tInstall a package\n");
+    printf("\n");
+    printf("-u, --update\n");
+    printf("\tUpdate a package\n");
+    printf("\n");
+    printf("-r, --remove\n");
+    printf("\tRemove a package\n");
+    printf("\n");
+    printf("-c, --clean\n");
+    printf("\tClean the package cache\n");
+    printf("\n");
+    printf("-s, --search\n");
+    printf("\tSearch for a package\n");
+    printf("\n");
+    printf("-d, --download\n");
+    printf("\tDownload a package\n");
+    printf("\n");
 
 }

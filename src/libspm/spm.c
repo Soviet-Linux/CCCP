@@ -57,6 +57,8 @@ int open_spm (const char* PPath,struct package* pkg)
     jsmn_init(&p);
     int r = jsmn_parse(&p, jstr, j_size, t, 128);
 
+    //TODO: check r
+
     enum EKEY {
     NAME,
     TYPE,
@@ -81,10 +83,11 @@ int open_spm (const char* PPath,struct package* pkg)
 
     //transform this json into a package object
     //loop over tokens
-    int i;
+    
 
     // looop over json tokens
-    for (int i = 0; i < p.toknext; i++) 
+    int i;
+    for (i = 0; i < p.toknext; i++) 
     {
 
 
@@ -210,6 +213,8 @@ int open_spm (const char* PPath,struct package* pkg)
                 break;
         }
     }    
+
+
     return 0;
 
     

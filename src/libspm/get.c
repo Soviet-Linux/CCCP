@@ -2,14 +2,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-//include json lib
 
 
  // class stuff
 #include "../../include/libspm.h"
 #include "../../include/globals.h"
+#include "../../include/utils.h"
 
-void get()
+int get(char* p_name,char* out_path)
 {
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
@@ -30,7 +30,7 @@ void get()
         if (input == 'n')
         {
             msg(ERROR, "No package data file found, to download it use -s option!");
-            return;
+            return -1;
         }  
         else if (input == 'y')
         {
@@ -46,42 +46,17 @@ void get()
     msg(DBG1,"Loading %s",  ALL_FILE);
     // verify if package exists
     // parse ALL_FILE and check if the package is there
-    std::ifstream file_spm((ALL_FILE), std::ios::in);
-    std::stringstream buffer;
-    buffer << file_spm.rdbuf();
-    //parsing json data
-    auto all_pkgs = json::parse(buffer.str());
-    msg(DBG1,"Parsing %s" ,ALL_FILE);
-    // check if the package is there
-    // this solution is pretty bad
-    // TODO : improve it
-    for (int i = 0; i < all_pkgs["all"].size(); i++)
-    {
-        std::string pkg_name = all_pkgs["all"][i]["name"];
-        if (pkg_name  == name )
-        {
-            type = all_pkgs["all"][i]["type"];
-            version = all_pkgs["all"][i]["version"];
-            break;
-        }
-    }
-    if (type == "")
-    {
-        msg(FATAL,"Package %s not found",name);
-        return;
-    }
-    else {
-        msg(INFO,"Package %s %s %s found",name,version,type);
-    }
-    // Defining package path , the location where the packages will be downloaded
-    packagePath = soviet::format("%s/%s.%s.spm.tar.gz",TMP_DIR, name, type);
-    
 
-    msg(DBG1,"Downloading %s %s %s",name,version,type);
+    struct package i_pkg;
+    
+    int r = findall(ALL_FILE,&i_pkg);
+
+
+    msg(DBG1,"Downloading %s %s %s",i_pkg.name,i_pkg.version,i_pkg.type);
     // loop through REPOS
-    downloadRepo(format("base/src/%s.%s.spm.tar.gz",name,type), packagePath);
-
-    
+    downloadRepo(format("base/%s/%s.%s.spm.tar.gz",typestr(i_pkg.type),i_pkg.name,i_pkg.type), out_path);
+ 
+    return 0;
 }
 
 /*

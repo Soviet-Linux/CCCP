@@ -1,15 +1,17 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "string.h"
 
 #include <curl/curl.h>
 
 // class stuff
-#include "../../include/libspm.hpp"
+#include "../../include/libspm.h"
+#include "../../include/utils.h"
 
 int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded)
 {
-    std::string barString = "";
+    
 
     // ensure that the file to be downloaded is not empty
     // because that would cause a division by zero error later on
@@ -23,38 +25,40 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, doubl
     // part of the progressmeter that's already "full"
     int dotz = (int) round(fractiondownloaded * totaldotz);
 
+    //declare the progressmeter
+    char bar[50];
+
     // create the "meter"
     int ii=0;
-    barString += soviet::format("%3.0f%% [",fractiondownloaded*100);
     // part  that's full already
-    for ( ; ii < dotz;ii++) {
-        barString += "=";
+    for ( ; ii < (dotz - 1);ii++) {
+        strcat(bar,"=");
     }
+    strcat(bar,">");
     // remaining part (spaces)
     for ( ; ii < totaldotz;ii++) {
-        barString += " ";
+        strcat(bar," ");
     }
     // and back to line begin - do not forget the fflush to avoid output buffering problems!
-    barString += "]";
-    soviet::msg(soviet::DOWNLOAD, "%s", barString.c_str());
+    printf(" %f [%s]\r",fractiondownloaded ,bar);
     // if you don't return 0, the transfer will be aborted - see the documentation
     return 0; 
 }
-int soviet::downloadRepo(const std::string& url_path,const std::string& file_path)
+int downloadRepo(const char* url_path,const char* file_path)
 {
-    for (int i = 0;i < vars.REPOS.size();i++)
+    for (int i = 0;i < REPO_COUNT;i++)
     {
         // get the url
-        std::string repo = vars.REPOS[i];
-        std::string url = format("%s/%s",repo.c_str(),url_path.c_str());
-        msg(INFO, "Downloading %s", url.c_str());
+        char* repo = REPOS[i];
+        char* url = format("%s/%s",repo,url_path);
+        msg(INFO, "Downloading %s", url);
         
         downloadFile(url,file_path);
     
     }
     return 0;
 } 
-int soviet::downloadFile(const std::string& url,const std::string file_path)
+int downloadFile(const char* url,const char* file_path)
 {
     CURL *curl;
     FILE *fp;
@@ -63,8 +67,8 @@ int soviet::downloadFile(const std::string& url,const std::string file_path)
     msg(DBG3,"curl_easy_init() returned %p",curl);                                                                                                                                                                                                                                                     
     if (curl)
     {   
-        fp = fopen(file_path.c_str(),"wb");
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        fp = fopen(file_path,"wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
         // Internal CURL progressmeter must be disabled if we provide our own callback

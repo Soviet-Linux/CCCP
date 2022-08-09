@@ -5,6 +5,7 @@
 
 // class stuff
 #include "../../include/libspm.h"
+#include "../../include/utils.h"
 
 
 #define RESET   "\033[0m"

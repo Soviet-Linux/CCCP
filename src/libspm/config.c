@@ -1,9 +1,12 @@
 #include "stdio.h"
 
 #include "../../include/libspm.h"
+
 #include <stdlib.h>
 #include <string.h>
 
+#include "../../include/globals.h"
+#include "../../include/utils.h"
 
 
 /* 
@@ -65,7 +68,10 @@ int readConfig(char* configFilePath)
             }
             else if (strcmp(key,"REPOS")) 
             {
-                REPOS = split(value,',',&count);
+                free(REPOS);
+                REPO_COUNT = 0;
+                REPOS = split(value,',',&REPO_COUNT);
+                
             }
             else {
                 msg(ERROR,"Unknown key in config file : %s",key);
