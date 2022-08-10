@@ -125,4 +125,20 @@ char* typestr(enum packageType type)
     }
     return str_type;
 }
+long findlast(char* str,char c)
+{
+    int i;
+    for (i = strlen(str);i > 0;i--)
+    {
+        if (str[i] == c)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+void popcharn(char* s,long s_size,int pos)
+{
+    memmove(&s[pos], &s[pos + 1], s_size - pos);
+}
     

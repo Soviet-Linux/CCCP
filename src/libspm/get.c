@@ -8,6 +8,7 @@
 #include "../../include/libspm.h"
 #include "../../include/globals.h"
 #include "../../include/utils.h"
+#include "../../include/data.h"
 
 int get(char* p_name,char* out_path)
 {
@@ -49,7 +50,7 @@ int get(char* p_name,char* out_path)
 
     struct package i_pkg;
     
-    int r = findall(ALL_FILE,&i_pkg);
+    int r = find_data(ALL_FILE,&i_pkg);
 
 
     msg(DBG1,"Downloading %s %s %s",i_pkg.name,i_pkg.version,i_pkg.type);

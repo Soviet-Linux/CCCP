@@ -1,14 +1,11 @@
-#include <fstream>
-#include <string>
+#include "stdio.h"
+#include "stdlib.h"
 #include <sys/stat.h>
-#include <unistd.h>
-#include <vector>
-#include <iostream>
-//I hate this , and i dont know why , but im forced to use  it because there is no other good alternative
-#include <filesystem>
+
 
 //class stuff
-#include "../../include/libspm.hpp"
+#include "../../include/libspm.h"
+#include "../../include/utils.h"
 
 /*
     All the complexity in this function and really in this entire project if just because we need to track  files installed by a makefile
@@ -23,15 +20,21 @@
     (I tried , but its not good enough)
 
 */
-int soviet::package::make (const std::string& package_dir)
+int make (char* package_dir,struct package* pkg)
 {
 
 
-    std::string cmd_params = "";
+
+    char *cmd_params;
     
     //If debug is not enabled , reidrecting all command output to /dev/null
-    if (vars.QUIET) cmd_params = "&> /dev/null";
-    // this is actually a great piece of code 
+    if (QUIET) {
+        cmd_params = "&> /dev/null";
+    }
+    else {
+        cmd_params = "";
+    }
+
 
     
 
@@ -60,50 +63,73 @@ int soviet::package::make (const std::string& package_dir)
     // TODO: find someone intelligent to ameliorate this code
 
     //checking is the command are used and formatting and executing them
-    if (!info["prepare"].empty())
+    if (pkg->info.prepare != NULL)
     {
         //formatting the prepare command
-        std::string prepare_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["prepare"].c_str());
+        char* prepare_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) %s",BUILD_DIR,package_dir,pkg->info.prepare,cmd_params);
 
         //Printing the command to the terminal
-       msg(DBG2,"Executing prepare command : %s",prepare_cmd.c_str());
+        msg(DBG2,"Executing prepare command : %s",prepare_cmd);
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        if (system((prepare_cmd + cmd_params).c_str())) return 1;
+        if (system(prepare_cmd) != 0) return 1;
         //debug
         msg(DBG1,"prepare command executed !");
+
+        free(prepare_cmd);
     }
-    if (!info["make"].empty())
+    if (pkg->info.make != NULL)
     {
-        //Formating the command
-        std::string make_cmd = soviet::format("BUILD_ROOT=%s; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["make"].c_str());
-        // printing the command to standard output if debug is enabled
-        msg(DBG3,"executing build command : %s",make_cmd.c_str());
+        //formatting the prepare command
+        char* make_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) %s",BUILD_DIR,package_dir,pkg->info.make,cmd_params);
+
+        //Printing the command to the terminal
+        msg(DBG2,"Executing make command : %s",make_cmd);
         //executing the command
-        if (system((make_cmd + cmd_params).c_str())) return 1;
+        // We add the extra command parameters to the command , so that the user can add extra parameters to the command
+        if (system(make_cmd) != 0) return 1;
         //debug
-        msg(DBG1,"Build done !");
+        msg(DBG1,"make command executed !");
+
+        free(make_cmd);
     
 
         
     }
+    if (pkg->info.test != NULL && TESTING)
+    {
+        //formatting the prepare command
+        char* test_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.make,TEST_LOG);
 
+        //Printing the command to the terminal
+        msg(DBG2,"Executing make command : %s",test_cmd);
+        //executing the command
+        // We add the extra command parameters to the command , so that the user can add extra parameters to the command
+        if (system(test_cmd) != 0) return 1;
+        //debug
+        msg(DBG1,"make command executed !");
 
-    
+        free(test_cmd);
+    }
 
-    //installing the package in the build directory
+    if (pkg->info.test != NULL)
+    {
+        //formatting the prepare command
+        char* install_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.make,TEST_LOG);
 
-    //formatting the install command
-    std::string install_cmd = soviet::format("BUILD_ROOT=%s ; ( cd %s && %s ) ",vars.BUILD_DIR.c_str(),package_dir.c_str(),info["install"].c_str());
+        //Printing the command to the terminal
+        msg(DBG2,"Executing make command : %s",install_cmd);
+        //executing the command
+        // We add the extra command parameters to the command , so that the user can add extra parameters to the command
+        if (system(install_cmd) != 0) return 1;
+        //debug
+        msg(DBG1,"make command executed !");
 
-    //printing , for debugging purposes
-    msg(DBG3,"Executing install command : %s",install_cmd.c_str());
-
-    //And finally , executing the install command
-    if (system((install_cmd + cmd_params).c_str())) return 1;
-
-    //debug
-    msg(DBG1,"Install done !");
+        free(install_cmd);
+    }
+    else {
+        msg(FATAL,"No install command !");
+    }
     
     return 0;
 

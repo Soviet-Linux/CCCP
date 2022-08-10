@@ -5,6 +5,7 @@
 #include  "../../include/libspm.h"
 #include "../../include/utils.h"
 #include "../../include/spm.h"
+#include "../../include/data.h"
 
 /*
 To uninstall packages , we'll use the location data ( all the files that were installed by the program )
@@ -41,7 +42,7 @@ int uninstall(char* name,char *p_path)
         msg(DBG3,"Remove exited with code %d",remove(r_pkg.locations[i]));   
     }
     //removing the entries in packages.json
-    remove_data();
+    remove_data(INSTALLED_FILE,r_pkg.name);
 
     //remove the spm file from DATA_DIR
     remove(dataSpmPath);

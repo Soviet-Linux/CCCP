@@ -35,3 +35,5 @@ extern char* CONFIG_FILE;
 // This is a fucking string array..., i know
 extern char** REPOS;
 extern int REPO_COUNT;
+
+extern char* TEST_LOG;

@@ -1,6 +1,7 @@
 #include "string.h"
 #include "stdlib.h"
 
+
 #include "../../lib/jsmn.h"
 
 
@@ -53,4 +54,18 @@ char* arrtojarr (char** arr,int count)
     }
     strcat(jarr,format("\"%s\"",arr[i+1]));
     return jarr;
+}
+unsigned long jparse(jsmntok_t** t,char* jstr,unsigned long jsize)
+{
+    jsmn_parser p;
+    jsmn_init(&p);
+
+    unsigned long t_num = jsmn_parse(&p, jstr, jsize, NULL,2048);
+    jsmn_init(&p);
+
+
+    *t = malloc(t_num * sizeof(jsmntok_t));
+
+    jsmn_parse(&p, jstr, jsize, *t, t_num);
+    return p.toknext;
 }

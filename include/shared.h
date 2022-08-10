@@ -17,10 +17,10 @@ float version();
 //# Package manipulation 
 
 // install packages
-int install();
-/*-->*/int installSpm();
-     /*-->*/int installSpmFile();
-     /*-->*/int installSpmArchive();
+//main exec function
+/*-->*/int installSpmFile();
+/*-->*/int installSpmArchive();
+/*-->*/int installSpmBinary();
 // Remove packages
 int uninstall();
 // Check packages

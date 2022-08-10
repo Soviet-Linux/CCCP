@@ -10,7 +10,9 @@
 
 
 // class stuff
-#include "../../include/libspm.hpp"
+#include "../../include/libspm.h"
+#include "../../include/utils.h"
+#include "../../include/spm.h"
 
 
 /*
@@ -21,9 +23,35 @@ Binary packages are archive files containing the compiled binary files of the pa
 
 
 // parsing data and installing package archive (with sources)
-void soviet::package::install()
+
+int installSpmFile(char* spm_path)
 {
-    if (type == "src")
+    struct package pkg;
+
+    open_spm(spm_path, &pkg);
+
+    if (pkg.info.download != NULL)
+        char* sources_cmd = format(" NAME=%s && VERSION=%s && URL=%s && cd %s && %s",pkg->name,pkg->version,pkg->url,MAKE_DIR,pkg->info.download);
+        msg(DBG2,"Downloading sources with %s",sources_cmd);
+        system(sources_cmd);
+}
+
+int installSpmArchive()
+{
+
+}
+
+int installSpmBinary()
+{
+
+}
+
+
+
+
+
+
+    if (type == )
     {
         /* All these variables are bad.*/
         //location spm file in build dir

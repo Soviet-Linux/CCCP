@@ -50,12 +50,19 @@ int open_spm (const char* PPath,struct package* pkg)
     char *jstr;
     long j_size = rdfile(PPath,&jstr);
     
-    //parsing json data
-    jsmn_parser p;
-    jsmntok_t t[128]; /* We expect no more than 128 JSON tokens */
 
-    jsmn_init(&p);
-    int r = jsmn_parse(&p, jstr, j_size, t, 128);
+    // before that we need to set infos to NULL for secutiry
+    pkg->info.download = NULL;
+    pkg->info.prepare = NULL;
+    pkg->info.make = NULL;
+    pkg->info.test = NULL;
+    pkg->info.install = NULL;
+    pkg->info.special = NULL;
+
+
+    jsmntok_t *t; /* We expect no more than 128 JSON tokens */
+    unsigned long t_size  = jparse(&t,jstr,j_size);
+    
 
     //TODO: check r
 
@@ -87,7 +94,7 @@ int open_spm (const char* PPath,struct package* pkg)
 
     // looop over json tokens
     int i;
-    for (i = 0; i < p.toknext; i++) 
+    for (i = 0; i < t_size; i++) 
     {
 
 
@@ -97,6 +104,42 @@ int open_spm (const char* PPath,struct package* pkg)
 
                 break;
             case JSMN_OBJECT:
+                if (
+                strcmp(jstrval(t[i-1],jstr),"info") == 0 &&
+                t[i].size > 0
+                ) 
+                {
+                    for (int j  = i;j < i + t[i].size;j++)
+                    {
+                        int pos = strinarr(jstrval(t[i],jstr), INFO_KEYS,INFO_KEY_COUNT);
+                        if (pos != -1)
+                        {
+                            switch (pos)
+                            {
+                                case DOWNLOAD:
+                                    pkg->info.download = jstrval(t[j],jstr);
+                                    break;
+                                case PREPARE:
+                                    pkg->info.prepare = jstrval(t[j],jstr);
+                                    break;
+                                case MAKE:
+                                    pkg->info.make = jstrval(t[j],jstr);
+                                    break;
+                                case TEST:
+                                    pkg->info.test = jstrval(t[j],jstr);
+                                    break;
+                                case INSTALL:
+                                    pkg->info.install = jstrval(t[j],jstr);
+                                    break;
+                                case SPECIAL:
+                                    pkg->info.special = jstrval(t[j],jstr);
+                                    break;
+                                
+                            }
+                        }
+                    }
+                } 
+
 
                 break;
             case JSMN_ARRAY:
