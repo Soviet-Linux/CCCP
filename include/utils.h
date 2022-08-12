@@ -35,10 +35,6 @@ int strinarr( char* val, char** arr,long arrsize);
 int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded);
 // donwnload a file 
 int downloadFile(const char* url,const char* file_path);
-//type to string (i shoud use type string but its better like this)
-enum packageType strtype(char* t_str);
-// String to type
-char* typestr(enum packageType type);
 //download package from repo
 int downloadRepo(const char* url_path,const char* file_path);
 // find last occurence of a char in a string.
@@ -49,4 +45,8 @@ void popchar(char* s,long s_size,int pos);
 char* exec(const char* cmd);
 // get package locations 
 long get_locations(char*** locations, char* loc_dir);
+// check and install dependencies for a package
+int check_dependencies (char ** dependencies,int dependenciesCount);
+// soething for sql stuff
+int callback(void *NotUsed, int argc, char **argv, char **azColName);
 

@@ -10,7 +10,7 @@
 
 int strcpa(char** dest,const char* value)
 {
-    *dest = strcpy(malloc(strlen(value) * sizeof(char)),value);
+    *dest = strcpy(malloc((strlen(value)+1) * sizeof(char)),value);
     return 0;
 }
 char** split (const char* string,char delim,int* returnCount)
@@ -48,7 +48,7 @@ char** split (const char* string,char delim,int* returnCount)
 }
 int freearr(void*** arr,unsigned long count)
 {
-    int i;
+    unsigned long i;
     for (i = 0; i < count; i++) {
         printf("Freeing string %p\n",(*arr)[i]);
         free((*arr)[i]);
@@ -98,33 +98,6 @@ int strinarr( char* val, char** arr,long arrsize)
     }
     return -1;
 }
-enum packageType strtype(char* t_str)
-{
-    if (strcmp(t_str,"src") == 0) return ARCHIVE;
-    else if (strcmp(t_str,"bin") == 0) return BINARY;
-    else if (strcmp(t_str,"ssf") == 0) return SPM_FILE;
-    else return -1;
-}
-char* typestr(enum packageType type)
-{
-    char* str_type;
-    switch (type)
-    {
-        case ARCHIVE:
-            str_type = "src";
-            break;
-        case BINARY:
-            str_type = "bin";
-            break;
-        case SPM_FILE:
-            str_type = "ssf";
-            break;
-        default:
-            str_type = NULL;
-            break;
-    }
-    return str_type;
-}
 long findlast(char* str,char c)
 {
     int i;
@@ -140,5 +113,13 @@ long findlast(char* str,char c)
 void popcharn(char* s,long s_size,int pos)
 {
     memmove(&s[pos], &s[pos + 1], s_size - pos);
+}
+
+long dynappend(char*** arr,unsigned int len,char* s)
+{
+    unsigned int s_len = strlen(s);
+    *arr = realloc(*arr, len + ( s_len * sizeof(char)));
+
+    return s_len + len;
 }
     

@@ -6,6 +6,7 @@
 //class stuff
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
+#include "../../include/globals.h"
 
 /*
     All the complexity in this function and really in this entire project if just because we need to track  files installed by a makefile
@@ -62,6 +63,12 @@ int make (char* package_dir,struct package* pkg)
     */
     // TODO: find someone intelligent to ameliorate this code
 
+    // Idk why i havent done this before , but i moved the downloading here
+    if (pkg->info.download != NULL) {
+        char* sources_cmd = format(" NAME=%s && VERSION=%s && URL=%s && cd %s && %s",pkg->name,pkg->version,pkg->url,MAKE_DIR,pkg->info.download);
+        msg(DBG2,"Downloading sources with %s",sources_cmd);
+        if (system(sources_cmd) != 0) return 1;
+    }
     //checking is the command are used and formatting and executing them
     if (pkg->info.prepare != NULL)
     {

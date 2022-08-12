@@ -4,12 +4,9 @@
 #include "shared.h"
 #include "globals.h"
 
+#define SOURCE "src"
+#define BINARY "bin"
 
-enum packageType {
-    ARCHIVE,
-    BINARY,
-    SPM_FILE
-};
 struct cmd
 {
     // Commands
@@ -24,7 +21,7 @@ struct package
 {
     // Basic infos
     char* name;
-    enum packageType type;
+    char* type; // for the type at first i used an enum but im lazy and its stupid;
     char* version;
     char* license;
     char* url;

@@ -4,10 +4,16 @@
 
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
+#include "../../include/globals.h"
+
 
 
 void init()
 {
+    
+
+
+
     clean();
     readConfig(CONFIG_FILE);
     // verify is all the DIR exists

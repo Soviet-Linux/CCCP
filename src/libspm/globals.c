@@ -1,48 +1,49 @@
-#include "stdbool.h"
+// This file is basically a copy of globals.h
 
+#include "stdbool.h"
 
 /*
 START OF THE (sort of) CONSTANTS DECALRATIONS 
 (They are not mean to be modified a lot)
 */
 
-extern int DEBUG;
-extern bool TESTING;
+int DEBUG;
+bool TESTING;
 
-extern bool OVERWRITE;
-extern bool QUIET;
+bool OVERWRITE;
+bool QUIET;
 // The filesystem root
-extern char* ROOT;
+char* ROOT;
 // For real use it must be set to "/"
 
 // main dir where all the files and packages will be stored and where we will work
-extern char* MAIN_DIR;
+char* MAIN_DIR;
 // the dir where we will be building the packages and downoading the sources
 //  TODO: proper dir names , but i dont have time to do it
-extern char* WORK_DIR;
+char* WORK_DIR;
 // the dir where the data is stored
-extern char* DATA_DIR;
+char* DATA_DIR;
 // where spm files of installed packages are stored
-extern char* SPM_DIR;
+char* SPM_DIR;
 //where we store tests and logs
-extern char* LOG_DIR;
+char* LOG_DIR;
 // Dir where built binaries are stored after making or after uncompressing
-extern char* BUILD_DIR;
+char* BUILD_DIR;
 // Dir where the package sources are downloaded and built
-extern char* MAKE_DIR;
+char* MAKE_DIR;
 // temp dir
-extern char* TMP_DIR;
+char* TMP_DIR;
 
 //The file where a lot of data are stored
-extern char* INSTALLED_DB;
-extern char* ALL_DB;
+char* INSTALLED_DB;
+char* ALL_DB;
 // configuraton file
-extern char* CONFIG_FILE;
+char* CONFIG_FILE;
 // This is a fucking string array..., i know
-extern char** REPOS;
-extern int REPO_COUNT;
+char** REPOS;
+int REPO_COUNT;
 
-extern char* TEST_LOG;
+char* TEST_LOG;
 
 /*
 END OF THE CONST ZONE
@@ -53,4 +54,4 @@ END OF THE CONST ZONE
 // IDK how to alloc memory efficiently to this.
 // I think that allocation should be moved to the executable*
 // We could also 
-extern char** PACKAGE_QUEUE;
+char** PACKAGE_QUEUE;

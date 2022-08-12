@@ -53,13 +53,13 @@ int readConfig(char* configFilePath)
             }
             else if (strcmp(key,"INSTALLED_FILE") == 0)
             {
-                free(INSTALLED_FILE);
-                strcpa(&INSTALLED_FILE,value);
+                free(INSTALLED_DB);
+                strcpa(&INSTALLED_DB,value);
             }
             else if (strcmp(key,"ALL_FILE") == 0)
             {
-                free(ALL_FILE);
-                strcpa(&ALL_FILE,value);
+                free(ALL_DB);
+                strcpa(&ALL_DB,value);
             }
             else if (strcmp(key,"CONFIG_FILE") == 0)
             {

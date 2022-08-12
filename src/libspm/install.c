@@ -1,18 +1,11 @@
-#include <fstream>
-#include <iostream>
-#include <ostream>
-#include <string>
-#include <sys/types.h>
-#include <unistd.h>
-#include <vector>
-#include <filesystem>
-#include <sys/stat.h>
+
 
 
 // class stuff
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
 #include "../../include/spm.h"
+#include <stdlib.h>
 
 
 /*
@@ -30,10 +23,11 @@ int installSpmFile(char* spm_path)
 
     open_spm(spm_path, &pkg);
 
-    if (pkg.info.download != NULL)
-        char* sources_cmd = format(" NAME=%s && VERSION=%s && URL=%s && cd %s && %s",pkg->name,pkg->version,pkg->url,MAKE_DIR,pkg->info.download);
-        msg(DBG2,"Downloading sources with %s",sources_cmd);
-        system(sources_cmd);
+    // check dependencies
+    //check_dependencies();
+
+
+    
 }
 
 int installSpmArchive()
@@ -51,9 +45,18 @@ int installSpmBinary()
 
 
 
+
+
+
+
+
+
+// The code below is the old c++ way of doing it 
+// i keep it in case
+/* 
     if (type == )
     {
-        /* All these variables are bad.*/
+        //All these variables are bad.
         //location spm file in build dir
         std::string spm_make = soviet::format("%s/%s.spm",vars.MAKE_DIR.c_str(),name.c_str());
 
@@ -175,7 +178,7 @@ int installSpmBinary()
         If you have an idea , do it 
         The goal is to remove all the content of BUILD_DIR 
         Without using complicated stuff
-        */
+        *//*
         
 
     }
@@ -265,9 +268,8 @@ int installSpmBinary()
     }
     std::cout << "Your package is installed, enjoy!" << std::endl;
 
+*/
 
-
-}
 
 
 
