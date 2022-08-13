@@ -1,5 +1,6 @@
 #include "stdbool.h"
 
+#define QUEUE_MAX 64
 
 /*
 START OF THE (sort of) CONSTANTS DECALRATIONS 

@@ -8,9 +8,14 @@
 
 
 
-void init()
+void init(int I_DEBUG,bool I_TESTING,bool I_OVERWRITE,bool I_QUIET)
+
 {
-    
+    int DEBUG = I_DEBUG;
+    bool TESTING = I_TESTING;
+
+    bool OVERWRITE = I_OVERWRITE;
+    bool QUIET = I_QUIET;
 
 
 
