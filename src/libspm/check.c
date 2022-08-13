@@ -37,3 +37,5 @@ int check (char* dataSpmPath, char* locations[], int locationsCount)
         return 0;
     }
 }
+// simpler check that also verifies f the package is being installed 
+
