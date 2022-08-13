@@ -1,6 +1,9 @@
 // This file is basically a copy of globals.h
 
 #include "stdbool.h"
+#include <stdlib.h>
+
+#define QUEUE_MAX 64
 
 /*
 START OF THE (sort of) CONSTANTS DECALRATIONS 
@@ -45,6 +48,7 @@ int REPO_COUNT;
 
 char* TEST_LOG;
 
+
 /*
 END OF THE CONST ZONE
 */
@@ -54,4 +58,5 @@ END OF THE CONST ZONE
 // IDK how to alloc memory efficiently to this.
 // I think that allocation should be moved to the executable*
 // We could also 
-char** PACKAGE_QUEUE;
+char* PACKAGE_QUEUE[QUEUE_MAX];
+int Q_COUNT;

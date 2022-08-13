@@ -1,4 +1,5 @@
 #include <curl/curl.h>
+#include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,13 +11,15 @@
 #include "../../include/utils.h"
 #include "../../include/data.h"
 
+
+
 int get(char* p_name,char* out_path)
 {
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
     
     // check if ALL_FILE exists
-    if (access((ALL_FILE),F_OK))
+    if (access((ALL_DB),F_OK))
     {
         // This is the first tim is use a ''' do {...} while(...) ''' loop
         char input;
@@ -44,20 +47,27 @@ int get(char* p_name,char* out_path)
 
         
     }
-    msg(DBG1,"Loading %s",  ALL_FILE);
+    msg(DBG1,"Loading %s",  ALL_DB);
     // verify if package exists
     // parse ALL_FILE and check if the package is there
 
     struct package i_pkg;
     
-    int r = find_data(ALL_FILE,&i_pkg);
+    int r = find_data(ALL_DB,&i_pkg);
 
 
     msg(DBG1,"Downloading %s %s %s",i_pkg.name,i_pkg.version,i_pkg.type);
     // loop through REPOS
-    downloadRepo(format("base/%s/%s.%s.spm.tar.gz",typestr(i_pkg.type),i_pkg.name,i_pkg.type), out_path);
+    downloadRepo(format("base/%s/%s.%s.spm.tar.gz",i_pkg.type,i_pkg.name,i_pkg.type), out_path);
  
-    return 0;
+    if (strcmp(i_pkg.type,"bin") == 0)
+    {
+        return 2;
+    }
+    else 
+    {
+        return 1;
+    }
 }
 
 /*

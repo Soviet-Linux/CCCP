@@ -3,7 +3,7 @@
 #include "malloc.h"
 #include <string.h>
 
-#include "../../lib/jsmn.h"
+#include "../../include/jsmn.h"
 
 
 #define PATTERN "{\"name\":\"%s\",\"type\":\"%s\",\"version\":\"%s\",\"license\":\"%s\",\"dependencies\":[%s],\"makedependencies\":[%s],\"optionaldependencies\":[%s],\"url\":\"%s\",\"info\":{\"download\":\"%s\",\"prepare\":\"%s\",\"make\":\"%s\",\"test\":\"%s\",\"install\":\"%s\",\"special\":\"%s\"},\"locations\":[%s]}"
@@ -166,22 +166,7 @@ int open_spm (const char* PPath,struct package* pkg)
                                pkg->name = j_val;
                                 break;
                             case TYPE:
-                                if (strcmp(j_val,"ssf") == 0) // This stands for Standalone Spm File
-                                {
-                                   pkg->type = SPM_FILE;
-                                }
-                                else if (strcmp(j_val,"bin") == 0)
-                                {
-                                   pkg->type = BINARY;
-                                }
-                                else if (strcmp(j_val,"src") == 0)
-                                {
-                                   pkg->type = ARCHIVE;
-                                }
-                                else
-                                {
-                                    msg(FATAL, "Unknown type %s",j_val);
-                                }
+                                pkg->type= j_val;
                             case VERSION :
                                 pkg->version = j_val;
                                 break;

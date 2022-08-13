@@ -2,7 +2,7 @@
 #include "stdlib.h"
 
 
-#include "../../lib/jsmn.h"
+#include "../../include/jsmn.h"
 
 
 #include "../../include/utils.h"

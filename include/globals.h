@@ -53,4 +53,5 @@ END OF THE CONST ZONE
 // IDK how to alloc memory efficiently to this.
 // I think that allocation should be moved to the executable*
 // We could also 
-extern char** PACKAGE_QUEUE;
+extern char* PACKAGE_QUEUE[];
+extern int Q_COUNT;

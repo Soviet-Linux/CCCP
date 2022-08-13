@@ -8,5 +8,5 @@
 
 void sync ()
 {
-    downloadRepo("all.json", ALL_FILE);
+    downloadRepo("all.db", ALL_DB);
 }

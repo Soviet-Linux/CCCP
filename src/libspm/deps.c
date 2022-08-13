@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include <stdlib.h>
 #include <unistd.h>
 
 // class stuff
@@ -24,6 +25,17 @@ int check_dependencies (char ** dependencies,int dependenciesCount)
                 TODO: Find a clever way to implement automatic dependencie installing*
                 In The meantime i'll implement no dep-checking.
             */
+            char* tempspm = mktemp("spm.XXXXXX");
+            int t = get(dependencies[i],tempspm);
+            if (t == SRC)
+            {
+                installSpmFile(tempspm);
+            }
+            else if (t == BIN)
+            {
+                installSpmFile(tempspm);
+            }
+            
 
             return 0;
         }

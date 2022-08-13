@@ -49,4 +49,5 @@ long get_locations(char*** locations, char* loc_dir);
 int check_dependencies (char ** dependencies,int dependenciesCount);
 // soething for sql stuff
 int callback(void *NotUsed, int argc, char **argv, char **azColName);
-
+// move program file to /
+void move_binaries(char** locations,long loc_size);

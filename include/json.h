@@ -1,4 +1,4 @@
-#include "../lib/jsmn.h"
+#include "jsmn.h"
 
 char* jstrval (jsmntok_t t,char* jstr);
 char** jarrtoarr (jsmntok_t t_list[],char* jstr,int pos);

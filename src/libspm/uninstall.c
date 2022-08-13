@@ -42,7 +42,7 @@ int uninstall(char* name,char *p_path)
         msg(DBG3,"Remove exited with code %d",remove(r_pkg.locations[i]));   
     }
     //removing the entries in packages.json
-    remove_data(INSTALLED_FILE,r_pkg.name);
+    remove_data(INSTALLED_DB,r_pkg.name);
 
     //remove the spm file from DATA_DIR
     remove(dataSpmPath);

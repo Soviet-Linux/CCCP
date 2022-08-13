@@ -27,9 +27,13 @@ int uninstall();
 int check (char* dataSpmPath, char* locations[], int locationsCount);
 
 //# Other stuff
-
+enum TypeInt {
+    SRC = 1,
+    BIN = 2,
+};
 //get a package
 int get(char* p_name,char* out_path);
+
 // update the system
 int update();
 // clean the work dirs
