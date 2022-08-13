@@ -7,6 +7,8 @@
 
 #define RELEASE 0.25
 
+#include "../../../include/globals.h"
+
 extern "C" float version();
 extern "C" int strcpa(char** dest,const char* value);
 
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
+    DEBUG = 3;
 
     // The packages to be installed or removed
     std::vector<std::string> parameters;

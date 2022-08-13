@@ -31,8 +31,7 @@ extern char* LOG_DIR;
 extern char* BUILD_DIR;
 // Dir where the package sources are downloaded and built
 extern char* MAKE_DIR;
-// temp dir
-extern char* TMP_DIR;
+
 
 //The file where a lot of data are stored
 extern char* INSTALLED_DB;

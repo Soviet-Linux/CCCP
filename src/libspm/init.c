@@ -8,14 +8,8 @@
 
 
 
-void init(int I_DEBUG,bool I_TESTING,bool I_OVERWRITE,bool I_QUIET)
-
+void init()
 {
-    int DEBUG = I_DEBUG;
-    bool TESTING = I_TESTING;
-
-    bool OVERWRITE = I_OVERWRITE;
-    bool QUIET = I_QUIET;
 
 
 
@@ -38,7 +32,7 @@ void init(int I_DEBUG,bool I_TESTING,bool I_OVERWRITE,bool I_QUIET)
     {
         msg(ERROR, "Global package data file not found, to download it use -s option!");
     }
-    mkdir(TMP_DIR,0777);
+    
     // Do other stuff if you want
 
 
