@@ -29,7 +29,7 @@ I really dont like that code so i wont comment.
 
 
 
-int get_data(char* DB_PATH,struct package* pkg)
+int find_data(char* DB_PATH,struct package* pkg)
 {
     sqlite3 *db;
     char *err_msg = 0;

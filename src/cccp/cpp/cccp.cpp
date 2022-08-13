@@ -1,16 +1,14 @@
 #include <iostream>
-#include <ostream>
-#include <string>
 #include <vector>
+#include <string>
+
+
 #include <unistd.h>
-#include <map>
-
-
-#include "../../include/shared.h"
 
 #define RELEASE 0.25
 
-configs FConf;
+extern "C" float version();
+extern "C" int strcpa(char** dest,const char* value);
 
 // Main function
 int main(int argc, char *argv[])
@@ -34,25 +32,9 @@ int main(int argc, char *argv[])
                 └── make --> MAKE_DIR
 
     */
-    FConf.ROOT = "/";
-    FConf.MAIN_DIR = FConf.ROOT + "var/cccp";
-    FConf.DATA_DIR = FConf.MAIN_DIR + "/data";
-    FConf.SPM_DIR = FConf.MAIN_DIR + "/spm";
-    FConf.LOG_DIR = FConf.MAIN_DIR + "/log";
-    FConf.WORK_DIR = FConf.MAIN_DIR + "/work";
-    FConf.BUILD_DIR = FConf.WORK_DIR + "/build";
-    FConf.MAKE_DIR = FConf.WORK_DIR + "/make";
-    FConf.TMP_DIR = FConf.ROOT + "tmp/spm.tmp.d";
 
-    FConf.CONFIG_FILE = "/etc/cccp.conf";
 
-    FConf.ALL_FILE = FConf.DATA_DIR + "/all.json";
-    FConf.INSTALLED_FILE = FConf.DATA_DIR + "/installed.json";
-    // setting the main config variables
-    FConf.DEBUG = false;
-    FConf.TESTING = false;
-    FConf.QUIET = true;
-    FConf.OVERWRITE = false;
+
 
 
     // checking if cccp is run as root
@@ -68,30 +50,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // new argument system
-    std::map<std::string,actionList> long2action =
-    {
-        {"help", HELP},
-        {"print",PRINT},
-        {"package",INSTALL_LOCAL},
-        {"install",INSTALL_FROM_REPO},
-        {"check",CHECK},
-        {"list",LIST},
-        {"remove",REMOVE},
-        {"archive",CREATE_ARCHIVE},
-        {"update",UPDATE},
-        {"clean",CLEAN},
-        {"sync",SYNC},
-        {"test",TEST},
-        {"build",CREATE_BINARY},
-        {"compatible",INSTALL_COMPATIBLE},
-        {"convert",TO_SPM},
-        {"aur",INSTALL_FROM_AUR}
 
 
-
-    };
-    actionList action = HELP;
     // The packages to be installed or removed
     std::vector<std::string> parameters;
 
@@ -103,26 +63,15 @@ int main(int argc, char *argv[])
             if (option.substr(0,2) == "--")
             {
                 std::string longOption = option.substr(2,option.length());
-                if (longOption == "debug")
-                {
-                    FConf.DEBUG = 3;
-                }
-                else if (longOption == "verbose")
-                {
-                    FConf.QUIET = false;
-                }
-                else if (longOption == "overwrite")
-                {
-                    FConf.OVERWRITE = true;
-                }
-                else if (longOption == "version")
+                if (longOption == "version")
                 {
                     std::cout << "CCCP C++ Frontend v" << RELEASE << std::endl;
                     std::cout << "Libspm C++ Library v" << version() << std::endl;
                     return 0;
                 }
-                else {
-                    action = long2action[longOption];
+                else if (longOption == "test")
+                {
+                    strcpa(NULL,NULL);
                 }
                 
 
@@ -148,12 +97,10 @@ int main(int argc, char *argv[])
             }
             else
             { 
-                action = HELP;
-                break;
+                continue;
             }
         }
     }
 
-    cccp(int(action),parameters,FConf);
     return 0;
 }
