@@ -141,3 +141,11 @@ int make (char* package_dir,struct package* pkg)
     return 0;
 
 }
+int exec_special(char* cmd,char* package_dir)
+{
+    msg(DBG2,"Executing special command : %s",cmd);
+    if (system(format("cd %s && %s",package_dir,cmd)) != 0) return 1;
+    
+    msg(DBG1,"special command executed !");
+    return 0;
+}

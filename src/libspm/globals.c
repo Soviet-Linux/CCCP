@@ -59,4 +59,4 @@ END OF THE CONST ZONE
 // I think that allocation should be moved to the executable*
 // We could also 
 char* PACKAGE_QUEUE[QUEUE_MAX];
-int Q_COUNT;
+int QUEUE_COUNT;

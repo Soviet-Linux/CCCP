@@ -29,11 +29,11 @@ int check_dependencies (char ** dependencies,int dependenciesCount)
             int t = get(dependencies[i],tempspm);
             if (t == SRC)
             {
-                installSpmFile(tempspm);
+                installSpmFile(tempspm,true);
             }
             else if (t == BIN)
             {
-                installSpmFile(tempspm);
+                installSpmFile(tempspm,true);
             }
             
 

@@ -10,6 +10,7 @@ extern "C" {
 
 
 
+
 // create a main function and call the version function
 
 fn main() {
@@ -17,9 +18,9 @@ fn main() {
 }
 
 fn print_version() {
-    unsafe {
+    unsafe 
+    {
         println!("[+] Libspm C version => {}", version());
-        println!("[+] CCCP Rust version => {}", VERSION);
-            
-        }
+        println!("[+] CCCP Rust version => {}", VERSION);        
+    }
 }

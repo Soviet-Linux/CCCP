@@ -2,7 +2,7 @@
 
 
 
-#define LIBSPM_VERSION 0.401
+#define LIBSPM_VERSION 0.403
 
 
 // package info
@@ -18,8 +18,7 @@ float version();
 
 // install packages
 //main exec function
-/*-->*/int installSpmFile();
-/*-->*/int installSpmArchive();
+/*-->*/int installSpmFile(char* spm_path,int as_dep);
 /*-->*/int installSpmBinary();
 // Remove packages
 int uninstall();

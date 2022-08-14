@@ -51,3 +51,13 @@ int check_dependencies (char ** dependencies,int dependenciesCount);
 int callback(void *NotUsed, int argc, char **argv, char **azColName);
 // move program file to /
 void move_binaries(char** locations,long loc_size);
+// build a package from source
+int make (char* package_dir,struct package* pkg);
+// execute post install scripts
+int exec_special(char* cmd,char* package_dir);
+// untar a binary package to another dir
+int uncompress_binary(char* bin_path,char* dest_dir);
+// get package name from binray file
+char* get_bin_name(char* bin_path);
+// cretae a binary spm package from dir
+int create_archive(char* DIR,char* out_path);

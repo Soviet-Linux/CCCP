@@ -11,6 +11,7 @@ CPPDIR = src/cccp/cpp
 RSDIR = src/cccp/rust
 
 CFLAGS = -Wall -g -fPIC -O2 -Wextra 
+RSFLAGS = -O
 LIBS = -lcurl -lsqlite3 -lm 
 
 SRCS = $(wildcard $(SDIR)/*.c)
@@ -29,7 +30,7 @@ $(OBJS): $(SRCS)
 	$(CC) -c $(INC) -o $@  $(subst .o,.c,$(subst ${ODIR},${SDIR},$@)) $(CFLAGS) 
 
 $(LIBOUT): $(OBJS) 
-	gcc -o $@  $(OBJS) $(CFLAGS) $(LIBS) -shared
+	$(CC) -o $@  $(OBJS) $(CFLAGS) $(LIBS) -shared
 
 .PHONY: clean
 
