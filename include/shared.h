@@ -2,7 +2,7 @@
 
 
 
-#define LIBSPM_VERSION 0.403
+#define LIBSPM_VERSION 0.404
 
 
 // package info
