@@ -31,6 +31,8 @@ int installSpmFile(char* spm_path,int as_dep)
     msg(DBG1,"Added %s to the queue",pkg.name);
 
     check_dependencies(pkg.dependencies,pkg.dependenciesCount);
+    // checking makedeps
+    check_dependencies(pkg.makedependencies,pkg.optionaldependenciesCount);
 
     /* 
         here we have some problems:

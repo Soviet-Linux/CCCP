@@ -61,3 +61,5 @@ int uncompress_binary(char* bin_path,char* dest_dir);
 char* get_bin_name(char* bin_path);
 // cretae a binary spm package from dir
 int create_archive(char* DIR,char* out_path);
+//free string better
+int sfree(char** ptr);

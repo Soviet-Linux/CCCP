@@ -6,7 +6,8 @@
 #include "../../include/libspm.h"
 
 
-#include "utils.h"
+
+#include "../../include/utils.h"
 
 int strcpa(char** dest,const char* value)
 {
@@ -59,27 +60,32 @@ int freearr(void*** arr,unsigned long count)
 }
 long rdfile(const char* filePath,char** buffer)
 {
-    FILE *fp;
-    long lSize;
+    (*buffer) = 0;
+    long length;
+    FILE * f = fopen (filePath, "rb");
 
-    fp = fopen ( filePath , "rb" );
-    if( !fp ) perror(filePath),exit(1);
+    if (f)
+    {
+        fseek (f, 0, SEEK_END);
+        length = ftell (f);
+        fseek (f, 0, SEEK_SET);
+        (*buffer) = calloc(length,sizeof(char));
+    if ((*buffer))
+    {
+        fread ((*buffer), 1, length, f);
+    }
+    fclose (f);
+    }
 
-    fseek( fp , 0L , SEEK_END);
-    lSize = ftell( fp );
-    rewind( fp );
-
-    /* allocate memory for entire content */
-    buffer = calloc( 1, lSize+1 );
-    if( !buffer ) fclose(fp),fputs("memory alloc fails",stderr),exit(1);
-
-    /* copy the file into the buffer */
-    if(fread(*buffer,lSize,1,fp) != 1) fclose(fp),free(*buffer),fputs("entire read fails",stderr),exit(1);
-
-    /* do your work here, buffer is a string contains the whole text */
-
-    fclose(fp);
-    return lSize;
+    if ((*buffer))
+    {
+        msg(DBG3,"Read %ld bytes from %s ==> %s",length,filePath,*buffer);
+        return length;
+    }
+    else
+    {
+        return -1;
+    }
 }
 int wrfile(const char* filePath,char* buffer,long size)
 {
@@ -94,6 +100,7 @@ int strinarr( char* val, char** arr,long arrsize)
 {
     int i;
     for(i = 0; i < arrsize; i++){
+        //msg(DBG3,"Comparing %s with %s",val,arr[i]);
         if (strcmp(arr[i],val) == 0) return i;
     }
     return -1;
@@ -121,5 +128,18 @@ long dynappend(char*** arr,unsigned int len,char* s)
     *arr = realloc(*arr, len + ( s_len * sizeof(char)));
 
     return s_len + len;
+}
+
+int sfree(char** ptr)
+{
+    if (strlen(*ptr) != 0)
+    {
+        free(*ptr);
+        return 0;
+    }
+    else {
+        msg(DBG3,"No free because string is null");
+        return 1;
+    }
 }
     

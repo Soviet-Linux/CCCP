@@ -60,9 +60,8 @@ int find_data(char* DB_PATH,struct package* pkg)
     int step = sqlite3_step(res);
     
     if (step == SQLITE_ROW) {
-        
-        strcpa(&pkg->name,(char*)sqlite3_column_text(res, 0));
-        strcpa(&pkg->version,(char*)sqlite3_column_text(res, 1));
+        strcpa(&pkg->version,(char*)sqlite3_column_text(res, 0));
+        strcpa(&pkg->type,(char*)sqlite3_column_text(res, 1));
         
     } 
 
@@ -185,4 +184,37 @@ int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     
     return 0;
  
+}
+
+int init_data(char* DB_PATH)
+{
+    sqlite3 *db;
+    char *err_msg = 0;
+    
+    int rc = sqlite3_open(DB_PATH, &db);
+    
+    if (rc != SQLITE_OK) {
+        
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        
+        return 1;
+    }
+    
+    char *sql = "CREATE TABLE Packages( Name TEXT,Version TEXT,Type TEXT,AsDep INT);";
+
+    rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+    
+    if (rc != SQLITE_OK ) {
+        
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        
+        sqlite3_free(err_msg);        
+        sqlite3_close(db);
+        
+        return 1;
+    } 
+    
+    sqlite3_close(db);
+    return 0;
 }

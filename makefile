@@ -17,13 +17,16 @@ LIBS = -lcurl -lsqlite3 -lm
 SRCS = $(wildcard $(SDIR)/*.c)
 OBJS = $(patsubst %,$(ODIR)/%,$(notdir $(SRCS:.c=.o)))
 
-all: $(LIBOUT)
+all: $(LIBOUT) $(EXEOUT)
+
+libspm: $(LIBOUT)
 
 cpp:
 	$(CPP) $(CFLAGS) $(CPPDIR)/* -o $(EXEOUT) -lspm -L./bin
 rust:
 	$(RSC) $(RSDIR)/test.rs -o $(EXEOUT) -lspm -L./bin
-
+testing:
+	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o bin/test -lspm -L./bin
 
 
 $(OBJS): $(SRCS)
