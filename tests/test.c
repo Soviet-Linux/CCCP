@@ -15,15 +15,48 @@ char* names[5] = {"pkg1","pkg2","pkg3","pkg4","pkg5"};
 char* versions[5] = {"1.1.0","2.0.8","6.8.7","7.0","5.20"};
 char* types[5] = {"bin","src","src","bin","src"};
 
-
+int test_spm();
+int test_data ();
 
 int main(void)
 {
+    DEBUG = 3;
+    printf("Launching Libspm test...\n");
+
+    test_data();
+
+    test_spm();
+}
+
+
+int test_spm()
+{
     int EXIT = 0;
 
-    DEBUG = 3;
+    printf("Testing spm functions\n");
 
-    printf("Launching Libspm test...\n");
+    char* TEST_SPM = "tests/neofetch.spm";
+
+    struct package t_pkg;
+
+    printf("Parsing package file \n");
+
+    open_spm(TEST_SPM,&t_pkg);
+
+    printf("  %s => %s %s\n",t_pkg.name,t_pkg.version,t_pkg.type);
+    // print info
+
+
+    printf("Creating spm package file \n");
+    // create new spm
+    create_spm("tests/neofetch-test.spm",&t_pkg);
+
+
+    return EXIT;
+}
+int test_data ()
+{
+    int EXIT = EXIT_SUCCESS;
 
     ALL_DB = "tests/test.db";
     INSTALLED_DB = "tests/installed.db";
@@ -88,24 +121,6 @@ int main(void)
     printf("listing all data from test database...\n");
     get_all_data(ALL_DB);
 
-    printf("Testing spm functions\n");
-
-    char* TEST_SPM = "tests/neofetch.spm";
-
-    struct package t_pkg;
-
-    printf("Parsing package file \n");
-
-    open_spm(TEST_SPM,&t_pkg);
-
-    printf("  %s => %s %s\n",t_pkg.name,t_pkg.version,t_pkg.type);
-    // print info
-
-
-    printf("Creating spm package file \n");
-    // create new spm
-    create_spm("tests/neofetch-test.spm",&t_pkg);
-
-
     return EXIT;
 }
+

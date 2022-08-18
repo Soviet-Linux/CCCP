@@ -177,7 +177,7 @@ int get_all_data(char * DB_PATH) {
 int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     
     NotUsed = 0;
-    
+    printf("%s",*azColName);
     printf("%s - [%s] => (%s)", argv[0], argv[1], argv[2]);
     
     printf("\n");
