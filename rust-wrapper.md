@@ -19,10 +19,7 @@ The CCCP will have to call the following functions:
 ### Remove function
  - `int uninstall(char* name)` ==> This function will uninstall a package.
 
-### Update function
 
- - `int updatePkg(char* name) ` ==> This function will update a package.  
- _Note: This function is not yet implemented._
 
 
 ### Binary function

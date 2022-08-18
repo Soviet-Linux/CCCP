@@ -63,3 +63,7 @@ char* get_bin_name(char* bin_path);
 int create_archive(char* DIR,char* out_path);
 //free string better
 int sfree(char** ptr);
+//check if the db global version is the same as the local version
+int check_repo_version(int V_LOCAL);
+// get local db version
+int get_data_version(char* VERSION_PATH);

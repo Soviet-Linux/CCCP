@@ -28,6 +28,13 @@ I really dont like that code so i wont comment.
 
 
 
+int get_data_version(char* VERSION_PATH)
+{
+    char* V_STR;
+    rdfile(VERSION_PATH,&V_STR); 
+    
+    return atoi(V_STR);
+}
 
 int find_data(char* DB_PATH,struct package* pkg)
 {
@@ -42,7 +49,7 @@ int find_data(char* DB_PATH,struct package* pkg)
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
         
-        return 1;
+        return -1;
     }
     
     char *sql = format("SELECT Version, Type FROM Packages WHERE Name = '%s'",pkg->name);

@@ -9,4 +9,5 @@
 void sync ()
 {
     downloadRepo("all.db", ALL_DB);
+    downloadRepo("VERSION",format("%s/VERSION",DATA_DIR));
 }
