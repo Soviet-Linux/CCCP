@@ -17,12 +17,13 @@ The CCCP will have to call the following functions:
  - `int installSpmBinary(char* archivePath,int as_dep)` ==> This function will install a package from a binary spm file.
 
 ### Remove function
- - `int uninstall(char* name,char *p_path)` ==> This function will uninstall a package.
+ - `int uninstall(char* name)` ==> This function will uninstall a package.
 
 ### Update function
 
- - `int updatePkg(char* name)` ==> This function will update a package.  
+ - `int updatePkg(char* name) ` ==> This function will update a package.  
  _Note: This function is not yet implemented._
+
 
 ### Binary function
  - `int createBinary(char* spm_path,char* bin_path)` ==> This function will create a binary spm file from a source spm file.

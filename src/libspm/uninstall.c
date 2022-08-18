@@ -18,7 +18,7 @@ This is simple . It could be simpler but really i dont know how .
 So dont touch this , except if there are a critical bug or an important missing feature.
 */
 // this function is for uninstaling packages
-int uninstall(char* name,char *p_path)
+int uninstall(char* name)
 {       
     char* dataSpmPath = format("%s/%s.spm",DATA_DIR,name);
     // verify if the package is installed
@@ -29,7 +29,7 @@ int uninstall(char* name,char *p_path)
     }
 
     struct package r_pkg;
-    open_spm(p_path,&r_pkg);
+    open_spm(dataSpmPath,&r_pkg);
 
 
 

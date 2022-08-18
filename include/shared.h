@@ -19,9 +19,9 @@ float version();
 // install packages
 //main exec function
 /*-->*/int installSpmFile(char* spm_path,int as_dep);
-/*-->*/int installSpmBinary();
+/*-->*/int installSpmBinary(char* archivePath,int as_dep);
 // Remove packages
-int uninstall();
+int uninstall(char* name);
 // Check packages
 int check (char* dataSpmPath, char* locations[], int locationsCount);
 
