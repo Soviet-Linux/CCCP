@@ -67,3 +67,5 @@ int sfree(char** ptr);
 int check_repo_version(int V_LOCAL);
 // get local db version
 int get_data_version(char* VERSION_PATH);
+//check if  a package is installed
+bool is_installed(char* name);

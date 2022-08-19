@@ -26,6 +26,8 @@ int main(void)
     test_data();
 
     test_spm();
+
+    installSpmFile("tests/vim-test.spm", 0);
 }
 
 
@@ -35,7 +37,7 @@ int test_spm()
 
     printf("Testing spm functions\n");
 
-    char* TEST_SPM = "tests/neofetch.spm";
+    char* TEST_SPM = "tests/vim.spm";
 
     struct package t_pkg;
 
@@ -49,7 +51,7 @@ int test_spm()
 
     printf("Creating spm package file \n");
     // create new spm
-    create_spm("tests/neofetch-test.spm",&t_pkg);
+    create_spm("tests/vim-test.spm",&t_pkg);
 
 
     return EXIT;

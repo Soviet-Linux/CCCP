@@ -15,7 +15,7 @@ int check_dependencies (char ** dependencies,int dependenciesCount)
     for (int i = 0; i < dependenciesCount; i++)
     {
         msg(DBG3,"Checking if %s is installed",dependencies[i]);
-        if (!(access(dependencies[i],F_OK) == 0))
+        if (!is_installed(dependencies[i]))
         {
             msg(DBG3, "Dependency %s is not installed",dependencies[i]);
             // TODO: we need to install the dependencie
@@ -25,7 +25,7 @@ int check_dependencies (char ** dependencies,int dependenciesCount)
                 TODO: Find a clever way to implement automatic dependencie installing*
                 In The meantime i'll implement no dep-checking.
             */
-            char* tempspm = mktemp("spm.XXXXXX");
+            char* tempspm = mktemp("/tmp/spm.XXXXXX");
             int t = get(dependencies[i],tempspm);
             if (t == SRC)
             {

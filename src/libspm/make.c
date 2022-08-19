@@ -1,5 +1,6 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include <string.h>
 #include <sys/stat.h>
 
 
@@ -54,6 +55,11 @@ int make (char* package_dir,struct package* pkg)
     */
     //TODO: resolve this issue (the original TODO was "fix this shit" , but i think "resolve this issue is better")
 
+    printf("prepare : %s\n",pkg->info.prepare);
+
+   
+
+
 
     /*
         So in this part we are foramtting and executing the commands to configure , compile , test and install the package.
@@ -64,13 +70,13 @@ int make (char* package_dir,struct package* pkg)
     // TODO: find someone intelligent to ameliorate this code
 
     // Idk why i havent done this before , but i moved the downloading here
-    if (pkg->info.download != NULL) {
+    if (pkg->info.download != NULL && strlen(pkg->info.download) > 0) {
         char* sources_cmd = format(" NAME=%s && VERSION=%s && URL=%s && cd %s && %s",pkg->name,pkg->version,pkg->url,MAKE_DIR,pkg->info.download);
         msg(DBG2,"Downloading sources with %s",sources_cmd);
         if (system(sources_cmd) != 0) return 1;
     }
     //checking is the command are used and formatting and executing them
-    if (pkg->info.prepare != NULL)
+    if (pkg->info.prepare != NULL && strlen(pkg->info.prepare) > 0) 
     {
         //formatting the prepare command
         char* prepare_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) %s",BUILD_DIR,package_dir,pkg->info.prepare,cmd_params);
@@ -85,7 +91,8 @@ int make (char* package_dir,struct package* pkg)
 
         free(prepare_cmd);
     }
-    if (pkg->info.make != NULL)
+    if (pkg->info.make != NULL && strlen(pkg->info.make) > 0) 
+
     {
         //formatting the prepare command
         char* make_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) %s",BUILD_DIR,package_dir,pkg->info.make,cmd_params);
@@ -103,7 +110,8 @@ int make (char* package_dir,struct package* pkg)
 
         
     }
-    if (pkg->info.test != NULL && TESTING)
+    if (pkg->info.test != NULL && TESTING && strlen(pkg->info.test) > 0) 
+
     {
         //formatting the prepare command
         char* test_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.make,TEST_LOG);
@@ -119,7 +127,8 @@ int make (char* package_dir,struct package* pkg)
         free(test_cmd);
     }
 
-    if (pkg->info.test != NULL)
+    if (pkg->info.install != NULL && strlen(pkg->info.install) > 0) 
+
     {
         //formatting the prepare command
         char* install_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.make,TEST_LOG);

@@ -30,9 +30,27 @@ int installSpmFile(char* spm_path,int as_dep)
     QUEUE_COUNT++;
     msg(DBG1,"Added %s to the queue",pkg.name);
 
-    check_dependencies(pkg.dependencies,pkg.dependenciesCount);
+    // check if package is already installed
+    if (is_installed(pkg.name))
+    {
+        msg(DBG1,"Package %s is already installed, reinstalling",pkg.name);
+        uninstall(pkg.name);
+    }
+
+    if (pkg.dependencies != NULL && pkg.dependenciesCount > 0 && strlen(pkg.dependencies[0]) > 0)
+
+    {
+        msg(DBG1,"Checking dependencies...");
+        check_dependencies(pkg.dependencies,pkg.dependenciesCount);
+    }
     // checking makedeps
-    check_dependencies(pkg.makedependencies,pkg.optionaldependenciesCount);
+    if (pkg.makedependencies != NULL && pkg.makedependenciesCount > 0 && strlen(pkg.makedependencies[0]) > 0)
+    {
+        msg(DBG3,"Checking makedeps : %s",pkg.makedependencies);
+        check_dependencies(pkg.makedependencies,pkg.makedependenciesCount);
+
+    }
+
 
     /* 
         here we have some problems:
@@ -148,6 +166,12 @@ char* get_bin_name(char* bin_path)
         }
     }
     return NULL;
+}
+bool is_installed(char* name)
+{
+    char* spm_path = format("%s/%s.spm",SPM_DIR,name);
+    if (access(spm_path,F_OK) == 0) return true;
+    return false;
 }
 
 

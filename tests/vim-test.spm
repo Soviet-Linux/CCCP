@@ -1,0 +1,1 @@
+{"name":"vim","type":"src","version":"8.1","license":"(null)","url":"https://github.com/vim/vim.git","dependencies":[""],"makedependencies":[""],"optionaldependencies":[""],"info":{"download":"git clone $URL && mv $NAME $NAME-VERSION","prepare":"","make":"prepare","test":"","install":"make DESTDIR=$BUILD_ROOT install","special":""},"locations":[]}
