@@ -132,6 +132,10 @@ int open_spm (const char* PPath,struct package* pkg)
                     
                     for (int j  = i+1;j < i + (t[i].size * 2);j++)
                     {
+                        if (t[j].size == 0) 
+                        {
+                            continue;
+                        } 
                         //msg(DBG3,"Info key : %s",jstrval(t[j],jstr));
                         int pos = strinarr(jstrval(t[j],jstr), INFO_KEYS,INFO_KEY_COUNT);
                         if (pos != -1)
@@ -145,6 +149,7 @@ int open_spm (const char* PPath,struct package* pkg)
                                     pkg->info.prepare = jstrval(t[j+1],jstr);
                                     break;
                                 case MAKE:
+                                    printf("Make : %s",jstrval(t[j+1],jstr));
                                     pkg->info.make = jstrval(t[j+1],jstr);
                                     break;
                                 case TEST:
@@ -183,7 +188,7 @@ int open_spm (const char* PPath,struct package* pkg)
                     
                     char* j_key = jstrval(t[i],jstr);
                     
-                    //msg(DBG3,"Key: %s",j_key);
+                    msg(DBG3,"Key: %s",j_key);
 
                     int pos = strinarr(j_key,KEYS,KEY_COUNT) ;
 

@@ -91,8 +91,8 @@ int make (char* package_dir,struct package* pkg)
 
         free(prepare_cmd);
     }
+    msg(DBG3,"Make command is %s",pkg->info.make);
     if (pkg->info.make != NULL && strlen(pkg->info.make) > 0) 
-
     {
         //formatting the prepare command
         char* make_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) %s",BUILD_DIR,package_dir,pkg->info.make,cmd_params);
@@ -111,13 +111,12 @@ int make (char* package_dir,struct package* pkg)
         
     }
     if (pkg->info.test != NULL && TESTING && strlen(pkg->info.test) > 0) 
-
     {
         //formatting the prepare command
-        char* test_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.make,TEST_LOG);
+        char* test_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.test,TEST_LOG);
 
         //Printing the command to the terminal
-        msg(DBG2,"Executing make command : %s",test_cmd);
+        msg(DBG2,"Executing test command : %s",test_cmd);
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
         if (system(test_cmd) != 0) return 1;
@@ -126,20 +125,19 @@ int make (char* package_dir,struct package* pkg)
 
         free(test_cmd);
     }
-
+    printf("install : %s\n",pkg->info.install);
     if (pkg->info.install != NULL && strlen(pkg->info.install) > 0) 
-
     {
         //formatting the prepare command
-        char* install_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.make,TEST_LOG);
+        char* install_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.install,TEST_LOG);
 
         //Printing the command to the terminal
-        msg(DBG2,"Executing make command : %s",install_cmd);
+        msg(DBG2,"Executing Install command : %s",install_cmd);
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
         if (system(install_cmd) != 0) return 1;
         //debug
-        msg(DBG1,"make command executed !");
+        msg(DBG1,"install command executed !");
 
         free(install_cmd);
     }

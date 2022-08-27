@@ -6,6 +6,7 @@
 #include "../include/spm.h"
 #include "../include/data.h"
 #include "../include/utils.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -21,6 +22,8 @@ int test_data ();
 int main(void)
 {
     DEBUG = 3;
+    QUIET = false;
+    OVERWRITE = true;
     printf("Launching Libspm test...\n");
 
     test_data();

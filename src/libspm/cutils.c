@@ -33,17 +33,15 @@ char** split (const char* string,char delim,int* returnCount)
     int i = 0;
     // loop through the string to extract all other tokens
     while( token != NULL ) {
-        printf("%d - %s \n",i,token);
+
         strcpa(&list[i],token);
-        printf("list[%d] = %p and value is %s\n",i,list[i],list[i]);
         token = strtok(NULL, &delim);
         i++;
     }
-    printf("After while\n");
-    printf("list = %p\n",list);
     if (returnCount != NULL) {
         *returnCount = count;
     }
+
     free(strcopy);
     return list;
 }
@@ -122,24 +120,5 @@ void popcharn(char* s,long s_size,int pos)
     memmove(&s[pos], &s[pos + 1], s_size - pos);
 }
 
-long dynappend(char*** arr,unsigned int len,char* s)
-{
-    unsigned int s_len = strlen(s);
-    *arr = realloc(*arr, len + ( s_len * sizeof(char)));
 
-    return s_len + len;
-}
 
-int sfree(char** ptr)
-{
-    if (strlen(*ptr) != 0)
-    {
-        free(*ptr);
-        return 0;
-    }
-    else {
-        msg(DBG3,"No free because string is null");
-        return 1;
-    }
-}
-    

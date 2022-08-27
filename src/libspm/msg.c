@@ -48,7 +48,7 @@ int msg(enum level msgLevel, const char* message,...)
     {
         // different debug levels
         case DBG1:
-            if (DEBUG >=1 ) printf("%sDEBUG: %s%s%s%s",BOLDGREEN,GREEN,strDest,RESET,RESET);
+            if (DEBUG >=1 ) printf("%sDEBUG: %s%s%s%s\n",BOLDGREEN,GREEN,strDest,RESET,RESET);
             break;
         case DBG2:
             if (DEBUG >= 2) printf("%sDEBUG: %s%s%s%s\n",BOLDGREEN,RESET,BOLDBLUE,strDest,RESET);

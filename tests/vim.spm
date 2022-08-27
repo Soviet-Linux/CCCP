@@ -3,7 +3,7 @@
         ""
     ],
     "info": {
-        "download": "git clone $URL && mv $NAME $NAME-VERSION",
+        "download": "git clone $URL && mv $NAME $NAME-$VERSION",
         "install": "make DESTDIR=$BUILD_ROOT install",
         "make": "make",
         "prepare": "",

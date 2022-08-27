@@ -19,13 +19,18 @@ void move_binaries(char** locations,long loc_size)
     */
     for (int i = 0; i < loc_size; i++)
     {
-        msg(DBG3,"Checking if %s is empty",locations[i]);
         if (!(access(locations[i],F_OK) == 0))
-        {
-            msg(DBG3, "moving %s/%s to %s", BUILD_DIR,locations[i],locations[i]);
+        {   if (locations[i] == NULL)
+            {
+                msg(ERROR,"Location is NULL");
+                exit(1);
+            }
+            printf("[%d/%ld] - %s/%s to => %s\n",i,loc_size, BUILD_DIR,locations[i],locations[i]);
+            fflush(stdout);
             // now that we know it is empty , mov the stuff
             rename(format("%s/%s",BUILD_DIR,locations[i]),locations[i]);
-
+            
+            msg(DBG1,"Moved %s/%s to %s",BUILD_DIR,locations[i],locations[i]);
         }
         else 
         {
@@ -41,6 +46,7 @@ void move_binaries(char** locations,long loc_size)
             }
         }
     }
+    return;
 
 
 }

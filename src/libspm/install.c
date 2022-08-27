@@ -30,6 +30,16 @@ int installSpmFile(char* spm_path,int as_dep)
     QUEUE_COUNT++;
     msg(DBG1,"Added %s to the queue",pkg.name);
 
+    /*
+        the following code is pretty bad.
+        I'll let i like that for now wince its needed
+        but I'll try to improve it later
+
+        TODO: Fix this shit
+    */
+
+
+
     // check if package is already installed
     if (is_installed(pkg.name))
     {
@@ -72,7 +82,7 @@ int installSpmFile(char* spm_path,int as_dep)
     // getting locations
     msg(DBG1,"Getting locations for %s",pkg.name);
     pkg.locationsCount = get_locations(&pkg.locations,BUILD_DIR);
-
+    
     // moving binaries
     msg(DBG1,"Moving binaries for %s",pkg.name);
     move_binaries(pkg.locations,pkg.locationsCount);
@@ -85,7 +95,7 @@ int installSpmFile(char* spm_path,int as_dep)
 
     create_spm(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
 
-    store_data(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg ,as_dep);
+    store_data(INSTALLED_DB,&pkg ,as_dep);
 
     // now we need to clean everything 
     clean();
