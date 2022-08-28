@@ -6,3 +6,4 @@ soviet/*
 obj/*
 bin/*
 all.json
+.ccls-cache
