@@ -7,3 +7,5 @@ obj/*
 bin/*
 all.json
 .ccls-cache
+target/
+Cargo.lock
