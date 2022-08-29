@@ -7,3 +7,11 @@ edition = "2021"
 
 [dependencies]
 libspm-rs = "0.0.3"
+
+[profile.release]
+lto = true
+debug = false
+codegen-units = 1
+opt-level = 3
+debug-assertions = false
+strip = true
