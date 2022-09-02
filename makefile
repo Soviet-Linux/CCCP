@@ -3,7 +3,6 @@ EXEOUT = bin/cccp
 
 CC = gcc
 CPP = g++
-RSC = rustc
 
 ODIR = obj
 SDIR = src/libspm
@@ -23,8 +22,15 @@ libspm: $(LIBOUT)
 
 cpp:
 	$(CPP) $(CFLAGS) $(CPPDIR)/* -o $(EXEOUT) -lspm -L./bin
+
 rust:
-	$(RSC) $(RSDIR)/test.rs -o $(EXEOUT) -lspm -L./bin
+	cargo build --manifest-path $(RSDIR)/Cargo.toml --release
+	cp $(RSDIR)/target/release/cccp ./bin/
+
+rust-dev:
+	cargo build --manifest-path $(RSDIR)/Cargo.toml
+	cp $(RSDIR)/target/debug/cccp ./bin/
+
 testing:
 	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o bin/test -lspm -L./bin
 
