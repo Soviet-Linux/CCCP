@@ -1,0 +1,24 @@
+{
+    "dependencies": [
+        ""
+    ],
+    "info": {
+        "download": "git clone $URL && mv $NAME $NAME-$VERSION",
+        "install": "make DESTDIR=$BUILD_ROOT install",
+        "make": "make",
+        "prepare": "",
+        "special": "",
+        "test": ""
+    },
+    "locations": [],
+    "makedependencies": [
+        ""
+    ],
+    "name": "vim",
+    "optionaldependencies": [
+        ""
+    ],
+    "type": "src",
+    "url": "https://github.com/vim/vim.git",
+    "version": "8.1"
+}

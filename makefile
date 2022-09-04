@@ -1,17 +1,51 @@
+LIBOUT = bin/libspm.so
+EXEOUT = bin/cccp
 
-all:
-	./make.sh all
-libspm:
-	./make.sh lib
-cccp:
-	./make.sh cccp
-install:
-	./make.sh install
-uninstal:
-	./make.sh uninstall
-test:
-	./make.sh test
-chroot:
-	./make.sh chroot
+CC = gcc
+CPP = g++
+
+ODIR = obj
+SDIR = src/libspm
+CPPDIR = src/cccp/cpp
+RSDIR = src/cccp/rust
+
+CFLAGS = -Wall -g -fPIC -O2 -Wextra 
+RSFLAGS = -O
+LIBS = -lcurl -lsqlite3 -lm 
+
+SRCS = $(wildcard $(SDIR)/*.c)
+OBJS = $(patsubst %,$(ODIR)/%,$(notdir $(SRCS:.c=.o)))
+
+all: $(LIBOUT) $(EXEOUT)
+
+libspm: $(LIBOUT)
+
+cpp:
+	$(CPP) $(CFLAGS) $(CPPDIR)/* -o $(EXEOUT) -lspm -L./bin
+
+rust:
+	cargo build --manifest-path $(RSDIR)/Cargo.toml --release
+	cp $(RSDIR)/target/release/cccp ./bin/
+
+rust-dev:
+	cargo build --manifest-path $(RSDIR)/Cargo.toml
+	cp $(RSDIR)/target/debug/cccp ./bin/
+
+testing:
+	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o bin/test -lspm -L./bin
+
+
+$(OBJS): $(SRCS)
+	$(CC) -c $(INC) -o $@  $(subst .o,.c,$(subst ${ODIR},${SDIR},$@)) $(CFLAGS) 
+
+$(LIBOUT): $(OBJS) 
+	$(CC) -o $@  $(OBJS) $(CFLAGS) $(LIBS) -shared
+
+.PHONY: clean
+
 clean:
-	./make.sh clean
+	rm -f $(ODIR)/*.o $(LIBOUT)
+install:
+	cp $(LIBOUT) $(DESTDIR)/lib
+	cp $(EXEOUT) $(DESTDIR)/bin
+
