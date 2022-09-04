@@ -25,9 +25,10 @@ build:
   # before_script:
   #   - apt update && apt -y install make autoconf
   script:
-    - sudo make all
+    - make
 
 # run tests using the binary built before
 push:
   stage: push
-  git push https://github.com/Soviet-Linux/CCCP.git
+  script:
+    - git push https://github.com/Soviet-Linux/CCCP.git
