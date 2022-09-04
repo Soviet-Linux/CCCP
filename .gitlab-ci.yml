@@ -8,6 +8,7 @@ stages:
 
 
 
+
 build:
   stage: build
   # instead of calling g++ directly you can also use some build toolkit like make
