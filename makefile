@@ -35,13 +35,18 @@ testing:
 	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o bin/test -lspm -L./bin
 
 
-$(OBJS): $(SRCS)
+$(OBJS): ${ODIR}
 	$(CC) -c $(INC) -o $@  $(subst .o,.c,$(subst ${ODIR},${SDIR},$@)) $(CFLAGS) 
 
-$(LIBOUT): $(OBJS) 
+$(LIBOUT): $(OBJS)
+	
 	$(CC) -o $@  $(OBJS) $(CFLAGS) $(LIBS) -shared
 
-.PHONY: clean
+${ODIR}:
+	mkdir -p ${ODIR}
+	mkdir -p bin
+
+.PHONY: clean testing
 
 clean:
 	rm -f $(ODIR)/*.o $(LIBOUT)
