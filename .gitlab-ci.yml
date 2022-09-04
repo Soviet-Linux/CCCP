@@ -14,11 +14,9 @@ image: gcc
 
 stages:
   - build
-  - test
+  - push
 
 
-before_script:
-  apt update && apt -y install make
 
 build:
   stage: build
@@ -30,7 +28,6 @@ build:
     - sudo make all
 
 # run tests using the binary built before
-test:
-  stage: test
-  script:
-    - sudo make testing
+push:
+  stage: push
+  git push https://github.com/Soviet-Linux/CCCP.git
