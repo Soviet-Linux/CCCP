@@ -10,13 +10,14 @@
 # can use versions as well, like gcc:5.2
 # see https://hub.docker.com/_/gcc/
 
-image: gcc
+image: alpine
 
 stages:
   - build
   - push
 
-
+before_script:
+  - apk add make gcc 
 
 build:
   stage: build
