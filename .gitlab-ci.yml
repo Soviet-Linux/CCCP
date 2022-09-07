@@ -16,7 +16,8 @@ build:
   # before_script:
   #   - apt update && apt -y install make autoconf
   script:
-    - make
+    - docker run -w /root/CCCP -v $PWD:/root/CCCP sovietlinux make libspm
+    - echo "GOOOD"
 
 # run tests using the binary built before
 push:
