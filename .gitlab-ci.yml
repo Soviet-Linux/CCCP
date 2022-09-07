@@ -17,7 +17,8 @@ build:
   #   - apt update && apt -y install make autoconf
   script:
     - echo "User is "$USER
-    - docker run -w /root/CCCP -v $PWD:/root/CCCP sovietlinux "make libspm && chmod -R 777 ."
+    - docker run -w /root/CCCP -v $PWD:/root/CCCP sovietlinux make libspm 
+    - chmod -R 777 .
     - echo "GOOOD"
 
 # run tests using the binary built before
