@@ -26,3 +26,4 @@ push:
   script:
      - echo "push to repo"
 #    - git push https://github.com/Soviet-Linux/CCCP.git
+
