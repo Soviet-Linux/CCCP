@@ -5,7 +5,7 @@
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
 #include "../../include/globals.h"
-
+#include "../../include/data.h"
 
 
 void init()
@@ -27,7 +27,9 @@ void init()
 
     // init data
     // TODO: do some stuff for the data
-    //if (access(INSTALLED_FILE,F_OK)) init_data();
+    if (access(INSTALLED_DB,F_OK) != 0) init_data(INSTALLED_DB);
+
+
     if (access(ALL_DB, F_OK))
     {
         msg(ERROR, "Global package data file not found, to download it use -s option!");

@@ -38,5 +38,8 @@ int update();
 // clean the work dirs
 int clean();
 
+// init the system
+void init();
+
 
 

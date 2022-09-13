@@ -91,7 +91,14 @@ int installSpmFile(char* spm_path,int as_dep)
     
 
     //  executing post install scripts
-    exec_special(pkg.info.special,BUILD_DIR);
+    // check if pkg.info.special is not empty or NULL
+    if (pkg.info.special != NULL && strlen(pkg.info.special) > 0)
+    {
+        msg(DBG1,"Executing post install script for %s",pkg.name);
+        exec_special(pkg.info.special,BUILD_DIR);
+        msg(DBG1,"Executing post install script for %s done",pkg.name);
+    }
+   
 
     create_spm(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
 

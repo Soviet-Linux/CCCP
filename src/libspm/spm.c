@@ -36,8 +36,11 @@ int open_spm (const char* PPath,struct package* pkg)
     pkg->version = NULL;
     pkg->license = NULL;
     pkg->dependencies = NULL;
+    pkg->dependenciesCount = 0;
     pkg->makedependencies = NULL;
+    pkg->makedependenciesCount = 0;
     pkg->optionaldependencies = NULL;
+    pkg->optionaldependenciesCount = 0;
     pkg->url = NULL;
     pkg->locations = NULL;
     pkg->locationsCount = 0;
@@ -300,7 +303,7 @@ int create_spm(const char* newPath,struct package* pkg)
 {
     msg(DBG3,"Creating spm at %s",newPath);
 
-    msg(DBG3,"dpendencies = %s",pkg->dependencies[0]);
+    
 
     char* j_deps = arrtojarr(pkg->dependencies,pkg->dependenciesCount);
     printf("stage 1\n");
@@ -333,7 +336,7 @@ int create_spm(const char* newPath,struct package* pkg)
     j_locations
     
     );
-    msg(DBG3,"Json created! : %s\n",s_json);
+
 
     free(j_deps);
     free(j_makedeps);

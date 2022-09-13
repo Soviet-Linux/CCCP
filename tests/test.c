@@ -21,10 +21,20 @@ int test_data ();
 
 int main(void)
 {
+
+
+
+    ALL_DB = "tests/test.db";
+    INSTALLED_DB = "tests/installed.db";
+
     DEBUG = 3;
     QUIET = false;
     OVERWRITE = true;
     printf("Launching Libspm test...\n");
+
+
+    printf("initiating test_spm()\n");
+    init();
 
     test_data();
 
@@ -63,8 +73,6 @@ int test_data ()
 {
     int EXIT = EXIT_SUCCESS;
 
-    ALL_DB = "tests/test.db";
-    INSTALLED_DB = "tests/installed.db";
 
     printf("Removing test.db\n");
     remove(ALL_DB);

@@ -25,9 +25,8 @@ char** split (const char* string,char delim,int* returnCount)
         ptr++;
     }
     count ++;
-    printf("String contains %d words\n", count);
+
     char** list = malloc((sizeof(char*)* count) + sizeof(void*));
-    printf("Allocated %zu bytes for %d string pointers\n",malloc_usable_size(list),count);
     // Extract the first token
     char * token = strtok(strcopy, &delim);
     int i = 0;
