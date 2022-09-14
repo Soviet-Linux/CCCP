@@ -1,11 +1,11 @@
 # Easy Communist Markup Package
 
 ## why ? 
-The actual package format used by the _libspm_ (json) , is complicated to parse and hard to read.  
-It has been suggested many times that we should switch to a simpler alternative like TOML or YAML.
+The actual package format used by the _libspm_ (json) , is not easy to parse and hard to read.  
+It has been suggested many times that we should switch to a simpler alternative such as TOML or YAML.
 
 ## goals 
-The goal of this markup language , and packaging format , is to be simple to read and write , easy to parse and to be as close as possible to the actual json format.  
+This markup language and packaging format are designed to be simple to read and write , easy to parse and as close as possible to the present json format.  
 It should be easy to convert from json to this format and vice versa.  
 It should be easy to convert from this format to a TOML or YAML format (we might have some troubles with special operators ).
 
@@ -13,17 +13,17 @@ It should be easy to convert from this format to a TOML or YAML format (we might
 
 ## syntax
 The syntax is really close to TOML , but with some differences and additional features : 
- - it doesnt support subsections.
- - if no operator is found the line is considered a a raw string and is added to the previous line (with a newline).
+ - it does not have subsections.
+ - if no operator is found the line is considered a raw string and is added to the previous line (with a newline).
  - if a line starts with a `#` it is considered a comment and is ignored.
  - We support different types of key/value operators :
-    - `=` : the default operator , it is used to assign a value to a key.
-    - `+=` : it is used to append a value to a key.
-    - `-=` : it is used to remove a value from a key.
-    - `++` : it is used to increment a key.
-    - `--` : it is used to decrement a key.
-    - `>=` : it is used to set the key to be all superiors or equals numbers to the value.
-    - `<=` : it is used to set the key to be all inferior or equals numbers to the value.
+    - `=` : the default operator assigns a value to a key.
+    - `+=` : appends a value to a key.
+    - `-=` : removes a value from a key.
+    - `++` : increments a key.
+    - `--` : decrements a key.
+    - `>=` : sets the key to be all superiors or equals numbers to the value.
+    - `<=` : sets the key to be all inferior or equals numbers to the value.
 
 ## implementation
 The parser for the language will be written in C and integrated in the _libspm_.  
