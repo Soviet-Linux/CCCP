@@ -24,7 +24,8 @@ The syntax is really close to TOML , but with some differences and additional fe
     - `--` : decrements a key.
     - `>=` : sets the key to be all superiors or equals numbers to the value.
     - `<=` : sets the key to be all inferior or equals numbers to the value.
-
+    - `>` : sets the key to be all inferior to the value.
+    - `<` : sets the key to be all inferior to the value.
 ## implementation
 The parser for the language will be written in C and integrated in the _libspm_.  
 The implementation is really simple , it is just a parser that converts the markup to a C struct

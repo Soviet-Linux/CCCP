@@ -1,35 +1,41 @@
 
-[info] # basic information about the package
+# basic information about the package
+[info] 
 name = <package name>
 version = <package version>
 type = <src or bin>
 license = <package license>
 
-[description] # package description , it can be on multiple lines and we support makdown
+# package description , it can be on multiple lines and we support makdown
+[description] 
 This package is really important.
 It is essential to the system.
 It is a dependency of many other packages.
 
-
-[dependencies] # the dependencies version support operators are: =, '<','>','<=','>='.
+# the dependencies version support operators are: =, '<','>','<=','>='.
+[dependencies] 
 <dependency name> >= <dependency version>
 <dependency name> = <dependency version>
 
-[makedeps] # the dependencies needed to build the package
+# the dependencies needed to build the package
+[makedeps] 
 <dependency name> >= <dependency version>
 <dependency name> = <dependency version>
 
-[install] # this is basically a bash script to install the package
+# this is basically a bash script to install the package
+[install] 
 sh autogen.sh
 ./configure --prefix=/usr
 make
 make DESTDIR=$BUILD_ROOT install
 
-[special] # a script to run after the package is installed
+# a script to run after the package is installed
+[special] 
 echo "the package is installed"
 echo "done..."
 
-[locations] # the locations of the files installed by the package
+# the locations of the files installed by the package
+[locations] 
 /usr/bin/<binary name>
 /usr/share/<data name>
 <other locations>

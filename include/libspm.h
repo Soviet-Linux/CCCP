@@ -10,7 +10,6 @@
 struct cmd
 {
     // Commands
-    char* prepare;
     char* make;
     char* test;
     char* install;
