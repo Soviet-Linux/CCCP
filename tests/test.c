@@ -6,6 +6,7 @@
 #include "../include/spm.h"
 #include "../include/data.h"
 #include "../include/utils.h"
+#include "../include/ecmp.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +19,7 @@ char* types[5] = {"bin","src","src","bin","src"};
 
 int test_spm();
 int test_data ();
+int test_ecmp();
 
 int main(void)
 {
@@ -32,6 +34,8 @@ int main(void)
     OVERWRITE = true;
     printf("Launching Libspm test...\n");
 
+    printf("launching new ecmp test...\n");
+    test_ecmp();
 
     printf("initiating test_spm()\n");
     init();
@@ -133,6 +137,22 @@ int test_data ()
     }
     printf("listing all data from test database...\n");
     get_all_data(ALL_DB);
+
+    return EXIT;
+}
+
+int test_ecmp()
+{
+    int EXIT = EXIT_SUCCESS;
+
+    printf("Testing ecmp functions\n");
+
+    struct package pkg;
+
+    ecmp_package_parse(&pkg,"tests/vim.ecmp");
+    
+    // print the pkg
+    printf("  %s => %s %s\n",pkg.name,pkg.version,pkg.type);
 
     return EXIT;
 }

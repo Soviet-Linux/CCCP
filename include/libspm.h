@@ -12,6 +12,7 @@ struct cmd
     // Commands
     char* make;
     char* test;
+    char* prepare;
     char* install;
     char* special;
     char* download;

@@ -40,7 +40,7 @@ int downloadRepo(const char* url_path,const char* file_path);
 // find last occurence of a char in a string.
 long findlast(char* str,char c);
 // remove a char with astring index
-void popchar(char* s,long s_size,int pos);
+void popcharn(char* s,long s_size,int pos);
 // exec a command and return the output
 char* exec(const char* cmd);
 // get package locations 

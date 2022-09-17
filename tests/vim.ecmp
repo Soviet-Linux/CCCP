@@ -1,10 +1,10 @@
 
 # basic information about the package
 [info] 
-name = <package name>
-version = <package version>
-type = <src or bin>
-license = <package license>
+name = vim
+version = 8.2
+type = src
+license = MIT
 
 # package description , it can be on multiple lines and we support makdown
 [description] 
@@ -14,13 +14,11 @@ It is a dependency of many other packages.
 
 # the dependencies version support operators are: =, '<','>','<=','>='.
 [dependencies] 
-<dependency name>
-<dependency name>
+ncurses >= 6.1
 
-# the dependencies needed to build the package
-[makedeps] 
-<dependency name>
-<dependency name>
+
+
+
 
 # this is basically a bash script to install the package
 [install] 
@@ -34,10 +32,5 @@ make DESTDIR=$BUILD_ROOT install
 echo "the package is installed"
 echo "done..."
 
-# the locations of the files installed by the package
-[locations] 
-/usr/bin/<binary name>
-/usr/share/<data name>
-<other locations>
 
 
