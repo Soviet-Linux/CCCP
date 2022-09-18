@@ -4,11 +4,15 @@
 #include "../../include/libspm.h"
 #include "../../include/shared.h"
 #include "../../include/spm.h"
+#include <sys/stat.h>
 
 int test_spm(char* TEST_SPM);
 
 int main(int argc,char** argv)
 {
+    DEBUG = 3;
+    QUIET = false;
+
     if (argc < 2)
     {
         printf("Usage: spm-tester <spm-file>\n");
@@ -21,6 +25,9 @@ int main(int argc,char** argv)
         printf("File %s does not exist\n",path);
         return 1;
     }
+
+    mkdir("test-root",0777);
+    ROOT = "test-root";
 
     test_spm(path);
 

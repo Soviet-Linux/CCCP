@@ -257,10 +257,14 @@ int open_spm (const char* PPath,struct package* pkg)
                                 }
                                 break;
                             case LOCATIONS:
-                                if (t[i].size > 0)
+                                if (t[i+1].size > 0)
                                 {
-                                    pkg->locations = jarrtoarr(t,jstr,i);
-                                    pkg->locationsCount = t[i].size - 1;
+                                    msg(DBG3,"Converting %s to array of size %d",jstrval(t[i+1],jstr),t[i+1].size);
+                                    pkg->locations = jarrtoarr(t, jstr,i+1);
+                                    pkg->locationsCount = t[i+1].size;
+                                }
+                                else {
+                                    pkg->optionaldependenciesCount = 0;
                                 }
 
                             default:

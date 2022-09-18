@@ -2,6 +2,9 @@
 #include "stdlib.h"
 #include "stdio.h"
 #include <malloc.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include "dirent.h"
 
 #include "../../include/libspm.h"
 
@@ -26,7 +29,7 @@ char** split (const char* string,char delim,int* returnCount)
     }
     count ++;
 
-    char** list = malloc((sizeof(char*)* count) + sizeof(void*));
+    char** list = calloc(count+1,sizeof(char*));
     // Extract the first token
     char * token = strtok(strcopy, &delim);
     int i = 0;
@@ -118,6 +121,70 @@ void popcharn(char* s,long s_size,int pos)
 {
     memmove(&s[pos], &s[pos + 1], s_size - pos);
 }
+
+int xis_dir (const char *d)
+{
+    DIR* dirptr;
+
+    if (access ( d, F_OK ) != -1 ) {
+        // file exists
+        if ((dirptr = opendir (d)) != NULL) {
+            closedir (dirptr); /* d exists and is a directory */
+        } else {
+            return -2; /* d exists but is not a directory */
+        }
+    } else {
+        return -1;     /* d does not exist */
+    }
+
+    return 0;
+}
+
+void pmkdir (const char *dir)
+{
+    char tmp[256];
+    char *p = NULL;
+    size_t len;
+    len = snprintf(tmp, sizeof(tmp),"%s",dir);
+    if (tmp[len - 1] == '/')
+        tmp[len - 1] = 0;
+    for (p = tmp + 1; *p; p++)
+        if (*p == '/') {
+            *p = 0;
+            mkdir(tmp, S_IRWXU);
+            *p = '/';
+        }
+    mkdir(tmp, S_IRWXU);
+}
+
+void mvsp(char* old_path,char* new_path)
+{
+    // get parent dir of new_file
+    int dec_count = 0;
+    char** dec_path = split(new_path,'/',&dec_count);
+
+    char* parent_dir = dec_path[dec_count-1];
+
+    // if parent dir does not exist, create it
+    if (xis_dir(parent_dir) == -1)
+    {
+        pmkdir(parent_dir);
+    }
+    else if (xis_dir(parent_dir) == -2)
+    {
+        msg(ERROR,"Parent dir %s is not a directory",parent_dir);
+        exit(1);
+    }
+    else {
+        msg(DBG3,"Parent dir %s exists",parent_dir);
+    }
+
+    // move file
+    rename(old_path,new_path);
+
+
+}
+
 
 
 

@@ -20,11 +20,12 @@ So dont touch this , except if there are a critical bug or an important missing 
 // this function is for uninstaling packages
 int uninstall(char* name)
 {       
-    char* dataSpmPath = format("%s/%s.spm",DATA_DIR,name);
+    char* dataSpmPath = format("%s/%s.spm",SPM_DIR,name);
     // verify if the package is installed
-    msg(DBG3, "Verifying if the package is installed with %s" , dataSpmPath);
+    msg(DBG3, "Verifying if the package is installed at %s" , dataSpmPath);
     // check if SPM_FILE exists
-    if (!(access(dataSpmPath,F_OK) == 0)) {
+    if ((access(dataSpmPath,F_OK) != 0)) {
+        msg(ERROR, "Package %s is not installed!" , name);
         return -1;
     }
 
