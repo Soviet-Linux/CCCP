@@ -33,6 +33,8 @@ int ecmp_package_parse(struct package* pkg,char* path)
             printf("parsing info section\n");
             // parse info section
             int line_count;
+            // print buff
+            printf("buff is \n%s\n",sections[i]->buff);
             char** lines = split(sections[i]->buff,'\n',&line_count);
             for (int j = 0; j < line_count-2; j++)
             {

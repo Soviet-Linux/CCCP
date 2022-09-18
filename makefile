@@ -27,12 +27,15 @@ rust:
 	cargo build --manifest-path $(RSDIR)/Cargo.toml --release
 	cp $(RSDIR)/target/release/cccp ./bin/
 
+spm-tester:
+	$(CC) $(CFLAGS) src/spm-tester/main.c $(LIBS) -o bin/spm-tester -lspm 
+
 rust-dev:
 	cargo build --manifest-path $(RSDIR)/Cargo.toml
 	cp $(RSDIR)/target/debug/cccp ./bin/
 
 testing:
-	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o bin/test -lspm -L./bin
+	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o tests/bin/test -lspm -L./bin
 
 
 $(OBJS): ${ODIR}
@@ -53,4 +56,5 @@ clean:
 install:
 	cp $(LIBOUT) $(DESTDIR)/lib
 	cp $(EXEOUT) $(DESTDIR)/bin
+
 
