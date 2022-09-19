@@ -23,8 +23,19 @@ int test_ecmp();
 
 int main(void)
 {
+    char* split_str = "Hello,World,This,is,a,test";
 
+    printf("cutils test\n");
 
+    printf("Testing split\n");
+    int count;
+    char** split_list = split(split_str,',',&count);
+
+    for (int i = 0; i < count; i++)
+    {
+        printf("  %s",split_list[i]);
+    }
+    printf("\n");
 
     ALL_DB = "tests/test.db";
     INSTALLED_DB = "tests/installed.db";

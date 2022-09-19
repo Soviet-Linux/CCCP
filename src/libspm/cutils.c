@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include "dirent.h"
+#include "dirent.h"/home/pkd
 
 #include "../../include/libspm.h"
 
@@ -19,32 +19,33 @@ int strcpa(char** dest,const char* value)
 }
 char** split (const char* string,char delim,int* returnCount)
 {
-    char* strcopy;
-    strcpa(&strcopy,string);
+    char** list = calloc(512,sizeof(char*));
+    char* buffer = calloc(256,sizeof(char));
     int count = 0;
-    char *ptr = strcopy;
-    while((ptr = strchr(ptr, delim)) != NULL) {
+
+    while (string[count] != '\0')
+    {
+        if (string[count] == delim)
+        {
+            if (count > 512)
+            {
+                list = realloc(list,(count+512) * sizeof(char*));
+            }
+
+            list[count] = buffer;
+            buffer = NULL;
+            buffer = calloc(256,sizeof(char));
+        }
+        else
+        {
+            buffer[strlen(buffer)] = string[count];
+        }
         count++;
-        ptr++;
-    }
-    count ++;
 
-    char** list = calloc(count+1,sizeof(char*));
-    // Extract the first token
-    char * token = strtok(strcopy, &delim);
-    int i = 0;
-    // loop through the string to extract all other tokens
-    while( token != NULL ) {
-
-        strcpa(&list[i],token);
-        token = strtok(NULL, &delim);
-        i++;
     }
-    if (returnCount != NULL) {
-        *returnCount = count;
-    }
+    list[count] = buffer;
 
-    free(strcopy);
+    *returnCount = count;
     return list;
 }
 int freearr(void*** arr,unsigned long count)
@@ -107,7 +108,7 @@ int strinarr( char* val, char** arr,long arrsize)
 }
 long findlast(char* str,char c)
 {
-    int i;
+    unsigned long i;
     for (i = strlen(str);i > 0;i--)
     {
         if (str[i] == c)
