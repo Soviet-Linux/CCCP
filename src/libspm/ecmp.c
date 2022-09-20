@@ -123,6 +123,8 @@ int ecmp_package_parse(struct package* pkg,char* path)
 
 unsigned int ecmp_parse_file(struct ecmp_section*** sections,char* path)
 {
+    bool RM_SPACE = false;
+
     // check if file exists
     if (access(path,F_OK) != 0)
     {
@@ -145,24 +147,34 @@ unsigned int ecmp_parse_file(struct ecmp_section*** sections,char* path)
     {
 
         // remove spaces from line
-        printf("Line: %s",line);
-        for (int i = 0; i < strlen(line); i++)
+        if (RM_SPACE)
         {
-            if (line[i] == ' ')
+            for (int i = 0; i < strlen(line); i++)
             {
-                popcharn(line, strlen(line), i);
+                if (line[i] == ' ')
+                {
+                    popcharn(line, strlen(line), i);
+                }
             }
+            printf("space removed: %s",line);
         }
-        printf("space removed: %s",line);
+        
+
+        printf("Line: %s with %lu chars\n",line,strlen(line));
+
 
         // remove empty line
-        if (strlen(line) < 1 ) continue;
+        if (line[0] == '\n' ) {
+            printf("Empty line\n");
+            continue;
+        }
 
         // ignore comments
         if(line[0] == '#') continue;
         
         
         if (line[0] == '[') {
+            RM_SPACE = false;
             sec_count++;
             // allocate new section
             (*sections)[sec_count] = calloc(1,sizeof(struct ecmp_section));
@@ -186,6 +198,14 @@ unsigned int ecmp_parse_file(struct ecmp_section*** sections,char* path)
             // allocate section buffer
             (*sections)[sec_count]->buff = calloc(512, sizeof(char));
             
+            if ((strcmp((*sections)[sec_count]->name,"info") == 0) ||
+            (strcmp((*sections)[sec_count]->name,"makedeps" ) == 0) ||
+            (strcmp((*sections)[sec_count]->name,"dependencies") == 0) ||
+            (strcmp((*sections)[sec_count]->name,"locations") == 0))
+            {
+                RM_SPACE = true;
+            }
+
             continue;
         }
 

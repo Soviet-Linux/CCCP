@@ -1,1 +1,0 @@
-{"name":"vim","type":"src","version":"9.0.0228","license":"(null)","url":"https://anduin.linuxfromscratch.org/BLFS/vim/vim-9.0.0228.tar.gz","dependencies":[],"makedependencies":[],"optionaldependencies":[],"info":{"download":"curl $URL | tar -xz ","prepare":"","make":"make","test":"","install":"make DESTDIR=$BUILD_ROOT install","special":""},"locations":[]}

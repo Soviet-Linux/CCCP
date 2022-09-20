@@ -52,8 +52,9 @@ int test_spm(char* TEST_SPM)
     open_spm(TEST_SPM,&t_pkg);
 
     printf("  %s => %s %s\n",t_pkg.name,t_pkg.version,t_pkg.type);
-    // print info
-
+    
+    // print all package info
+    
 
     return EXIT;
 }

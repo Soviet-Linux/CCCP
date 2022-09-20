@@ -25,6 +25,14 @@ char* assemble(char** list,int count);
 
 int main(void)
 {
+
+    // testing ecmp
+    test_ecmp();
+
+    exit(1);
+
+
+
     char* split_str = "Hello,World,This,is,a,test";
 
     printf("cutils test\n");
@@ -170,6 +178,17 @@ int test_ecmp()
     
     // print the pkg
     printf("  %s => %s %s\n",pkg.name,pkg.version,pkg.type);
+
+    // print package info
+    printf("install script : \n");
+    printf("  %s\n",pkg.info.install);
+
+    // print dependencies
+    printf("dependencies : \n");
+    for (int i = 0; i < pkg.dependenciesCount; i++)
+    {
+        printf("  %s\n",pkg.dependencies[i]);
+    }
 
     return EXIT;
 }
