@@ -21,6 +21,8 @@ int test_spm();
 int test_data ();
 int test_ecmp();
 
+char* assemble(char** list,int count);
+
 int main(void)
 {
     char* split_str = "Hello,World,This,is,a,test";
@@ -31,11 +33,15 @@ int main(void)
     int count;
     char** split_list = split(split_str,',',&count);
 
+        // print list
+    printf("split : printing list\n");
     for (int i = 0; i < count; i++)
     {
-        printf("  %s",split_list[i]);
+        printf("  %s\n",split_list[i]);
     }
-    printf("\n");
+
+    
+
 
     ALL_DB = "tests/test.db";
     INSTALLED_DB = "tests/installed.db";
@@ -168,3 +174,15 @@ int test_ecmp()
     return EXIT;
 }
 
+char* assemble(char** list,int count)
+{
+    char* string = calloc(256,sizeof(char));
+    int i;
+    for (i = 0; i < count-1; i++)
+    {
+        strcat(string,list[i]);
+        strcat(string,",");
+    }
+    strcat(string,list[i]);
+    return string;
+}

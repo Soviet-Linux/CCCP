@@ -21,29 +21,36 @@ char** split (const char* string,char delim,int* returnCount)
 {
     char** list = calloc(512,sizeof(char*));
     char* buffer = calloc(256,sizeof(char));
-    int count = 0;
 
-    while (string[count] != '\0')
+    char* ptr = string;
+
+    int count = 0;
+    while ((*ptr) != '\0')
     {
-        if (string[count] == delim)
+        
+        if (*ptr == delim)
         {
             if (count > 512)
             {
+                printf("Error : too many elements in list , reallocating\n");
                 list = realloc(list,(count+512) * sizeof(char*));
             }
 
             list[count] = buffer;
-            buffer = NULL;
             buffer = calloc(256,sizeof(char));
+            count++;
         }
         else
         {
-            buffer[strlen(buffer)] = string[count];
+            buffer[strlen(buffer)] = *ptr;
         }
-        count++;
+        ptr++;
+        
 
     }
-    list[count] = buffer;
+    list[count++] = buffer;
+
+
 
     *returnCount = count;
     return list;
