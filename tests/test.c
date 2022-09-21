@@ -31,8 +31,6 @@ int main(void)
 
     struct package o_pkg;
 
-    // test open_pkg
-    open_pkg("tests/vim.ecmp", &o_pkg);
 
     exit(1);
 
@@ -98,7 +96,7 @@ int test_spm()
 
     printf("Creating spm package file \n");
     // create new spm
-    create_spm("tests/vim-test.spm",&t_pkg);
+    create_pkg("tests/vim-test.spm",&t_pkg,SPM);
 
 
     return EXIT;
@@ -171,7 +169,7 @@ int test_data ()
     return EXIT;
 }
 
-int test_ecmp()
+int test_ecmp(int type)
 {
     int EXIT = EXIT_SUCCESS;
 
@@ -179,7 +177,7 @@ int test_ecmp()
 
     struct package pkg;
 
-    open_ecmp("tests/vim.ecmp",&pkg);
+    open_pkg("tests/vim.ecmp",&pkg);
     
     // print the pkg
     printf("  %s => %s %s\n",pkg.name,pkg.version,pkg.type);
@@ -187,6 +185,7 @@ int test_ecmp()
     // print package info
     printf("install script : \n");
     printf("  %s\n",pkg.info.install);
+    
 
     // print dependencies
     printf("dependencies : \n");
@@ -194,6 +193,10 @@ int test_ecmp()
     {
         printf("  %s\n",pkg.dependencies[i]);
     }
+
+    msg(INFO,"Creating ecmp package file");
+
+    create_pkg("tests/vim-test.ecmp", &pkg,ECMP);
 
     return EXIT;
 }

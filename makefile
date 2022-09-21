@@ -37,6 +37,8 @@ rust-dev:
 testing:
 	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o tests/bin/test -lspm -L./bin
 
+direct:
+	$(CC) $(CFLAGS) $(SRCS) $(LIBS) -shared -fPIC -o $(LIBOUT)
 
 $(OBJS): ${ODIR}
 	$(CC) -c $(INC) -o $@  $(subst .o,.c,$(subst ${ODIR},${SDIR},$@)) $(CFLAGS) 

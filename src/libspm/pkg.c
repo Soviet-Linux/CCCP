@@ -48,6 +48,7 @@ int open_pkg(char* path, struct package* pkg)
 
 int create_pkg(char* path,struct package* pkg,int type)
 {
+    msg(INFO,"Creating package %s",path);
     if (type == 0)
     {
         type = DEFAULT_FORMAT;
