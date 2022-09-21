@@ -5,7 +5,7 @@ CC = gcc
 CPP = g++
 
 ODIR = obj
-SDIR = src/libspm
+SDIR = src
 CPPDIR = src/cccp/cpp
 RSDIR = src/cccp/rust
 
@@ -13,8 +13,8 @@ CFLAGS = -Wall -g -fPIC -O2 -Wextra
 RSFLAGS = -O
 LIBS = -lcurl -lsqlite3 -lm 
 
-SRCS = $(wildcard $(SDIR)/*.c)
-OBJS = $(patsubst %,$(ODIR)/%,$(notdir $(SRCS:.c=.o)))
+SRCS = $(wildcard $(SDIR)/*/*.c)
+OBJS = $(patsubst $(SDIR),$(ODIR),$(SRCS:.c=.o))
 
 all: $(LIBOUT) $(EXEOUT)
 
@@ -42,7 +42,6 @@ $(OBJS): ${ODIR}
 	$(CC) -c $(INC) -o $@  $(subst .o,.c,$(subst ${ODIR},${SDIR},$@)) $(CFLAGS) 
 
 $(LIBOUT): $(OBJS)
-	
 	$(CC) -o $@  $(OBJS) $(CFLAGS) $(LIBS) -shared
 
 ${ODIR}:

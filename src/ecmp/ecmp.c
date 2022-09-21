@@ -2,17 +2,18 @@
 #include "stdlib.h"
 #include "string.h"
 #include "malloc.h"
+#include <unistd.h>
 
 #include "../../include/utils.h"
 #include "../../include/libspm.h"
-#include "../../include/ecmp.h"
-#include <unistd.h>
+#include "../../include/ecmp/ecmp.h"
 
 
 
 
 
-int ecmp_package_parse(struct package* pkg,char* path)
+
+int open_ecmp(char* path,struct package* pkg)
 {
     struct ecmp_section** sections = calloc(32,sizeof(struct ecmp_section*));
     printf("sections address is %p\n",&sections);
@@ -117,8 +118,46 @@ int ecmp_package_parse(struct package* pkg,char* path)
 
 }
 
+int create_ecmp(char* path,struct package* pkg)
+{
+    // create file
+    FILE* file = fopen(path,"w");
+    if (file == NULL)
+    {
+        printf("Error creating file %s\n",path);
+        return 1;
+    }
 
+    // write info section
+    fprintf(file,"[info]\n");
+    fprintf(file,"name=%s",pkg->name);
+    fprintf(file,"version=%s",pkg->version);
+    fprintf(file,"type=%s",pkg->type);
+    fprintf(file,"license=%s",pkg->license);
+    fprintf(file,"url=%s",pkg->url);
 
+    fprintf(file,"[makedeps]\n");
+    for (int i = 0; i < pkg->makedependenciesCount; i++)
+    {
+        fprintf(file,"%s\n",pkg->makedependencies[i]);
+    }
+    fprintf(file,"[dependencies]\n");
+    for (int i = 0; i < pkg->dependenciesCount; i++)
+    {
+        fprintf(file,"%s\n",pkg->dependencies[i]);
+    }
+    fprintf(file,"[install]\n");
+    fprintf(file,"%s",pkg->info.install);
+    fprintf(file,"[special]\n");
+    fprintf(file,"%s",pkg->info.special);
+    fprintf(file,"[locations]\n");
+    for (int i = 0; i < pkg->locationsCount; i++)
+    {
+        fprintf(file,"%s\n",pkg->locations[i]);
+    }
+    fclose(file);
+    return 0;
+}
 
 
 unsigned int ecmp_parse_file(struct ecmp_section*** sections,char* path)

@@ -4,7 +4,6 @@
 //the class file 
 #include  "../../include/libspm.h"
 #include "../../include/utils.h"
-#include "../../include/spm.h"
 #include "../../include/data.h"
 
 /*
@@ -30,7 +29,7 @@ int uninstall(char* name)
     }
 
     struct package r_pkg;
-    open_spm(dataSpmPath,&r_pkg);
+    open_pkg(dataSpmPath,&r_pkg);
 
 
 

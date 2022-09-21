@@ -1,4 +1,4 @@
-#include "../../include/jsmn.h"
+#include "../../include/spm/jsmn.h"
 
 /**
  * Allocates a fresh unused token from the token pull.

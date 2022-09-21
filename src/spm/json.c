@@ -2,12 +2,12 @@
 #include "stdlib.h"
 
 
-#include "../../include/jsmn.h"
+#include "../../include/spm/jsmn.h"
 
 
 #include "../../include/utils.h"
 #include "../../include/libspm.h"
-#include "../../include/json.h"
+#include "../../include/spm/json.h"
 
 
 

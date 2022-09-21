@@ -13,7 +13,7 @@
 
 
 
-int get(char* p_name,char* out_path)
+char* get(char* p_name,char* out_path)
 {
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
@@ -34,7 +34,7 @@ int get(char* p_name,char* out_path)
         if (input == 'n')
         {
             msg(ERROR, "No package data file found, to download it use -s option!");
-            return -1;
+            return NULL;
         }  
         else if (input == 'y')
         {
@@ -62,22 +62,16 @@ int get(char* p_name,char* out_path)
     if (check_repo_version(get_data_version(format("%s/VERSION",DATA_DIR))) != 0)
     {
         msg(ERROR,"The local database version is not the same as the one in the repository, please update the local database!");
-        return -1;
+        return NULL;
     }
 
     msg(DBG1,"Downloading %s %s %s",i_pkg.name,i_pkg.version,i_pkg.type);
     // loop through REPOS
     downloadRepo(format("base/%s/%s.%s.spm.tar.gz",i_pkg.type,i_pkg.name,i_pkg.type), out_path);
  
-    if (strcmp(i_pkg.type,"bin") == 0)
-    {
-        return 2;
-    }
-    else 
-    {
-        return 1;
-    }
+    return i_pkg.type; 
 }
+
 int check_repo_version(int V_LOCAL)
 {
     char* V_CHECK = mktemp("/tmp/V_CHECK.XXXXXX");

@@ -1,5 +1,3 @@
-
-
 // find a package from an all file in json
 int find_data(char *ALL_PATH,struct package* a_pkg);
 // remove an entry from all.json

@@ -2,10 +2,12 @@
 
 #define QUEUE_MAX 64
 
+
 /*
 START OF THE (sort of) CONSTANTS DECALRATIONS 
 (They are not mean to be modified a lot)
 */
+
 
 extern int DEBUG;
 extern bool TESTING;

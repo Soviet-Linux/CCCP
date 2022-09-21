@@ -2,8 +2,7 @@
 #include "unistd.h"
 
 #include "../../include/libspm.h"
-#include "../../include/shared.h"
-#include "../../include/spm.h"
+
 #include <sys/stat.h>
 
 int test_spm(char* TEST_SPM);
@@ -54,7 +53,7 @@ int test_spm(char* TEST_SPM)
     printf("  %s => %s %s\n",t_pkg.name,t_pkg.version,t_pkg.type);
     
     // print all package info
-    
+
 
     return EXIT;
 }

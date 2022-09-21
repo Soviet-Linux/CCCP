@@ -3,7 +3,7 @@
 #include "malloc.h"
 #include <string.h>
 
-#include "../../include/jsmn.h"
+#include "../../include/spm/jsmn.h"
 
 
 #define PATTERN "{\"name\":\"%s\",\"type\":\"%s\",\"version\":\"%s\",\"license\":\"%s\",\"url\":\"%s\",\"dependencies\":[%s],\"makedependencies\":[%s],\"optionaldependencies\":[%s],\"info\":{\"download\":\"%s\",\"prepare\":\"%s\",\"make\":\"%s\",\"test\":\"%s\",\"install\":\"%s\",\"special\":\"%s\"},\"locations\":[%s]}"
@@ -11,8 +11,8 @@
 // class thing
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
-#include "../../include/spm.h"
-#include "../../include/json.h"
+#include "../../include/spm/spm.h"
+#include "../../include/spm/json.h"
 
 
 

@@ -6,7 +6,6 @@
 //class thing
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
-#include "../../include/json.h"
 
 #include "sqlite3.h"
 #include <malloc.h>

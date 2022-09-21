@@ -2,11 +2,11 @@
 
 #include "../include/globals.h"
 #include "../include/libspm.h"
-#include "../include/shared.h"
-#include "../include/spm.h"
+#include "../include/spm/spm.h"
 #include "../include/data.h"
 #include "../include/utils.h"
-#include "../include/ecmp.h"
+#include "../include/ecmp/ecmp.h"
+#include "../include/libspm.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +28,11 @@ int main(void)
 
     // testing ecmp
     test_ecmp();
+
+    struct package o_pkg;
+
+    // test open_pkg
+    open_pkg("tests/vim.ecmp", &o_pkg);
 
     exit(1);
 
@@ -174,7 +179,7 @@ int test_ecmp()
 
     struct package pkg;
 
-    ecmp_package_parse(&pkg,"tests/vim.ecmp");
+    open_ecmp("tests/vim.ecmp",&pkg);
     
     // print the pkg
     printf("  %s => %s %s\n",pkg.name,pkg.version,pkg.type);
