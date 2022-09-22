@@ -120,6 +120,7 @@ int open_ecmp(char* path,struct package* pkg)
 
 int create_ecmp(char* path,struct package* pkg)
 {
+    msg(DBG3,"Creating ecmp file %s",path);
     // create file
     FILE* file = fopen(path,"w");
     if (file == NULL)
@@ -128,34 +129,68 @@ int create_ecmp(char* path,struct package* pkg)
         return 1;
     }
 
+    msg(DBG3,"Writing info section");
     // write info section
     fprintf(file,"[info]\n");
-    fprintf(file,"name=%s",pkg->name);
-    fprintf(file,"version=%s",pkg->version);
-    fprintf(file,"type=%s",pkg->type);
-    fprintf(file,"license=%s",pkg->license);
-    fprintf(file,"url=%s",pkg->url);
+    msg(DBG3,"Writing name");
+    if (pkg->name != NULL) fprintf(file,"name=%s\n",pkg->name);
 
-    fprintf(file,"[makedeps]\n");
-    for (int i = 0; i < pkg->makedependenciesCount; i++)
+    msg(DBG3,"Writing version");
+    if (pkg->version != NULL) fprintf(file,"version=%s\n",pkg->version);
+
+    msg(DBG3,"Writing type");
+    if (pkg->type != NULL) fprintf(file,"type=%s\n",pkg->type);
+
+    msg(DBG3,"Writing license");
+    if (pkg->license != NULL) fprintf(file,"license=%s\n",pkg->license);
+
+    msg(DBG3,"Writing url");
+    if (pkg->url != NULL) fprintf(file,"url=%s\n",pkg->url);
+
+
+    msg(DBG3,"Writing makedeps section : %s",pkg->makedependencies);
+    if (pkg->makedependencies != NULL)
     {
-        fprintf(file,"%s\n",pkg->makedependencies[i]);
+        fprintf(file,"\n[makedeps]\n");
+        for (int i = 0; i < pkg->makedependenciesCount; i++)
+        {
+            fprintf(file,"%s\n",pkg->makedependencies[i]);
+        }
     }
-    fprintf(file,"[dependencies]\n");
+
+    msg(DBG3,"Writing dependencies section");
+    fprintf(file,"\n[dependencies]\n");
     for (int i = 0; i < pkg->dependenciesCount; i++)
     {
         fprintf(file,"%s\n",pkg->dependencies[i]);
     }
-    fprintf(file,"[install]\n");
-    fprintf(file,"%s",pkg->info.install);
-    fprintf(file,"[special]\n");
-    fprintf(file,"%s",pkg->info.special);
-    fprintf(file,"[locations]\n");
-    for (int i = 0; i < pkg->locationsCount; i++)
+    msg(DBG3,"Writing install section");
+    fprintf(file,"\n[install]\n");
+    // compatibility
+    if (pkg->info.download != NULL) fprintf(file, "%s\n",pkg->info.download);
+    if (pkg->info.prepare != NULL) fprintf(file,"%s\n",pkg->info.prepare);
+    if (pkg->info.make != NULL) fprintf(file,"%s\n",pkg->info.make);
+
+    fprintf(file,"%s\n",pkg->info.install);
+    msg(DBG3,"Writing special section : %s",pkg->info.special);
+    if (pkg->info.special != NULL)
     {
-        fprintf(file,"%s\n",pkg->locations[i]);
+        fprintf(file,"\n[special]\n");
+        fprintf(file,"%s\n",pkg->info.special);
+    }
+
+    msg(DBG3,"Writing locations section : %s",pkg->info.special);
+    if (pkg->locations != NULL)
+    {
+        fprintf(file,"\n[locations]\n");
+        for (int i = 0; i < pkg->locationsCount; i++)
+        {
+            fprintf(file,"%s\n",pkg->locations[i]);
+        }
     }
     fclose(file);
+    msg(INFO,"Created ecmp file %s",path);
+
     return 0;
 }
 

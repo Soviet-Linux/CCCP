@@ -25,6 +25,12 @@ char* assemble(char** list,int count);
 
 int main(void)
 {
+    ALL_DB = "tests/test.db";
+    INSTALLED_DB = "tests/installed.db";
+
+    DEBUG = 3;
+    QUIET = false;
+    OVERWRITE = true;
 
     // testing ecmp
     test_ecmp();
@@ -52,14 +58,6 @@ int main(void)
     }
 
     
-
-
-    ALL_DB = "tests/test.db";
-    INSTALLED_DB = "tests/installed.db";
-
-    DEBUG = 3;
-    QUIET = false;
-    OVERWRITE = true;
     printf("Launching Libspm test...\n");
 
     printf("launching new ecmp test...\n");

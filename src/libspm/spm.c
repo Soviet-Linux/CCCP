@@ -25,35 +25,6 @@ int open_spm (const char* PPath,struct package* pkg)
     char *jstr;
     msg(DBG2,"Reading file");
     long j_size = rdfile(PPath,&jstr);
-    
-    msg(DBG2,"Setting everything to NULL"); 
-
-
-
-    //set all varibales t NULL
-    pkg->name = NULL;
-    pkg->type = NULL;
-    pkg->version = NULL;
-    pkg->license = NULL;
-    pkg->dependencies = NULL;
-    pkg->dependenciesCount = 0;
-    pkg->makedependencies = NULL;
-    pkg->makedependenciesCount = 0;
-    pkg->optionaldependencies = NULL;
-    pkg->optionaldependenciesCount = 0;
-    pkg->url = NULL;
-    pkg->locations = NULL;
-    pkg->locationsCount = 0;
-    pkg->info.download = NULL;
-    pkg->info.prepare = NULL;
-    pkg->info.make = NULL;
-    pkg->info.test = NULL;
-    pkg->info.install = NULL;
-    pkg->info.special = NULL;
-    pkg->info.download = NULL;
-    pkg->info.prepare = NULL;
-
-
 
 
     msg(DBG3,"Parsing json : %s",jstr);

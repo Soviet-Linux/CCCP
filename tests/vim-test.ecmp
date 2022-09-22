@@ -1,0 +1,15 @@
+[info]
+name=vim
+version=8.2
+type=src
+
+[dependencies]
+ncurses>=6.1
+
+
+[install]
+sh autogen.sh
+./configure --prefix=/usr
+make
+make DESTDIR=$BUILD_ROOT install
+

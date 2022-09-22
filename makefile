@@ -1,5 +1,25 @@
-LIBOUT = bin/libspm.so
-EXEOUT = bin/cccp
+
+
+# ------------------------------------------------
+# Generic Makefile
+#
+# Author: yanick.rochon@gmail.com
+# Date  : 2011-08-10
+#
+# Changelog :
+#   2010-11-05 - first version
+#   2011-08-10 - added structure : sources, objects, binaries
+#				thanks to http://stackoverflow.com/users/128940/beta
+#   2017-04-24 - changed order of linker params
+# ------------------------------------------------
+
+# project name (generate executable with this name)
+
+
+# compiling flags here
+
+LIBOUT = libspm.so
+EXEOUT = cccp
 
 CC = gcc
 CPP = g++
@@ -9,30 +29,35 @@ SDIR = src
 CPPDIR = src/cccp/cpp
 RSDIR = src/cccp/rust
 
-CFLAGS = -Wall -g -fPIC -O2 -Wextra 
+CFLAGS = -Wall -g -fPIC -O2 -Wextra -fPIC
 RSFLAGS = -O
+
 LIBS = -lcurl -lsqlite3 -lm 
 
-SRCS = $(wildcard $(SDIR)/*/*.c)
-OBJS = $(patsubst $(SDIR),$(ODIR),$(SRCS:.c=.o))
+# change these to proper directories where each file should be
+SRCDIR   = src/libspm
+OBJDIR   = obj
+BINDIR   = bin
 
-all: $(LIBOUT) $(EXEOUT)
+SOURCES  := $(wildcard $(SRCDIR)/*.c)
+INCLUDES := $(wildcard $(SRCDIR)/*.h)
+OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
-libspm: $(LIBOUT)
 
-cpp:
-	$(CPP) $(CFLAGS) $(CPPDIR)/* -o $(EXEOUT) -lspm -L./bin
+all: $(BINDIR)/$(LIBOUT)
 
-rust:
-	cargo build --manifest-path $(RSDIR)/Cargo.toml --release
-	cp $(RSDIR)/target/release/cccp ./bin/
+$(BINDIR)/$(LIBOUT): $(OBJECTS)
+	@$(CC) $(OBJECTS) $(LIBS) $(LFLAGS) -o $@ -shared
+	@echo "Linking complete!"
 
-spm-tester:
-	$(CC) $(CFLAGS) src/spm-tester/main.c $(LIBS) -o bin/spm-tester -lspm 
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiled "$<" successfully!"
+
 
 rust-dev:
 	cargo build --manifest-path $(RSDIR)/Cargo.toml
-	cp $(RSDIR)/target/debug/cccp ./bin/
+	cp $(RSDIR)/target/debug/cccp $(BINDIR)/$(EXEOUT)
 
 testing:
 	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o tests/bin/test -lspm -L./bin
@@ -40,22 +65,15 @@ testing:
 direct:
 	$(CC) $(CFLAGS) $(SRCS) $(LIBS) -shared -fPIC -o $(LIBOUT)
 
-$(OBJS): ${ODIR}
-	$(CC) -c $(INC) -o $@  $(subst .o,.c,$(subst ${ODIR},${SDIR},$@)) $(CFLAGS) 
-
-$(LIBOUT): $(OBJS)
-	$(CC) -o $@  $(OBJS) $(CFLAGS) $(LIBS) -shared
-
-${ODIR}:
-	mkdir -p ${ODIR}
-	mkdir -p bin
 
 .PHONY: clean testing
 
 clean:
 	rm -f $(ODIR)/*.o $(LIBOUT)
 install:
-	cp $(LIBOUT) $(DESTDIR)/lib
-	cp $(EXEOUT) $(DESTDIR)/bin
+	if [ ! -d "/usr/local/lib/spm" ]; then mkdir -p /usr/local/lib/spm; fi
+	cp -rf include/* $(DESTDIR)/usr/include/spm
+	cp $(BINDIR)/$(LIBOUT) $(DESTDIR)/lib
+	cp $(BINDIR)/$(EXEOUT) $(DESTDIR)/bin
 
 

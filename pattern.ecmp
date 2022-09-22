@@ -23,7 +23,10 @@ It is a dependency of many other packages.
 <dependency name>
 
 # this is basically a bash script to install the package
-[install] 
+[install]
+wget https://package.com/downloads/package-1.tar.gz
+tar -xzvf package-1.tar.gz
+cd package-1 
 sh autogen.sh
 ./configure --prefix=/usr
 make
