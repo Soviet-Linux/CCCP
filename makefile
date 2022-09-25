@@ -45,6 +45,7 @@ OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 
 all: $(BINDIR)/$(LIBOUT)
+	echo make user is $(USER)
 
 $(BINDIR)/$(LIBOUT): $(OBJECTS)
 	@$(CC) $(OBJECTS) $(LIBS) $(LFLAGS) -o $@ -shared
@@ -54,7 +55,7 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 
 	if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
 	if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
-	
+
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
