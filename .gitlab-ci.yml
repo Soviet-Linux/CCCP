@@ -4,7 +4,6 @@
 
 stages:
   - build
-  - push
 
 
 
@@ -18,7 +17,7 @@ build:
   script:
     - echo "User is "$USER
     - docker run -w /root/CCCP -v $PWD:/root/CCCP sovietlinux make libspm 
-    - chmod -R 777 .
+    - rm -rf *
     - echo "GOOOD"
 
 # run tests using the binary built before
