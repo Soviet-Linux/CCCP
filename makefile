@@ -59,21 +59,23 @@ rust-dev:
 	cargo build --manifest-path $(RSDIR)/Cargo.toml
 	cp $(RSDIR)/target/debug/cccp $(BINDIR)/$(EXEOUT)
 
-testing:
-	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o tests/bin/test -lspm -L./bin
+test:
+	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o bin/spm-test -lspm -L./bin
 
 direct:
 	$(CC) $(CFLAGS) $(SRCS) $(LIBS) -shared -fPIC -o $(LIBOUT)
 
 
-.PHONY: clean testing
+.PHONY: clean test
 
 clean:
-	rm -f $(ODIR)/*.o $(LIBOUT)
+	rm -f $(ODIR)/*.o $(BINDIR)/* 
+
 install:
 	if [ ! -d "/usr/local/lib/spm" ]; then mkdir -p /usr/local/lib/spm; fi
 	cp -rf include/* $(DESTDIR)/usr/include/spm
 	cp $(BINDIR)/$(LIBOUT) $(DESTDIR)/lib
 	cp $(BINDIR)/$(EXEOUT) $(DESTDIR)/bin
+	
 
 
