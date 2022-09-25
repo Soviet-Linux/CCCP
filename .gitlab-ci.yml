@@ -17,7 +17,7 @@ build:
   #   - apt update && apt -y install make autoconf
   script:
     - echo "User is "$USER
-    - docker run docker  run  -v `pwd`:`pwd` -w `pwd` sovietlinux make && echo $USER && ls -lsa . bin obj && make clean
+    - docker run -v `pwd`:`pwd` -w `pwd` sovietlinux make && echo $USER && ls -lsa . bin obj && make clean
     - echo "GOOOD"
 
 # run tests using the binary built before
