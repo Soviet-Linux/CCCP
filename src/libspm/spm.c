@@ -263,11 +263,18 @@ int open_spm (const char* PPath,struct package* pkg)
 
     //print all dependencies
 
-    msg(DBG3,"Dependencies :");
+    msg(DBG3,"Dependencies : %d",pkg->dependenciesCount);
     for (i = 0; i < pkg->dependenciesCount; i++)
     {
         msg(DBG3,"%s",pkg->dependencies[i]);
     }
+    msg(DBG3,"Make Dependencies : %d",pkg->makedependenciesCount);
+    for (i = 0; i < pkg->makedependenciesCount; i++)
+    {
+        msg(DBG3,"%s",pkg->makedependencies[i]);
+    }
+
+
 
 
     return 0;
@@ -282,6 +289,7 @@ int create_spm(const char* newPath,struct package* pkg)
 
     char* j_deps = arrtojarr(pkg->dependencies,pkg->dependenciesCount);
     printf("stage 1\n");
+    printf("%d - ",pkg->makedependenciesCount);
     char* j_makedeps = arrtojarr(pkg->makedependencies,pkg->makedependenciesCount);
     printf("stage 2\n");
     char* j_optdeps = arrtojarr(pkg->optionaldependencies,pkg->optionaldependenciesCount);

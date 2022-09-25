@@ -26,12 +26,13 @@ void move_binaries(char** locations,long loc_size)
                 msg(ERROR,"Location is NULL");
                 exit(1);
             }
-            printf("[%d/%ld] - %s/%s to => %s\n",i,loc_size, BUILD_DIR,locations[i],dest_loc);
-            fflush(stdout);
+            //printf("[%d/%ld] - %s/%s to => %s\n",i,loc_size, BUILD_DIR,locations[i],dest_loc);
+            //fflush(stdout);
             // now that we know it is empty , mov the stuff
+            //msg(DBG1,"Moving %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
             mvsp(format("%s/%s",BUILD_DIR,locations[i]),dest_loc);
             
-            msg(DBG1,"Moved %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
+            //smsg(DBG1,"Moved %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
         }
         else 
         {

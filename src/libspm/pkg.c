@@ -34,6 +34,10 @@ int open_pkg(char* path, struct package* pkg)
     pkg->info.download = NULL;
     pkg->info.prepare = NULL;
 
+
+    // print make dependencies count
+    msg(DBG3,"make dependencies count : %d",pkg->makedependenciesCount);
+
     // check if file exists
     if (access(path,F_OK) != 0)
     {
@@ -72,13 +76,38 @@ int open_pkg(char* path, struct package* pkg)
 
 }
 
-int create_pkg(char* path,struct package* pkg,int type)
+int create_pkg(char* path,struct package* pkg)
 {
     msg(INFO,"Creating package %s",path);
-    if (type == 0)
+
+    int type;
+
+    // get file extension
+    char * ptr;
+    /* This illustrates strrchr */
+    ptr = strrchr( path, '.' );
+    if (ptr != NULL)
+    {
+        if (strcmp(ptr,".ecmp") == 0)
+        {
+            msg(INFO,"File %s is an ecmp file",path);
+            type = ECMP;
+        }
+        else if (strcmp(ptr,".spm") == 0)
+        {
+            msg(INFO,"File %s is an spm file",path);
+            type = SPM;
+        }
+        else
+        {
+            type = DEFAULT_FORMAT;
+        }
+    }
+    else
     {
         type = DEFAULT_FORMAT;
     }
+
 
     if (type == SPM)
     {

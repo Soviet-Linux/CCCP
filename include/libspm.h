@@ -86,7 +86,7 @@ int readConfig(char* configFilePath);
 
 //open a pkg file (can be spm or ecmp)
 int open_pkg(char* path, struct package* pkg);
-int create_pkg(char* path,struct package* pkg,int type);
+int create_pkg(char* path,struct package* pkg);
 
 
 

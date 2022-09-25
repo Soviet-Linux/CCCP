@@ -17,31 +17,85 @@ char* names[5] = {"pkg1","pkg2","pkg3","pkg4","pkg5"};
 char* versions[5] = {"1.1.0","2.0.8","6.8.7","7.0","5.20"};
 char* types[5] = {"bin","src","src","bin","src"};
 
+char* locs[10] = {"b","b/d/e","a","d","b/d","b/c","b/f"};
+
 int test_spm();
 int test_data ();
 int test_ecmp();
+int test_move();
 
 char* assemble(char** list,int count);
 
-int main(void)
+int main(int argc, char const *argv[])
 {
-    ALL_DB = "tests/test.db";
-    INSTALLED_DB = "tests/installed.db";
+
+    if (argc  < 2)
+    {
+        printf("No arguments provided\n");
+        return 1;
+    }
 
     DEBUG = 3;
     QUIET = false;
     OVERWRITE = true;
 
-    // testing ecmp
-    test_ecmp();
+    init();
 
-    struct package o_pkg;
+    if (strcmp(argv[1],"spm") == 0)
+    {
+        return test_spm();
+    }
+    else if (strcmp(argv[1],"data") == 0)
+    {
+        return test_data();
+    }
+    else if (strcmp(argv[1],"ecmp") == 0)
+    {
+        return test_ecmp();
+    }
+    else if (strcmp(argv[1],"all") == 0)
+    {
+        int ret = 0;
+        ret += test_spm();
+        ret += test_data();
+        ret += test_ecmp();
+        return ret;
+    }
+    else if (strcmp(argv[1],"install") == 0)
+    {
+        installSpmFile(argv[2],0);
+        return 0;
+    }
+    else if (strcmp(argv[1],"move") == 0)
+    {
+        return test_move();
+    }
+    else if (strcmp(argv[1],"help") == 0)
+    {
+        printf("Usage: test [spm|data|ecmp|all|help|install]\n");
+        return 0;
+    }
+    else
+    {
+        printf("Invalid argument\n");
+        return 1;
+    }
 
 
-    exit(1);
+}
 
+int test_move()
+{
+    ROOT = "tests/dest";
+    BUILD_DIR = "tests/locs";
 
+    move_binaries(locs, 7);
 
+    return 0;
+}
+
+int test_split()
+{
     char* split_str = "Hello,World,This,is,a,test";
 
     printf("cutils test\n");
@@ -56,45 +110,20 @@ int main(void)
     {
         printf("  %s\n",split_list[i]);
     }
-
-    
-    printf("Launching Libspm test...\n");
-
-    printf("launching new ecmp test...\n");
-    test_ecmp();
-
-    printf("initiating test_spm()\n");
-    init();
-
-    test_data();
-
-    test_spm();
-
-    installSpmFile("tests/vim-test.spm", 0);
+    return 0;
 }
-
 
 int test_spm()
 {
     int EXIT = 0;
 
-    printf("Testing spm functions\n");
-
-    char* TEST_SPM = "tests/vim.spm";
-
     struct package t_pkg;
 
-    printf("Parsing package file \n");
-
-    open_spm(TEST_SPM,&t_pkg);
-
-    printf("  %s => %s %s\n",t_pkg.name,t_pkg.version,t_pkg.type);
-    // print info
-
+    EXIT += open_pkg("tests/vim.spm", &t_pkg);
 
     printf("Creating spm package file \n");
     // create new spm
-    create_pkg("tests/vim-test.spm",&t_pkg,SPM);
+    EXIT += create_pkg("tests/vim-test.spm",&t_pkg);
 
 
     return EXIT;
@@ -194,7 +223,7 @@ int test_ecmp(int type)
 
     msg(INFO,"Creating ecmp package file");
 
-    create_pkg("tests/vim-test.ecmp", &pkg,ECMP);
+    create_pkg("tests/vim-test.ecmp", &pkg);
 
     return EXIT;
 }

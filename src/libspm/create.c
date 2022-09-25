@@ -38,7 +38,7 @@ int createBinary(char* spm_path,char* bin_path)
 
     // creating spm file in BUILD_DIR
     msg(DBG1,"Creating spm file for %s",pkg.name);
-    create_pkg(format("%s/%s.spm",BUILD_DIR,pkg.name),&pkg,0);
+    create_pkg(format("%s/%s.spm",BUILD_DIR,pkg.name),&pkg);
 
     // compressing stuff to package archive
     msg(DBG1,"Compressing binaries for %s",pkg.name);

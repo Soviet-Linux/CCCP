@@ -99,7 +99,7 @@ int installSpmFile(char* spm_path,int as_dep)
     }
    
 
-    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg,0);
+    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
 
     store_data(INSTALLED_DB,&pkg ,as_dep);
 
@@ -154,7 +154,7 @@ int installSpmBinary(char* archivePath,int as_dep)
     //  executing post install scripts
     exec_special(pkg.info.special,BUILD_DIR);
 
-    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg,0);
+    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
 
     store_data(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg ,as_dep);
 

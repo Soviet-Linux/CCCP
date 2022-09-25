@@ -167,28 +167,52 @@ void pmkdir (const char *dir)
 
 void mvsp(char* old_path,char* new_path)
 {
-    // get parent dir of new_file
-    int dec_count = 0;
-    char** dec_path = split(new_path,'/',&dec_count);
+    msg(DBG3,"MVSP : Moving %s to %s",old_path,new_path);
+    char* parent_path = calloc(256,sizeof(char));
+    strcpa(&parent_path,old_path);
 
-    char* parent_dir = dec_path[dec_count-1];
+    char* parent_pos = strrchr(parent_path, '/');
+    if (parent_pos == NULL)
+    {
+        printf("Parent path is %s , errorr\n",parent_path);
+        return;
+    }
+    else
+    {
+        parent_pos[0] = '\0';
+        // print parent path hex
+        //printf("Parent path is %s\n",parent_path);
+
+    }
+    printf("Parent path is %s\n",parent_path);
 
     // if parent dir does not exist, create it
-    if (xis_dir(parent_dir) == -1)
+    if (xis_dir(parent_path) == -1)
     {
-        pmkdir(parent_dir);
+        msg(DBG3,"Parent dir %s does not exist, creating it",parent_path);
+        mkdir(parent_path,0777);
     }
-    else if (xis_dir(parent_dir) == -2)
+    else if (xis_dir(parent_path) == -2)
     {
-        msg(ERROR,"Parent dir %s is not a directory",parent_dir);
+        msg(DBG3,"Parent dir %s exists but is not a directory",parent_path);
+        msg(ERROR,"Parent dir %s is not a directory",parent_path);
         exit(1);
     }
     else {
-        msg(DBG3,"Parent dir %s exists",parent_dir);
+        msg(DBG3,"Parent dir %s exists",parent_path);
+        msg(DBG3,"Parent dir %s exists",parent_path);
     }
 
     // move file
-    rename(old_path,new_path);
+    if (rename(old_path,new_path) == 0)
+    {
+        msg(DBG3,"Moved %s to %s",old_path,new_path);
+    }
+    else
+    {
+        msg(ERROR,"Could not move %s to %s",old_path,new_path);
+        exit(1);
+    }
 
 
 }

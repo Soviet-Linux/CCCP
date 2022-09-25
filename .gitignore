@@ -5,6 +5,7 @@ soviet/*
 .DS_Store
 obj/*
 bin/*
+tests/dest/*
 all.json
 .ccls-cache
 target/
