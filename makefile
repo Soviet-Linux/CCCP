@@ -51,6 +51,10 @@ $(BINDIR)/$(LIBOUT): $(OBJECTS)
 	@echo "Linking complete!"
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+
+	if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
+	if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
+	
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
