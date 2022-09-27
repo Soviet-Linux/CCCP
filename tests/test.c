@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 
 
@@ -17,7 +18,12 @@ char* names[5] = {"pkg1","pkg2","pkg3","pkg4","pkg5"};
 char* versions[5] = {"1.1.0","2.0.8","6.8.7","7.0","5.20"};
 char* types[5] = {"bin","src","src","bin","src"};
 
-char* locs[10] = {"b","b/d/e","a","d","b/d","b/c","b/f"};
+#define l_d_count 5
+#define l_f_count 8
+char* l_dirs[l_d_count] = {"b","b/d","s","s/j","s/j/k"};
+char* l_files[l_f_count] = {"w","b/d/e","a","d","b/y","b/c","b/f","s/j/k/z"};
+
+
 
 int test_spm();
 int test_data ();
@@ -86,11 +92,49 @@ int main(int argc, char const *argv[])
 
 int test_move()
 {
-    ROOT = "tests/dest";
-    BUILD_DIR = "tests/locs";
+    
+    printf("Testing move\n");
+    ROOT = "/tmp/spm-testing";
+    BUILD_DIR = "/tmp/spm-testing/old";
+    printf("Creating directories\n");
+    rmrf(ROOT);
+    printf("Creating directories\n");
+    mkdir(ROOT,0777);
+    printf("Creating directories\n");
+    mkdir(BUILD_DIR,0777);
+    printf("Creating directories\n");
 
-    move_binaries(locs, 7);
+    printf("Creating test dirs\n");
+    //make all dirs
+    for (int i = 0; i < l_d_count; i++)
+    {
+        printf("Creating %s\n",l_dirs[i]);
+        char* dir = malloc(256);
+        sprintf(dir,"%s/%s",BUILD_DIR,l_dirs[i]);
+        mkdir(dir,0777);
+    }
+    printf("creating test files\n");
+    // make all files
+    for (int i = 0; i < l_f_count; i++)
+    {
+        printf("Creating %s\n",l_files[i]);
+        char* path = malloc(256);
+        sprintf(path,"%s/%s",BUILD_DIR,l_files[i]);
+        printf("Path: %s\n",path);
+        FILE* f = fopen(path,"w");
+        fclose(f);
+        free(path);
+    }
 
+    move_binaries(l_files,8);
+
+    char** l = ls(ROOT);
+    printf("Listing root\n");
+    for (int i = 0; i < l_f_count; i++)
+    {
+        printf("%s ",l[i]);
+    }
+    printf("\n");
     return 0;
 }
 

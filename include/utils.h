@@ -72,6 +72,8 @@ bool is_installed(char* name);
 // check if a dir exists
 int xis_dir (const char *d);
 // create dir recursivelty (similar to mkdir -p)
-void pmkdir (const char *dir);
+int pmkdir (const char *dir);
 //  move a file and create the dir if it doesn't exist
 void mvsp(char* old_path,char* new_path);
+// LIST  file in a dir
+char** ls(char* path);
