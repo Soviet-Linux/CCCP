@@ -135,6 +135,28 @@ int test_move()
         printf("%s ",l[i]);
     }
     printf("\n");
+    //list content of folders in root
+    char** l_s = ls(format("%s/%s",ROOT,"s"));
+    printf("Listing s\n");
+    for (int i = 0; i < 3; i++)
+    {
+        printf("%s ",l_s[i]);
+    }
+    printf("\n");
+    char** l_s_j = ls(format("%s/%s",ROOT,"s/j"));
+    printf("Listing s/j\n");
+    for (int i = 0; i < 3; i++)
+    {
+        printf("%s ",l_s_j[i]);
+    }
+    printf("\n");
+    char** l_s_j_k = ls(format("%s/%s",ROOT,"s/j/k"));
+    printf("Listing s/j/k\n");
+    for (int i = 0; i < 3; i++)
+    {
+        printf("%s ",l_s_j_k[i]);
+    }
+    printf("\n");
     return 0;
 }
 

@@ -166,14 +166,14 @@ int xis_dir (const char *d)
         // file exists
         if ((dirptr = opendir (d)) != NULL) {
             closedir (dirptr); /* d exists and is a directory */
-            printf("xis : Directory %s exists\n",d);
+            //printf("xis : Directory %s exists\n",d);
             return 0;
         } else {
-            printf("xis : Error : %s is not a directory\n",d);
+            //printf("xis : Error : %s is not a directory\n",d);
             return -2; /* d exists but is not a directory */
         }
     } else {
-        printf("xis : Directory %s does not exist , exit %s\n",d,strerror(errno));
+        //printf("xis : Directory %s does not exist , exit %s\n",d,strerror(errno));
         return -1;     /* d does not exist */
     }
 
@@ -182,114 +182,54 @@ int xis_dir (const char *d)
 int pmkdir (const char *dir)
 {
     char* parent_path = calloc(256,sizeof(char));
-
     strcpa(&parent_path,dir);
-
     char* parent_pos = strrchr(parent_path, '/');
-    if (parent_pos == NULL)
-    {
-        printf("Parent path is %s , errorr\n",parent_path);
-        return -1;
-    }
-    else
-    {
-        parent_pos[0] = '\0';
-        // print parent path hex
-        //printf("Parent path is %s\n",parent_path);
-
-    }
-    printf("Parent path is %s\n",parent_path);
-
-    int xis = xis_dir(parent_path);
+    if (parent_pos == NULL) return -1;
+    
+    parent_pos[0] = '\0';
 
     // if parent dir does not exist, create it
-    if (xis == -1)
+    switch (xis_dir(parent_path))
     {
-        msg(DBG3,"Parent dir %s does not exist, creating it",parent_path);
-        pmkdir(parent_path);
-        // check if mkdir success
-        if (xis_dir(parent_path) == -1)
-        {
-            msg(DBG3,"Error : could not create parent dir %s",parent_path);
-            // print errno
-            printf("Error : %s\n",strerror(errno));
-            return -1;
-        }
+        case -1:
+            if (pmkdir(parent_path) != 0) return -1;
+            return mkdir(dir,0777);
+        case -2:
+            msg(FATAL,"pmkdir : not a directory");
+        case 0:
+            return mkdir(dir,0777); 
     }
-    else if (xis == -2)
-    {
-        msg(DBG3,"Parent dir %s exists but is not a directory",parent_path);
-        msg(ERROR,"Parent dir %s is not a directory",parent_path);
-        exit(1);
-    }
-    else {
-        msg(DBG3,"Parent dir %s exists creating dir",parent_path);
-        return mkdir(dir,0777);
-
-        
-    }
+    free(parent_path);
+    return mkdir(dir,0777); 
 
 }
 
-void mvsp(char* old_path,char* new_path)
+int mvsp(char* old_path,char* new_path)
 {
     msg(DBG3,"MVSP : Moving %s to %s",old_path,new_path);
     char* parent_path = calloc(256,sizeof(char));
     strcpa(&parent_path,new_path);
 
     char* parent_pos = strrchr(parent_path, '/');
-    if (parent_pos == NULL)
-    {
-        printf("Parent path is %s , errorr\n",parent_path);
-        return;
-    }
-    else
-    {
-        parent_pos[0] = '\0';
-        // print parent path hex
-        //printf("Parent path is %s\n",parent_path);
+    if (parent_pos == NULL) return -1;
 
-    }
-    printf("Parent path is %s\n",parent_path);
+    parent_pos[0] = '\0';
 
-    int xis = xis_dir(parent_path);
 
-    // if parent dir does not exist, create it
-    if (xis == -1)
+    switch (xis_dir(parent_path))
     {
-        msg(DBG3,"Parent dir %s does not exist, creating it",parent_path);
-        mkdir(parent_path,0777);
-        // check if mkdir success
-        if (xis_dir(parent_path) == -1)
-        {
-            msg(DBG3,"Error : could not create parent dir %s",parent_path);
-            // print errno
-            printf("Error : %s\n",strerror(errno));
-            return;
-        }
+        case -1:
+            if (pmkdir(parent_path) != 0) return -1;
+            break;
+        case -2:
+            msg(FATAL,"mvsp : not a directory");
+        case 0:
+            msg(DBG3,"Prent exists , all good");
+            break;
     }
-    else if (xis == -2)
-    {
-        msg(DBG3,"Parent dir %s exists but is not a directory",parent_path);
-        msg(ERROR,"Parent dir %s is not a directory",parent_path);
-        exit(1);
-    }
-    else {
-        msg(DBG3,"Parent dir %s exists",parent_path);
-    }
-
+    free(parent_path);
     // move file
-    if (rename(old_path,new_path) == 0)
-    {
-        msg(DBG3,"Moved %s to %s",old_path,new_path);
-    }
-    else
-    {
-        msg(ERROR,"Could not move %s to %s error %s",old_path,new_path,strerror(errno));
-        exit(1);
-    }
-
-
+    return rename(old_path,new_path);
 }
 
 
