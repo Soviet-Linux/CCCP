@@ -1,0 +1,46 @@
+
+# basic information about the package
+[info] 
+name = <package name>
+version = <package version>
+type = <src or bin>
+license = <package license>
+
+# package description , it can be on multiple lines and we support makdown
+[description] 
+This package is really important.
+It is essential to the system.
+It is a dependency of many other packages.
+
+# the dependencies version support operators are: =, '<','>','<=','>='.
+[dependencies] 
+<dependency name>
+<dependency name>
+
+# the dependencies needed to build the package
+[makedeps] 
+<dependency name>
+<dependency name>
+
+# this is basically a bash script to install the package
+[install]
+wget https://package.com/downloads/package-1.tar.gz
+tar -xzvf package-1.tar.gz
+cd package-1 
+sh autogen.sh
+./configure --prefix=/usr
+make
+make DESTDIR=$BUILD_ROOT install
+
+# a script to run after the package is installed
+[special] 
+echo "the package is installed"
+echo "done..."
+
+# the locations of the files installed by the package
+[locations] 
+/usr/bin/<binary name>
+/usr/share/<data name>
+<other locations>
+
+

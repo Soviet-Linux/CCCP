@@ -40,7 +40,7 @@ int downloadRepo(const char* url_path,const char* file_path);
 // find last occurence of a char in a string.
 long findlast(char* str,char c);
 // remove a char with astring index
-void popchar(char* s,long s_size,int pos);
+void popcharn(char* s,long s_size,int pos);
 // exec a command and return the output
 char* exec(const char* cmd);
 // get package locations 
@@ -69,3 +69,11 @@ int check_repo_version(int V_LOCAL);
 int get_data_version(char* VERSION_PATH);
 //check if  a package is installed
 bool is_installed(char* name);
+// check if a dir exists
+int xis_dir (const char *d);
+// create dir recursivelty (similar to mkdir -p)
+int pmkdir (const char *dir);
+//  move a file and create the dir if it doesn't exist
+int mvsp(char* old_path,char* new_path);
+// LIST  file in a dir
+char** ls(char* path);

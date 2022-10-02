@@ -16,10 +16,14 @@ build:
   # before_script:
   #   - apt update && apt -y install make autoconf
   script:
-    - make
+    - echo "User is "$USER
+    - mkdir obj bin
+    - docker run -v `pwd`:`pwd` -w `pwd` sovietlinux make && make clean
+    - echo "GOOOD"
 
 # run tests using the binary built before
 push:
   stage: push
   script:
-    - git push https://github.com/Soviet-Linux/CCCP.git
+     - echo "push to repo"
+     - git push ssh://github.com/Soviet-Linux/CCCP.git HEAD:main

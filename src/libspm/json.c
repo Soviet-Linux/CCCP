@@ -2,12 +2,12 @@
 #include "stdlib.h"
 
 
-#include "../../include/jsmn.h"
+#include "../../include/spm/jsmn.h"
 
 
 #include "../../include/utils.h"
 #include "../../include/libspm.h"
-#include "../../include/json.h"
+#include "../../include/spm/json.h"
 
 
 
@@ -42,15 +42,13 @@ char* arrtojarr (char** arr,int count)
     unsigned long totsize = 0;
     for (int j =0;j < count;j++)
     {
-        msg(DBG3,"Adding size of %d : %s",j,arr[j]);
         // ading size of ach string
         totsize += strlen(arr[j]);
-        msg(DBG3,"Adding size of %s",arr[j]);
         // adding size of comma
         totsize += 1;
         // adding zize of quotes
         totsize += 2;
-        msg(DBG3,"Size of string %d is %lu",j,strlen(arr[j]));
+
 
     }
     msg(DBG3,"Allocating memory for json array");
@@ -58,7 +56,6 @@ char* arrtojarr (char** arr,int count)
     int i;
     for (i=0;i < (count - 1) ;i++)
     {
-        msg(DBG3,"Adding %s to json array",arr[i]);
         strcat(jarr,format("\"%s\"",arr[i]));
         strcat(jarr,",");
     }

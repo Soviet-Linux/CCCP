@@ -3,7 +3,7 @@
 #include "malloc.h"
 #include <string.h>
 
-#include "../../include/jsmn.h"
+#include "../../include/spm/jsmn.h"
 
 
 #define PATTERN "{\"name\":\"%s\",\"type\":\"%s\",\"version\":\"%s\",\"license\":\"%s\",\"url\":\"%s\",\"dependencies\":[%s],\"makedependencies\":[%s],\"optionaldependencies\":[%s],\"info\":{\"download\":\"%s\",\"prepare\":\"%s\",\"make\":\"%s\",\"test\":\"%s\",\"install\":\"%s\",\"special\":\"%s\"},\"locations\":[%s]}"
@@ -11,8 +11,8 @@
 // class thing
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
-#include "../../include/spm.h"
-#include "../../include/json.h"
+#include "../../include/spm/spm.h"
+#include "../../include/spm/json.h"
 
 
 
@@ -25,32 +25,6 @@ int open_spm (const char* PPath,struct package* pkg)
     char *jstr;
     msg(DBG2,"Reading file");
     long j_size = rdfile(PPath,&jstr);
-    
-    msg(DBG2,"Setting everything to NULL"); 
-
-
-
-    //set all varibales t NULL
-    pkg->name = NULL;
-    pkg->type = NULL;
-    pkg->version = NULL;
-    pkg->license = NULL;
-    pkg->dependencies = NULL;
-    pkg->makedependencies = NULL;
-    pkg->optionaldependencies = NULL;
-    pkg->url = NULL;
-    pkg->locations = NULL;
-    pkg->locationsCount = 0;
-    pkg->info.download = NULL;
-    pkg->info.prepare = NULL;
-    pkg->info.make = NULL;
-    pkg->info.test = NULL;
-    pkg->info.install = NULL;
-    pkg->info.special = NULL;
-    pkg->info.download = NULL;
-    pkg->info.prepare = NULL;
-
-
 
 
     msg(DBG3,"Parsing json : %s",jstr);
@@ -254,10 +228,14 @@ int open_spm (const char* PPath,struct package* pkg)
                                 }
                                 break;
                             case LOCATIONS:
-                                if (t[i].size > 0)
+                                if (t[i+1].size > 0)
                                 {
-                                    pkg->locations = jarrtoarr(t,jstr,i);
-                                    pkg->locationsCount = t[i].size - 1;
+                                    msg(DBG3,"Converting %s to array of size %d",jstrval(t[i+1],jstr),t[i+1].size);
+                                    pkg->locations = jarrtoarr(t, jstr,i+1);
+                                    pkg->locationsCount = t[i+1].size;
+                                }
+                                else {
+                                    pkg->optionaldependenciesCount = 0;
                                 }
 
                             default:
@@ -285,11 +263,18 @@ int open_spm (const char* PPath,struct package* pkg)
 
     //print all dependencies
 
-    msg(DBG3,"Dependencies :");
+    msg(DBG3,"Dependencies : %d",pkg->dependenciesCount);
     for (i = 0; i < pkg->dependenciesCount; i++)
     {
         msg(DBG3,"%s",pkg->dependencies[i]);
     }
+    msg(DBG3,"Make Dependencies : %d",pkg->makedependenciesCount);
+    for (i = 0; i < pkg->makedependenciesCount; i++)
+    {
+        msg(DBG3,"%s",pkg->makedependencies[i]);
+    }
+
+
 
 
     return 0;
@@ -300,10 +285,11 @@ int create_spm(const char* newPath,struct package* pkg)
 {
     msg(DBG3,"Creating spm at %s",newPath);
 
-    msg(DBG3,"dpendencies = %s",pkg->dependencies[0]);
+    
 
     char* j_deps = arrtojarr(pkg->dependencies,pkg->dependenciesCount);
     printf("stage 1\n");
+    printf("%d - ",pkg->makedependenciesCount);
     char* j_makedeps = arrtojarr(pkg->makedependencies,pkg->makedependenciesCount);
     printf("stage 2\n");
     char* j_optdeps = arrtojarr(pkg->optionaldependencies,pkg->optionaldependenciesCount);
@@ -333,7 +319,7 @@ int create_spm(const char* newPath,struct package* pkg)
     j_locations
     
     );
-    msg(DBG3,"Json created! : %s\n",s_json);
+
 
     free(j_deps);
     free(j_makedeps);

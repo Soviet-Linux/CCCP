@@ -19,10 +19,18 @@ long get_locations(char ***locations, char *loc_dir) {
 
   // execute the commands
   char* res = exec(files_location_cmd);
+  free(files_location_cmd);
+
+  msg(DBG2, "Got locations !");
   
   // print the locations
   int count;
-  *locations = split(res, '\n', &count);
+  (*locations) = split(res, '\n', &count);
+
+  // free the memory
+  free(res);
+
+  printf("Got %d locations\n", count);
 
   /* WARNING : This is a bad way to do it , i should use a proper way to do it
    */
@@ -31,8 +39,7 @@ long get_locations(char ***locations, char *loc_dir) {
 
 
   
-  // free the memory
-  free(res);
+  
 
   return count;
 }

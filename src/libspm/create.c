@@ -1,7 +1,5 @@
 
 #include "../../include/libspm.h"
-#include "../../include/shared.h"
-#include "../../include/spm.h"
 #include "../../include/utils.h"
 #include <stdlib.h>
 
@@ -9,7 +7,7 @@ int createBinary(char* spm_path,char* bin_path)
 {
     struct package pkg;
 
-    open_spm(spm_path, &pkg);
+    open_pkg(spm_path, &pkg);
 
     PACKAGE_QUEUE[QUEUE_COUNT] = pkg.name; // add this shit to the PKG_QUEUE ARRAY
     QUEUE_COUNT++;
@@ -40,7 +38,7 @@ int createBinary(char* spm_path,char* bin_path)
 
     // creating spm file in BUILD_DIR
     msg(DBG1,"Creating spm file for %s",pkg.name);
-    create_spm(format("%s/%s.spm",BUILD_DIR,pkg.name),&pkg);
+    create_pkg(format("%s/%s.spm",BUILD_DIR,pkg.name),&pkg);
 
     // compressing stuff to package archive
     msg(DBG1,"Compressing binaries for %s",pkg.name);

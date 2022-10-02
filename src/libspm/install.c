@@ -4,7 +4,6 @@
 // class stuff
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
-#include "../../include/spm.h"
 #include "../../include/data.h"
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +23,7 @@ int installSpmFile(char* spm_path,int as_dep)
 {
     struct package pkg;
 
-    open_spm(spm_path, &pkg);
+    open_pkg(spm_path, &pkg);
 
     PACKAGE_QUEUE[QUEUE_COUNT] = pkg.name; // add this shit to the PKG_QUEUE ARRAY
     QUEUE_COUNT++;
@@ -91,9 +90,16 @@ int installSpmFile(char* spm_path,int as_dep)
     
 
     //  executing post install scripts
-    exec_special(pkg.info.special,BUILD_DIR);
+    // check if pkg.info.special is not empty or NULL
+    if (pkg.info.special != NULL && strlen(pkg.info.special) > 0)
+    {
+        msg(DBG1,"Executing post install script for %s",pkg.name);
+        exec_special(pkg.info.special,BUILD_DIR);
+        msg(DBG1,"Executing post install script for %s done",pkg.name);
+    }
+   
 
-    create_spm(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
+    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
 
     store_data(INSTALLED_DB,&pkg ,as_dep);
 
@@ -130,7 +136,7 @@ int installSpmBinary(char* archivePath,int as_dep)
     }
 
 
-    open_spm(spm_path,&pkg);
+    open_pkg(spm_path,&pkg);
 
     PACKAGE_QUEUE[QUEUE_COUNT] = pkg.name; // add this shit to the PKG_QUEUE ARRAY
     QUEUE_COUNT++;
@@ -148,7 +154,7 @@ int installSpmBinary(char* archivePath,int as_dep)
     //  executing post install scripts
     exec_special(pkg.info.special,BUILD_DIR);
 
-    create_spm(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
+    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
 
     store_data(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg ,as_dep);
 

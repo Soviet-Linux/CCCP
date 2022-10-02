@@ -19,32 +19,35 @@ void move_binaries(char** locations,long loc_size)
     */
     for (int i = 0; i < loc_size; i++)
     {
-        if (!(access(locations[i],F_OK) == 0))
+        char* dest_loc = format("%s/%s",ROOT,locations[i]);
+        if (!(access(dest_loc,F_OK) == 0))
         {   if (locations[i] == NULL)
             {
                 msg(ERROR,"Location is NULL");
                 exit(1);
             }
-            printf("[%d/%ld] - %s/%s to => %s\n",i,loc_size, BUILD_DIR,locations[i],locations[i]);
-            fflush(stdout);
+            //printf("[%d/%ld] - %s/%s to => %s\n",i,loc_size, BUILD_DIR,locations[i],dest_loc);
+            //fflush(stdout);
             // now that we know it is empty , mov the stuff
-            rename(format("%s/%s",BUILD_DIR,locations[i]),locations[i]);
+            //msg(DBG1,"Moving %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
+            mvsp(format("%s/%s",BUILD_DIR,locations[i]),dest_loc);
             
-            msg(DBG1,"Moved %s/%s to %s",BUILD_DIR,locations[i],locations[i]);
+            //smsg(DBG1,"Moved %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
         }
         else 
         {
 
-            msg(WARNING,"%s is already here",locations[i]);
+            msg(WARNING,"%s is already here",dest_loc);
 
             if (OVERWRITE) 
             {
-                rename(format("%s/%s",BUILD_DIR,locations[i]),locations[i]);
+                rename(format("%s/%s",BUILD_DIR,locations[i]),dest_loc);
             }
             else {
                 msg(FATAL, "Terminating the program");
             }
         }
+        free(dest_loc);
     }
     return;
 

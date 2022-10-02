@@ -1,0 +1,36 @@
+
+# basic information about the package
+[info] 
+name = vim
+version = 8.2
+type = src
+license = MIT
+
+# package description , it can be on multiple lines and we support makdown
+[description] 
+This package is really important.
+It is essential to the system.
+It is a dependency of many other packages.
+
+# the dependencies version support operators are: =, '<','>','<=','>='.
+[dependencies] 
+ncurses >= 6.1
+
+
+
+
+
+# this is basically a bash script to install the package
+[install] 
+sh autogen.sh
+./configure --prefix=/usr
+make
+make DESTDIR=$BUILD_ROOT install
+
+# a script to run after the package is installed
+[special] 
+echo "the package is installed"
+echo "done..."
+
+
+

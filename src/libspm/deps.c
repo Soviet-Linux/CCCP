@@ -1,5 +1,6 @@
 #include "stdio.h"
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 // class stuff
@@ -26,14 +27,19 @@ int check_dependencies (char ** dependencies,int dependenciesCount)
                 In The meantime i'll implement no dep-checking.
             */
             char* tempspm = mktemp("/tmp/spm.XXXXXX");
-            int t = get(dependencies[i],tempspm);
-            if (t == SRC)
+            char* t = get(dependencies[i],tempspm);
+            if (strcmp(t,SOURCE))
             {
                 installSpmFile(tempspm,true);
             }
-            else if (t == BIN)
+            else if (strcmp(t,BINARY))
             {
-                installSpmFile(tempspm,true);
+                installSpmBinary(tempspm,true);
+            }
+            else
+            {
+                msg(ERROR,"Package %s not found",dependencies[i]);
+                return 1;
             }
             
 

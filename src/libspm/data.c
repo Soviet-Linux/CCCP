@@ -6,7 +6,6 @@
 //class thing
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
-#include "../../include/json.h"
 
 #include "sqlite3.h"
 #include <malloc.h>
@@ -80,6 +79,8 @@ int find_data(char* DB_PATH,struct package* pkg)
 
 int store_data(char* DB_PATH,struct package* a_pkg,int as_dep)
 {
+    msg(INFO,"Storing data to database %s",DB_PATH);
+
     sqlite3 *db;
     char *err_msg = 0;
     

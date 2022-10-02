@@ -1,9 +1,7 @@
 {
-    "dependencies": [
-        ""
-    ],
+    "dependencies": [],
     "info": {
-        "download": "git clone $URL && mv $NAME $NAME-$VERSION",
+        "download": "curl $URL | tar -xz ",
         "install": "make DESTDIR=$BUILD_ROOT install",
         "make": "make",
         "prepare": "",
@@ -11,14 +9,8 @@
         "test": ""
     },
     "locations": [],
-    "makedependencies": [
-        ""
-    ],
     "name": "vim",
-    "optionaldependencies": [
-        ""
-    ],
     "type": "src",
-    "url": "https://github.com/vim/vim.git",
-    "version": "8.1"
+    "url": "https://anduin.linuxfromscratch.org/BLFS/vim/vim-9.0.0228.tar.gz",
+    "version": "9.0.0228"
 }
