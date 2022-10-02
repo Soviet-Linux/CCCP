@@ -27,5 +27,4 @@ push:
   stage: push
   script:
      - echo "push to repo"
-     - git pull https://github.com/Soviet-Linux/CCCP.git
      - git push ssh://git@github.com/Soviet-Linux/CCCP.git HEAD:main
