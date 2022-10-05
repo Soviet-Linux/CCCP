@@ -21,9 +21,10 @@ build:
     - docker run -v `pwd`:`pwd` -w `pwd` sovietlinux make && make clean
     - echo "GOOOD"
 
+
 # run tests using the binary built before
 push:
   stage: push
   script:
      - echo "push to repo"
-     - git push ssh://github.com/Soviet-Linux/CCCP.git HEAD:main
+     - git push ssh://git@github.com/Soviet-Linux/CCCP.git HEAD:main
