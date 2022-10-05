@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <dlfcn.h>
+
 
 
 
@@ -23,12 +26,14 @@ char* types[5] = {"bin","src","src","bin","src"};
 char* l_dirs[l_d_count] = {"b","b/d","s","s/j","s/j/k"};
 char* l_files[l_f_count] = {"w","b/d/e","a","d","b/y","b/c","b/f","s/j/k/z"};
 
-
+char** list_of_stuff  = NULL;
+int list_of_stuff_count = 0;
 
 int test_spm();
 int test_data ();
 int test_ecmp();
 int test_move();
+int test_dl();
 
 char* assemble(char** list,int count);
 
@@ -45,7 +50,7 @@ int main(int argc, char const *argv[])
     QUIET = false;
     OVERWRITE = true;
 
-    init();
+    
 
     if (strcmp(argv[1],"spm") == 0)
     {
@@ -81,6 +86,10 @@ int main(int argc, char const *argv[])
         printf("Usage: test [spm|data|ecmp|all|help|install]\n");
         return 0;
     }
+    else if (strcmp(argv[1],"dl") == 0)
+    {
+        return test_dl();
+    }
     else
     {
         printf("Invalid argument\n");
@@ -92,7 +101,7 @@ int main(int argc, char const *argv[])
 
 int test_move()
 {
-    
+    init();
     printf("Testing move\n");
     ROOT = "/tmp/spm-testing";
     BUILD_DIR = "/tmp/spm-testing/old";
@@ -181,6 +190,7 @@ int test_split()
 
 int test_spm()
 {
+    init();
     int EXIT = 0;
 
     struct package t_pkg;
@@ -196,6 +206,7 @@ int test_spm()
 }
 int test_data ()
 {
+    init();
     int EXIT = EXIT_SUCCESS;
 
 
@@ -264,6 +275,7 @@ int test_data ()
 
 int test_ecmp(int type)
 {
+    init();
     int EXIT = EXIT_SUCCESS;
 
     printf("Testing ecmp functions\n");
@@ -305,4 +317,67 @@ char* assemble(char** list,int count)
     }
     strcat(string,list[i]);
     return string;
+}
+
+int test_dl()
+{
+    list_of_stuff = calloc(256,sizeof(char*));
+    
+    list_of_stuff[list_of_stuff_count++] = "Hello";
+    list_of_stuff[list_of_stuff_count++] = "World";
+    list_of_stuff[list_of_stuff_count++] = "This";
+    list_of_stuff[list_of_stuff_count++] = "is";
+    list_of_stuff[list_of_stuff_count++] = "a";
+    list_of_stuff[list_of_stuff_count++] = "test";
+
+    char* list = assemble(list_of_stuff,list_of_stuff_count);
+    printf("list : %s\n",list);
+
+
+
+    printf("Testing dynamic loading\n");
+
+    char* libname = "testlib";
+
+    system(format("gcc -fPIC -c -o tests/%s.o tests/%s.c",libname,libname));
+    system(format("gcc -shared -o tests/%s.so tests/%s.o",libname,libname));
+
+    rmrf(format("%s.c",libname));
+
+    // load library
+    void* lib = dlopen(format("tests/%s.so",libname),RTLD_LAZY);
+    if (!lib)
+    {
+        msg(ERROR,"Failed to load library");
+        return -1;
+    }
+    //load function
+    int (*print_hello)() = dlsym(lib,"print_hello");
+    if (!print_hello)
+    {
+        msg(ERROR,"Failed to load function");
+        return -1;
+    }
+    // load list function
+    int (*edit_list)(char**,int) = dlsym(lib,"edit_list");
+    if (!edit_list)
+    {
+        msg(ERROR,"Failed to load function");
+        return -1;
+    }
+    // call function
+    printf("Calling function edit list...\n");
+    printf("count is %d\n",list_of_stuff_count);
+    list_of_stuff_count = edit_list(list_of_stuff,list_of_stuff_count);
+    printf("count is %d\n",list_of_stuff_count);
+    list = assemble(list_of_stuff,list_of_stuff_count);
+
+    printf("list : %s\n",list);
+    printf("Calling function from library\n");
+    // call function
+    print_hello();
+    // close library
+    dlclose(lib);
+    return 0;
+
 }

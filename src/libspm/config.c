@@ -70,8 +70,14 @@ int readConfig(char* configFilePath)
             {
                 free(REPOS);
                 REPO_COUNT = 0;
-                REPOS = split(value,',',&REPO_COUNT);
+                REPOS = split(value,' ',&REPO_COUNT);
                 
+            }
+            else if (strcmp(key,"FORMATS"))
+            {
+                free(FORMATS);
+                FORMAT_COUNT = 0;
+                FORMATS = split(value,' ',&FORMAT_COUNT);
             }
             else {
                 msg(ERROR,"Unknown key in config file : %s",key);

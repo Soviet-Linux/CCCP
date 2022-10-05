@@ -48,6 +48,9 @@ int REPO_COUNT = 0;
 
 char* TEST_LOG = "/var/cccp/log/test.log";
 
+// formats
+char** FORMATS = NULL;
+int FORMAT_COUNT = 0;
 
 /*
 END OF THE CONST ZONE
@@ -60,3 +63,5 @@ END OF THE CONST ZONE
 // We could also 
 char* PACKAGE_QUEUE[QUEUE_MAX];
 int QUEUE_COUNT;
+
+

@@ -46,6 +46,10 @@ extern int REPO_COUNT;
 
 extern char* TEST_LOG;
 
+// list of all formats supported by spm
+extern char** FORMATS;
+extern int FORMAT_COUNT;
+
 /*
 END OF THE CONST ZONE
 */
@@ -57,3 +61,4 @@ END OF THE CONST ZONE
 // We could also 
 extern char* PACKAGE_QUEUE[];
 extern int QUEUE_COUNT;
+

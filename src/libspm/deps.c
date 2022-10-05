@@ -26,22 +26,6 @@ int check_dependencies (char ** dependencies,int dependenciesCount)
                 TODO: Find a clever way to implement automatic dependencie installing*
                 In The meantime i'll implement no dep-checking.
             */
-            char* tempspm = mktemp("/tmp/spm.XXXXXX");
-            char* t = get(dependencies[i],tempspm);
-            if (strcmp(t,SOURCE))
-            {
-                installSpmFile(tempspm,true);
-            }
-            else if (strcmp(t,BINARY))
-            {
-                installSpmBinary(tempspm,true);
-            }
-            else
-            {
-                msg(ERROR,"Package %s not found",dependencies[i]);
-                return 1;
-            }
-            
 
             return 0;
         }

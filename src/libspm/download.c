@@ -9,6 +9,8 @@
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
 
+
+
 int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded)
 {
     
@@ -65,26 +67,46 @@ int downloadFile(const char* url,const char* file_path)
     CURLcode res;
     curl = curl_easy_init();      
     msg(DBG3,"curl_easy_init() returned %p",curl);                                                                                                                                                                                                                                                     
-    if (curl)
-    {   
-        fp = fopen(file_path,"wb");
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        // Internal CURL progressmeter must be disabled if we provide our own callback
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
-        // Install the callback function
-        msg(DBG3,"launching progress func");
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func); 
-        
-        res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-        fclose(fp);
-        printf("\n");
-    }
-    else {
+    if (!curl)
+    {
         msg(ERROR,"curl_easy_init() failed");
-    }
+        return -1;  
+    } 
+
+    
+    fp = fopen(file_path,"wb");
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+    // Internal CURL progressmeter must be disabled if we provide our own callback
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
+    // Install the callback function
+    msg(DBG3,"launching progress func");
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func); 
+    
+    res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    fclose(fp);
+    printf("\n");
+
     return 0;
+}
+
+
+bool is_in_repo(CURL* session)
+{
+    CURLcode curl_code;
+    curl_code = curl_easy_perform (session);
+    long http_code = 0;
+    curl_easy_getinfo (session, CURLINFO_RESPONSE_CODE, &http_code);
+    if (http_code == 200 && curl_code != CURLE_ABORTED_BY_CALLBACK)
+    {
+        printf("found in repo\n");
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 

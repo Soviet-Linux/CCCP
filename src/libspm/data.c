@@ -27,15 +27,14 @@ I really dont like that code so i wont comment.
 
 
 
-int get_data_version(char* VERSION_PATH)
-{
-    char* V_STR;
-    rdfile(VERSION_PATH,&V_STR); 
-    
-    return atoi(V_STR);
-}
 
-int find_data(char* DB_PATH,struct package* pkg)
+
+/*
+ The Format arg can be nulled if you dont care
+ If you need it , you should preallocate if.
+*/
+
+int find_data(char* DB_PATH,struct package* pkg,char** fileFmt)
 {
     sqlite3 *db;
     char *err_msg = 0;
@@ -51,7 +50,7 @@ int find_data(char* DB_PATH,struct package* pkg)
         return -1;
     }
     
-    char *sql = format("SELECT Version, Type FROM Packages WHERE Name = '%s'",pkg->name);
+    char *sql = format("SELECT Version, Type, Format FROM Packages WHERE Name = '%s'",pkg->name);
         
     rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
     
@@ -68,8 +67,14 @@ int find_data(char* DB_PATH,struct package* pkg)
     if (step == SQLITE_ROW) {
         strcpa(&pkg->version,(char*)sqlite3_column_text(res, 0));
         strcpa(&pkg->type,(char*)sqlite3_column_text(res, 1));
+        if (*fileFmt != NULL) {
+            strcpa(fileFmt,(char*)sqlite3_column_text(res, 2));
+        }
+        
         
     } 
+
+
 
     sqlite3_finalize(res);
     sqlite3_close(db);
@@ -209,7 +214,7 @@ int init_data(char* DB_PATH)
         return 1;
     }
     
-    char *sql = "CREATE TABLE Packages( Name TEXT,Version TEXT,Type TEXT,AsDep INT);";
+    char *sql = "CREATE TABLE Packages( Name TEXT,Version TEXT,Type TEXT,Format TEXT,AsDep INT);";
 
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     
@@ -226,3 +231,15 @@ int init_data(char* DB_PATH)
     sqlite3_close(db);
     return 0;
 }
+
+/*
+ A little more detail of the database scheme :
+    The installed database contains basic data for all installed packages , 
+    and the all databse contains information for all packages in repo :
+     - Name TEXT -> the name of the Package
+     - Version TEXT -> the Version of the package (In special format)
+     - Type TEXT -> The type of the package ("src" or "bin")
+     - Format TEXT -> the format of the local (or remote for all.db) copy of the package.
+    Installed DB specific :
+     - AsDEP INT -> 0 is the package is installed by the user , and 1 if its installed by the system.
+*/
