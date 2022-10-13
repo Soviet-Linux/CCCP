@@ -34,7 +34,7 @@ I really dont like that code so i wont comment.
  If you need it , you should preallocate if.
 */
 
-int find_data(char* DB_PATH,struct package* pkg,char** fileFmt)
+int find_data_installed(char* DB_PATH,struct package* pkg,int* as_dep)
 {
     sqlite3 *db;
     char *err_msg = 0;
@@ -67,14 +67,54 @@ int find_data(char* DB_PATH,struct package* pkg,char** fileFmt)
     if (step == SQLITE_ROW) {
         strcpa(&pkg->version,(char*)sqlite3_column_text(res, 0));
         strcpa(&pkg->type,(char*)sqlite3_column_text(res, 1));
-        if (*fileFmt != NULL) {
-            strcpa(fileFmt,(char*)sqlite3_column_text(res, 2));
-        }
-        
+        *as_dep = sqlite3_column_int(res, 2);
         
     } 
 
+    sqlite3_finalize(res);
+    sqlite3_close(db);
+    
+    return 0;
+}
 
+int find_data_repo(char* DB_PATH,struct package* pkg,char** fileFmt)
+{
+    sqlite3 *db;
+    char *err_msg = 0;
+    sqlite3_stmt *res;
+    
+    int rc = sqlite3_open(DB_PATH , &db);
+    
+    if (rc != SQLITE_OK) {
+        
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        
+        return -1;
+    }
+    
+    char *sql = format("SELECT Version, Type, Format FROM Packages WHERE Name = '%s'",pkg->name);
+        
+    rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+    
+    if (rc == SQLITE_OK) {
+        
+        sqlite3_bind_int(res, 1, 3);
+    } else {
+        
+        fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(db));
+    }
+    
+    int step = sqlite3_step(res);
+    
+    if (step == SQLITE_ROW) {
+        strcpa(&pkg->version,(char*)sqlite3_column_text(res, 0));
+        if (fileFmt != NULL)
+        {
+            strcpa(fileFmt,(char*)sqlite3_column_text(res, 1));
+        }
+        
+    } 
 
     sqlite3_finalize(res);
     sqlite3_close(db);
@@ -214,7 +254,7 @@ int init_data(char* DB_PATH)
         return 1;
     }
     
-    char *sql = "CREATE TABLE Packages( Name TEXT,Version TEXT,Type TEXT,Format TEXT,AsDep INT);";
+    char *sql = "CREATE TABLE Packages( Name TEXT,Version TEXT,Type TEXT,AsDep INT);";
 
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     

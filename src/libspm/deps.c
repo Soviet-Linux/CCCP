@@ -39,3 +39,4 @@ int check_dependencies (char ** dependencies,int dependenciesCount)
     return 0;
 
 }
+

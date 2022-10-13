@@ -55,10 +55,14 @@ int downloadRepo(const char* url_path,const char* file_path)
         char* url = format("%s/%s",repo,url_path);
         msg(INFO, "Downloading %s", url);
         
-        downloadFile(url,file_path);
+        if (downloadFile(url,file_path) == 0)
+        {
+            return 0;
+        }
     
     }
-    return 0;
+    return 1;
+    
 } 
 int downloadFile(const char* url,const char* file_path)
 {
@@ -89,7 +93,12 @@ int downloadFile(const char* url,const char* file_path)
     fclose(fp);
     printf("\n");
 
+    if (res != CURLE_OK)
+    {
+        return -1;
+    }
     return 0;
+
 }
 
 

@@ -19,7 +19,7 @@ So dont touch this , except if there are a critical bug or an important missing 
 // this function is for uninstaling packages
 int uninstall(char* name)
 {       
-    char* dataSpmPath = format("%s/%s.spm",SPM_DIR,name);
+    char* dataSpmPath = format("%s/%s.%s",SPM_DIR,name,DEFAULT_FORMAT);
     // verify if the package is installed
     msg(DBG3, "Verifying if the package is installed at %s" , dataSpmPath);
     // check if SPM_FILE exists
@@ -29,7 +29,7 @@ int uninstall(char* name)
     }
 
     struct package r_pkg;
-    open_pkg(dataSpmPath,&r_pkg);
+    open_pkg(dataSpmPath,&r_pkg,NULL);
 
 
 

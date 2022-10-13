@@ -8,10 +8,10 @@
 #define SOURCE "src"
 #define BINARY "bin"
 
-#define SPM 0xf
-#define ECMP 0xe
+#define SPM "spm"
+#define ECMP "ecmp"
 
-#define DEFAULT_FORMAT SPM;
+#define DEFAULT_FORMAT ECMP;
 
 struct cmd
 {
@@ -70,8 +70,9 @@ int uninstall(char* name);
 int check (char* dataSpmPath, char* locations[], int locationsCount);
 
 
-//get a package
-char* get(char* p_name,char* out_path);
+//get a package 
+/* the return value is a package format*/
+char* get(struct package i_pkg,char* out_path);
 
 // update the system
 int update();
@@ -85,8 +86,8 @@ int readConfig(char* configFilePath);
 
 
 //open a pkg file (can be spm or ecmp)
-int open_pkg(char* path, struct package* pkg);
-int create_pkg(char* path,struct package* pkg);
+int open_pkg(char* path, struct package* pkg,char* format);
+int create_pkg(char* path,struct package* pkg,char* format);
 
 
 

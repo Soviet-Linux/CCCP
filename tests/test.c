@@ -34,6 +34,7 @@ int test_data ();
 int test_ecmp();
 int test_move();
 int test_dl();
+int test_get();
 
 char* assemble(char** list,int count);
 
@@ -89,6 +90,10 @@ int main(int argc, char const *argv[])
     else if (strcmp(argv[1],"dl") == 0)
     {
         return test_dl();
+    }
+    else if (strcmp(argv[1],"get") == 0)
+    {
+        return test_get();
     }
     else
     {
@@ -195,14 +200,40 @@ int test_spm()
 
     struct package t_pkg;
 
-    EXIT += open_pkg("tests/vim.spm", &t_pkg);
+    EXIT += open_pkg("tests/vim.spm", &t_pkg,NULL);
 
     printf("Creating spm package file \n");
     // create new spm
-    EXIT += create_pkg("tests/vim-test.spm",&t_pkg);
+    EXIT += create_pkg("tests/vim-test.spm",&t_pkg,NULL);
 
 
     return EXIT;
+}
+int test_get()
+{
+    ALL_DB = "tests/all.db";
+
+    init();
+    int EXIT = 0;
+
+    struct package t_pkg;
+
+    t_pkg.name = "test";
+    t_pkg.version = "1";
+
+    char* fmt = get(t_pkg,"test");
+    
+    // print fmt and all package info
+    printf("fmt: %s\n",fmt);
+    printf("name: %s\n",t_pkg.name);
+    printf("version: %s\n",t_pkg.version);
+    printf("type: %s\n",t_pkg.type);
+
+    printf("fmt: %s\n",fmt);
+
+
+    return 0;
+
 }
 int test_data ()
 {
@@ -235,7 +266,7 @@ int test_data ()
         struct package a_pkg;
         a_pkg.name = names[i];
         printf("Checking %s...\n",a_pkg.name);
-        find_data(ALL_DB,&a_pkg);
+        find_data(ALL_DB,&a_pkg,NULL);
         printf("  %s => %s %s\n",a_pkg.name,a_pkg.version,a_pkg.type);
         if (strcmp(a_pkg.version,versions[i]) != 0 | strcmp(a_pkg.type,types[i]) !=0 )
         {
@@ -259,7 +290,7 @@ int test_data ()
         a_pkg.name = names[i];
         a_pkg.version = NULL;
         a_pkg.type = NULL;
-        find_data(ALL_DB,&a_pkg);
+        find_data(ALL_DB,&a_pkg,NULL);
         printf("  %s => %s %s\n",a_pkg.name,a_pkg.version,a_pkg.type);
         if (a_pkg.type != NULL | a_pkg.version != NULL)
         {
@@ -282,7 +313,7 @@ int test_ecmp(int type)
 
     struct package pkg;
 
-    open_pkg("tests/vim.ecmp",&pkg);
+    open_pkg("tests/vim.ecmp",&pkg,NULL);
     
     // print the pkg
     printf("  %s => %s %s\n",pkg.name,pkg.version,pkg.type);
@@ -301,7 +332,7 @@ int test_ecmp(int type)
 
     msg(INFO,"Creating ecmp package file");
 
-    create_pkg("tests/vim-test.ecmp", &pkg);
+    create_pkg("tests/vim-test.ecmp", &pkg,NULL);
 
     return EXIT;
 }

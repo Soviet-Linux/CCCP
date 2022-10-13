@@ -23,7 +23,7 @@ int installSpmFile(char* spm_path,int as_dep)
 {
     struct package pkg;
 
-    open_pkg(spm_path, &pkg);
+    open_pkg(spm_path, &pkg,NULL);
 
     PACKAGE_QUEUE[QUEUE_COUNT] = pkg.name; // add this shit to the PKG_QUEUE ARRAY
     QUEUE_COUNT++;
@@ -99,7 +99,7 @@ int installSpmFile(char* spm_path,int as_dep)
     }
    
 
-    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
+    create_pkg(format("%s/%s.%s",SPM_DIR,pkg.name,DEFAULT_FORMAT),&pkg,NULL);
 
     store_data(INSTALLED_DB,&pkg ,as_dep);
 
@@ -136,7 +136,7 @@ int installSpmBinary(char* archivePath,int as_dep)
     }
 
 
-    open_pkg(spm_path,&pkg);
+    open_pkg(spm_path,&pkg,NULL);
 
     PACKAGE_QUEUE[QUEUE_COUNT] = pkg.name; // add this shit to the PKG_QUEUE ARRAY
     QUEUE_COUNT++;
@@ -154,7 +154,7 @@ int installSpmBinary(char* archivePath,int as_dep)
     //  executing post install scripts
     exec_special(pkg.info.special,BUILD_DIR);
 
-    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg);
+    create_pkg(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg,NULL);
 
     store_data(format("%s/%s.spm",SPM_DIR,pkg.name),&pkg ,as_dep);
 

@@ -8,7 +8,7 @@
 #include "../../include/libspm.h"
 
 
-int open_pkg(char* path, struct package* pkg)
+int open_pkg(char* path, struct package* pkg,char* format)
 {
     msg(DBG2,"Setting everything to NULL"); 
     //set all varibales t NULL
@@ -46,18 +46,22 @@ int open_pkg(char* path, struct package* pkg)
     }
     //check file extension
 
-    // get file extension
-    char * ptr;
+
     /* This illustrates strrchr */
-    ptr = strrchr( path, '.' );
-    if (ptr != NULL)
+
+    if (format == NULL)
     {
-        if (strcmp(ptr,".ecmp") == 0)
+        format = strrchr( path, '.' );
+    }  
+
+    if (format != NULL)
+    {
+        if (strcmp(format,".ecmp") == 0)
         {
             msg(INFO,"File %s is an ecmp file",path);
             return open_ecmp(path,pkg);
         }
-        else if (strcmp(ptr,".spm") == 0)
+        else if (strcmp(format,".spm") == 0)
         {
             msg(INFO,"File %s is an spm file",path);
             return open_spm(path,pkg);
@@ -76,52 +80,35 @@ int open_pkg(char* path, struct package* pkg)
 
 }
 
-int create_pkg(char* path,struct package* pkg)
+int create_pkg(char* path,struct package* pkg,char* format)
 {
     msg(INFO,"Creating package %s",path);
 
     int type;
 
     // get file extension
-    char * ptr;
-    /* This illustrates strrchr */
-    ptr = strrchr( path, '.' );
-    if (ptr != NULL)
+    if (format == NULL)
     {
-        if (strcmp(ptr,".ecmp") == 0)
+        format = strrchr( path, '.' );
+    } 
+    /* This illustrates strrchr */
+    if (format != NULL)
+    {
+        if (strcmp(format,".ecmp") == 0)
         {
-            msg(INFO,"File %s is an ecmp file",path);
-            type = ECMP;
+            msg(WARNING,"ECMP format is still experimental");
+            return create_ecmp(path,pkg);
         }
-        else if (strcmp(ptr,".spm") == 0)
+        else if (strcmp(format,".spm") == 0)
         {
             msg(INFO,"File %s is an spm file",path);
-            type = SPM;
+            return create_spm(path,pkg);
         }
         else
         {
-            type = DEFAULT_FORMAT;
+            msg(ERROR,"Invalid package type");
+            return 1;
         }
     }
-    else
-    {
-        type = DEFAULT_FORMAT;
-    }
-
-
-    if (type == SPM)
-    {
-        msg(INFO,"Creating spm package");
-        return create_spm(path,pkg);
-    }
-    else if (type == ECMP)
-    {
-        msg(WARNING,"ECMP format is still experimental");
-        return create_ecmp(path,pkg);
-    }
-    else
-    {
-        msg(ERROR,"Invalid package type");
-        return 1;
-    }
+    return -1;
 }
