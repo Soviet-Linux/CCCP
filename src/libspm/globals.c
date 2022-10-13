@@ -52,6 +52,9 @@ char* TEST_LOG = "/var/cccp/log/test.log";
 char** FORMATS = NULL;
 int FORMAT_COUNT = 0;
 
+// default format
+char* DEFAULT_FORMAT = "ecmp";
+
 /*
 END OF THE CONST ZONE
 */

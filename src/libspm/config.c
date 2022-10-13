@@ -36,6 +36,7 @@ int readConfig(char* configFilePath)
         else {
             key = kvlist[0];
             value = kvlist[1];
+            printf("key: %s, value: %s", key, value);
             if (strcmp(key,"ROOT") == 0)
             {
                 free(ROOT);
