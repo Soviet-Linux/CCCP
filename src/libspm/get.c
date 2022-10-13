@@ -13,13 +13,13 @@
 
 
 
-char* get(struct package i_pkg,char* out_path)
+char* get(struct package *i_pkg,char* out_path)
 {
     // I commented this part because the soviet system im working on right now doesnt support curl 
     // I will add it later whan the rest of the stuff is ready 
 
     // check if ALL_FILE exists
-    if (i_pkg.name == NULL)
+    if (i_pkg->name == NULL)
     {
         msg(ERROR,"Package name not specified!");
         return NULL;
@@ -35,16 +35,18 @@ char* get(struct package i_pkg,char* out_path)
 
     char* pkg_format = calloc(64,sizeof(char));
     
-    find_data(ALL_DB,&i_pkg,pkg_format);
+
+    find_data_repo(ALL_DB,i_pkg,&pkg_format);
+    printf("format is %s\n",pkg_format);
 
     // we need to add a way to check if the repo that we are using is on the same version as the one in the database
     // if not , we need to update the database*
 
 
-    msg(DBG1,"Downloading %s %s %s",i_pkg.name,i_pkg.version,i_pkg.type);
+    msg(DBG1,"Downloading %s %s %s",i_pkg->name,i_pkg->version,i_pkg->type);
 
     // loop through REPOS
-    if (downloadRepo(format("base/%s/%s.%s.%s.tar.gz",i_pkg.type,i_pkg.name,i_pkg.type,pkg_format), out_path) != 0)
+    if (downloadRepo(format("base/%s/%s.%s.%s",i_pkg->type,i_pkg->name,i_pkg->type,pkg_format), out_path) != 0)
     {
         return NULL;
     } 

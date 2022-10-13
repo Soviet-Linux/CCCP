@@ -50,7 +50,7 @@ int find_data_installed(char* DB_PATH,struct package* pkg,int* as_dep)
         return -1;
     }
     
-    char *sql = format("SELECT Version, Type, Format FROM Packages WHERE Name = '%s'",pkg->name);
+    char *sql = format("SELECT Version, Type, AsDep FROM Packages WHERE Name = '%s'",pkg->name);
         
     rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
     
@@ -93,7 +93,7 @@ int find_data_repo(char* DB_PATH,struct package* pkg,char** fileFmt)
         return -1;
     }
     
-    char *sql = format("SELECT Version, Type, Format FROM Packages WHERE Name = '%s'",pkg->name);
+    char *sql = format("SELECT Version, Format FROM Packages WHERE Name = '%s'",pkg->name);
         
     rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
     

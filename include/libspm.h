@@ -69,7 +69,7 @@ int check (char* dataSpmPath, char* locations[], int locationsCount);
 
 //get a package 
 /* the return value is a package format*/
-char* get(struct package i_pkg,char* out_path);
+char* get(struct package *i_pkg,char* out_path);
 
 // update the system
 int update();

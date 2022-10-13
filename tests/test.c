@@ -219,17 +219,15 @@ int test_get()
     struct package t_pkg;
 
     t_pkg.name = "test";
-    t_pkg.version = "1";
+    t_pkg.type = "src";
 
-    char* fmt = get(t_pkg,"test");
+    char* fmt = get(&t_pkg,"test");
     
     // print fmt and all package info
     printf("fmt: %s\n",fmt);
     printf("name: %s\n",t_pkg.name);
     printf("version: %s\n",t_pkg.version);
     printf("type: %s\n",t_pkg.type);
-
-    printf("fmt: %s\n",fmt);
 
 
     return 0;
@@ -266,7 +264,7 @@ int test_data ()
         struct package a_pkg;
         a_pkg.name = names[i];
         printf("Checking %s...\n",a_pkg.name);
-        find_data(ALL_DB,&a_pkg,NULL);
+        find_data_installed(ALL_DB,&a_pkg,NULL);
         printf("  %s => %s %s\n",a_pkg.name,a_pkg.version,a_pkg.type);
         if (strcmp(a_pkg.version,versions[i]) != 0 | strcmp(a_pkg.type,types[i]) !=0 )
         {
@@ -290,7 +288,7 @@ int test_data ()
         a_pkg.name = names[i];
         a_pkg.version = NULL;
         a_pkg.type = NULL;
-        find_data(ALL_DB,&a_pkg,NULL);
+        find_data_installed(ALL_DB,&a_pkg,NULL);
         printf("  %s => %s %s\n",a_pkg.name,a_pkg.version,a_pkg.type);
         if (a_pkg.type != NULL | a_pkg.version != NULL)
         {

@@ -27,6 +27,9 @@ int readConfig(char* configFilePath)
     while (fgets(line, sizeof(line), file)) {
         /* note that fgets don't strip the terminating \n, checking its
            presence would allow to handle lines longer that sizeof(line) */
+        // removing the '\n' mentioned above
+        line[strlen(line)-1] = 0;
+
         kvlist = split(line,'=',&count);
         if (count == 0)
         {
@@ -36,7 +39,6 @@ int readConfig(char* configFilePath)
         else {
             key = kvlist[0];
             value = kvlist[1];
-            printf("key: %s, value: %s", key, value);
             if (strcmp(key,"ROOT") == 0)
             {
                 free(ROOT);
@@ -67,14 +69,14 @@ int readConfig(char* configFilePath)
                 free(CONFIG_FILE);
                 strcpa(&CONFIG_FILE,value);
             }
-            else if (strcmp(key,"REPOS")) 
+            else if (strcmp(key,"REPOS") == 0)
             {
                 free(REPOS);
                 REPO_COUNT = 0;
                 REPOS = split(value,' ',&REPO_COUNT);
                 
             }
-            else if (strcmp(key,"FORMATS"))
+            else if (strcmp(key,"FORMATS") == 0)
             {
                 free(FORMATS);
                 FORMAT_COUNT = 0;
@@ -83,6 +85,8 @@ int readConfig(char* configFilePath)
             else {
                 msg(ERROR,"Unknown key in config file : %s",key);
             }
+            free(kvlist);
+            kvlist = NULL;
         }
 
     }

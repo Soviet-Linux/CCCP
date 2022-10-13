@@ -43,6 +43,7 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded, doubl
     }
     // and back to line begin - do not forget the fflush to avoid output buffering problems!
     printf(" %f [%s]\r",fractiondownloaded ,bar);
+    fflush(stdout);
     // if you don't return 0, the transfer will be aborted - see the documentation
     return 0; 
 }
@@ -52,6 +53,7 @@ int downloadRepo(const char* url_path,const char* file_path)
     {
         // get the url
         char* repo = REPOS[i];
+        printf("repo is %s\n",repo);
         char* url = format("%s/%s",repo,url_path);
         msg(INFO, "Downloading %s", url);
         
