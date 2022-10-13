@@ -8,10 +8,7 @@
 #define SOURCE "src"
 #define BINARY "bin"
 
-#define SPM "spm"
-#define ECMP "ecmp"
 
-#define DEFAULT_FORMAT ECMP;
 
 struct cmd
 {

@@ -50,6 +50,9 @@ extern char* TEST_LOG;
 extern char** FORMATS;
 extern int FORMAT_COUNT;
 
+// default format
+extern char* DEFAULT_FORMAT;
+
 /*
 END OF THE CONST ZONE
 */
