@@ -34,6 +34,7 @@ extern char* BUILD_DIR;
 // Dir where the package sources are downloaded and built
 extern char* MAKE_DIR;
 
+extern char* PLUGIN_DIR;
 
 //The file where a lot of data are stored
 extern char* INSTALLED_DB;

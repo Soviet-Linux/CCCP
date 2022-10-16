@@ -88,7 +88,7 @@ int downloadFile(const char* url,const char* file_path)
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
     // Install the callback function
     msg(DBG3,"launching progress func");
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func); 
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, NULL); 
     
     res = curl_easy_perform(curl);
     curl_easy_cleanup(curl);

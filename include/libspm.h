@@ -86,5 +86,7 @@ int readConfig(char* configFilePath);
 int open_pkg(char* path, struct package* pkg,char* format);
 int create_pkg(char* path,struct package* pkg,char* format);
 
+int runFormatLib (char* format,char* fn,char* pkg_path,struct package* pkg);
+
 
 

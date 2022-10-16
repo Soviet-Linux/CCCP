@@ -15,7 +15,6 @@ Exit code signification :
 3 = Package is corrupted (Some locations arent here)
 */
 int check (char* dataSpmPath, char* locations[], int locationsCount)
-
 {
     // checkinig if package data file exists
     if (access(dataSpmPath,F_OK) != 0){

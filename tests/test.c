@@ -1,18 +1,16 @@
 #include "stdio.h"
-
-#include "../include/globals.h"
-#include "../include/libspm.h"
-#include "../include/spm/spm.h"
-#include "../include/data.h"
-#include "../include/utils.h"
-#include "../include/ecmp/ecmp.h"
-#include "../include/libspm.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dlfcn.h>
+
+#include "../include/globals.h"
+#include "../include/libspm.h"
+#include "../include/data.h"
+#include "../include/utils.h"
+#include "../include/libspm.h"
 
 
 
@@ -196,11 +194,24 @@ int test_split()
 int test_spm()
 {
     init();
+    //print FORMATS
+    printf("FORMATS:\n");
+    for (int i = 0; i < FORMAT_COUNT; i++)
+    {
+        printf("%s\n",FORMATS[i]);
+
+    }
     int EXIT = 0;
 
     struct package t_pkg;
 
     EXIT += open_pkg("tests/vim.spm", &t_pkg,NULL);
+
+    //print packge info
+    printf("Package info:\n");
+    printf("  Name: %s\n",t_pkg.name);
+    printf("  Version: %s\n",t_pkg.version);
+    printf("  Type: %s\n",t_pkg.type);
 
     printf("Creating spm package file \n");
     // create new spm
@@ -217,7 +228,6 @@ int test_get()
     int EXIT = 0;
 
     struct package t_pkg;
-
     t_pkg.name = "test";
     t_pkg.type = "src";
 

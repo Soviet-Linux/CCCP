@@ -46,7 +46,7 @@ char* get(struct package *i_pkg,char* out_path)
     msg(DBG1,"Downloading %s %s %s",i_pkg->name,i_pkg->version,i_pkg->type);
 
     // loop through REPOS
-    if (downloadRepo(format("base/%s/%s.%s.%s",i_pkg->type,i_pkg->name,i_pkg->type,pkg_format), out_path) != 0)
+    if (downloadRepo(format("base/%s/%s.%s",i_pkg->type,i_pkg->name,pkg_format), out_path) != 0)
     {
         return NULL;
     } 

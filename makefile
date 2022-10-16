@@ -29,7 +29,7 @@ SDIR = src
 CPPDIR = src/cccp/cpp
 RSDIR = src/cccp/rust
 
-CFLAGS = -Wall -g -fPIC -O2 -Wextra -fPIC
+CFLAGS = -Wall -g -fPIC -O2 -Wextra -fPIC -L./bin
 RSFLAGS = -O
 
 LIBS = -lcurl -lsqlite3 -lm 
@@ -43,9 +43,11 @@ SOURCES  := $(wildcard $(SRCDIR)/*.c)
 INCLUDES := $(wildcard $(SRCDIR)/*.h)
 OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
+FMT_DIR = src/formats
+
 
 all: $(BINDIR)/$(LIBOUT)
-	echo make user is $(USER)
+	@echo "BUILD SUCESSFUL"
 
 $(BINDIR)/$(LIBOUT): $(OBJECTS)
 	@$(CC) $(OBJECTS) $(LIBS) $(LFLAGS) -o $@ -shared
@@ -53,8 +55,8 @@ $(BINDIR)/$(LIBOUT): $(OBJECTS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 
-	if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
-	if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
+	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi
+	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
 
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
@@ -70,6 +72,15 @@ test:
 direct:
 	$(CC) $(CFLAGS) $(SRCS) $(LIBS) -shared -fPIC -o $(LIBOUT)
 
+formats:
+	@echo "Building formats..."
+	@echo $(FMT_DIR)/*
+	for i in $(FMT_DIR)/*; do \
+		echo "Building $$i"; \
+		if [ -d $$i ]; then \
+			$(CC) $(CFLAGS) -shared -fPIC $$i/*.c -o $(BINDIR)/plugins/$$(basename $$i).so; \
+		fi; \
+	done
 
 .PHONY: clean test
 
@@ -81,6 +92,9 @@ install:
 	cp -rf include/* $(DESTDIR)/usr/include/spm
 	cp $(BINDIR)/$(LIBOUT) $(DESTDIR)/lib
 	cp $(BINDIR)/$(EXEOUT) $(DESTDIR)/bin
+	cp -rf $(BINDIR)/plugins/* $(DESTDIR)/var/cccp/plugins
+
+
 	
 
 

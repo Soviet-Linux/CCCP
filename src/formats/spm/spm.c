@@ -3,23 +3,22 @@
 #include "malloc.h"
 #include <string.h>
 
-#include "../../include/spm/jsmn.h"
+#include "jsmn.h"
 
 
 #define PATTERN "{\"name\":\"%s\",\"type\":\"%s\",\"version\":\"%s\",\"license\":\"%s\",\"url\":\"%s\",\"dependencies\":[%s],\"makedependencies\":[%s],\"optionaldependencies\":[%s],\"info\":{\"download\":\"%s\",\"prepare\":\"%s\",\"make\":\"%s\",\"test\":\"%s\",\"install\":\"%s\",\"special\":\"%s\"},\"locations\":[%s]}"
 
 // class thing
-#include "../../include/libspm.h"
-#include "../../include/utils.h"
-#include "../../include/spm/spm.h"
-#include "../../include/spm/json.h"
+#include "spm/libspm.h"
+#include "spm/utils.h"
+#include "json.h"
 
 
 
 
 
 
-int open_spm (const char* PPath,struct package* pkg)
+int open(const char* PPath,struct package* pkg)
 {
     if (access(PPath, F_OK) != 0)  msg(FATAL, "PPath not found !");
     char *jstr;
@@ -281,7 +280,7 @@ int open_spm (const char* PPath,struct package* pkg)
 
     
 }
-int create_spm(const char* newPath,struct package* pkg)
+int create(const char* newPath,struct package* pkg)
 {
     msg(DBG3,"Creating spm at %s",newPath);
 

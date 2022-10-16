@@ -92,6 +92,10 @@ fn main() {
                 .map(|s| s.as_str())
                 .collect();
             println!("Installing package files {}", packagefiles.join(", "));
+        	for file in packagefiles {
+				install_spm_file(file.to_string(),0);
+            }
+
         },
         Some(("remove", remove_matches)) => {
             let packages: Vec<_> = remove_matches

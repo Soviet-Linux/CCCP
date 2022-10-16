@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include "dirent.h"
 #include <errno.h>
+#include <dlfcn.h>
 
 #include "../../include/libspm.h"
 
@@ -231,7 +232,6 @@ int mvsp(char* old_path,char* new_path)
     // move file
     return rename(old_path,new_path);
 }
-
 
 
 

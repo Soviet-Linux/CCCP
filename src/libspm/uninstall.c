@@ -32,7 +32,6 @@ int uninstall(char* name)
     open_pkg(dataSpmPath,&r_pkg,NULL);
 
 
-
     msg(DBG3,"Found %d locations",r_pkg.locationsCount);
     //remove all the files in the data["locations"]
     for (int i = 0; i < r_pkg.locationsCount; i++)

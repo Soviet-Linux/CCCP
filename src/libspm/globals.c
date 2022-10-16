@@ -36,6 +36,7 @@ char* BUILD_DIR = "/var/cccp/work/build";
 // Dir where the package sources are downloaded and built
 char* MAKE_DIR = "/var/cccp/work/make";
 
+char* PLUGIN_DIR = "/var/cccp/plugins";
 
 //The file where a lot of data are stored
 char* INSTALLED_DB = "/var/cccp/data/installed.db";
@@ -49,7 +50,7 @@ int REPO_COUNT = 0;
 char* TEST_LOG = "/var/cccp/log/test.log";
 
 // formats
-char** FORMATS = NULL;
+char** FORMATS;
 int FORMAT_COUNT = 0;
 
 // default format

@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "command",
+            "name": "build",
+            "program": "make"
+        }
+
+    ]
+}

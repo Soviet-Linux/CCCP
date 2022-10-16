@@ -2,10 +2,10 @@
 #include "stdio.h"
 #include "string.h"
 
-#include "../../include/ecmp/ecmp.h"
 #include "../../include/utils.h"
-#include "../../include/spm/spm.h"
 #include "../../include/libspm.h"
+#include <dlfcn.h>
+#include <stdlib.h>
 
 
 int open_pkg(char* path, struct package* pkg,char* format)
@@ -51,25 +51,21 @@ int open_pkg(char* path, struct package* pkg,char* format)
 
     if (format == NULL)
     {
-        format = strrchr( path, '.' );
+        format = strrchr( path, '.' ) + 1;
     }  
-
+    
     if (format != NULL)
     {
-        if (strcmp(format,".ecmp") == 0)
+        // this is experimental
+        for (int i = 0; i < FORMAT_COUNT; i++)
         {
-            msg(INFO,"File %s is an ecmp file",path);
-            return open_ecmp(path,pkg);
-        }
-        else if (strcmp(format,".spm") == 0)
-        {
-            msg(INFO,"File %s is an spm file",path);
-            return open_spm(path,pkg);
-        }
-        else
-        {
-            msg(ERROR,"File %s is not a valid package file",path);
-            return 1;
+            printf("format : %s = %s\n",format,FORMATS[i]);
+            if (strcmp(format,FORMATS[i]) == 0)
+            {
+                msg(DBG2,"Opening package with %s format",FORMATS[i]);
+                runFormatLib(FORMATS[i],"open",path,pkg);
+                return 0;
+            }
         }
     }
     else
@@ -77,6 +73,8 @@ int open_pkg(char* path, struct package* pkg,char* format)
         msg(ERROR,"File %s is not a valid package file",path);
         return 1;
     }
+    msg(ERROR,"File %s is not a valid package file, or the format plugin isn't loaded",path);
+    return 1;
 
 }
 
@@ -89,26 +87,58 @@ int create_pkg(char* path,struct package* pkg,char* format)
     // get file extension
     if (format == NULL)
     {
-        format = strrchr( path, '.' );
+        format = strrchr( path, '.' ) + 1;
     } 
     /* This illustrates strrchr */
     if (format != NULL)
     {
-        if (strcmp(format,".ecmp") == 0)
+        // this is experimental
+        for (int i = 0; i < FORMAT_COUNT; i++)
         {
-            msg(WARNING,"ECMP format is still experimental");
-            return create_ecmp(path,pkg);
-        }
-        else if (strcmp(format,".spm") == 0)
-        {
-            msg(INFO,"File %s is an spm file",path);
-            return create_spm(path,pkg);
-        }
-        else
-        {
-            msg(ERROR,"Invalid package type");
-            return 1;
+            if (strcmp(format,FORMATS[i]) == 0)
+            {
+                msg(DBG2,"Opening package with %s format",FORMATS[i]);
+                runFormatLib(FORMATS[i],"create",path,pkg);
+                return 0;
+            }
         }
     }
+    msg(ERROR,"File %s is not a valid package file, or the format plugin isn't loaded",path);
     return -1;
+}
+
+int runFormatLib (char* format,char* fn,char* pkg_path,struct package* pkg)
+{
+    char* lib_path = calloc(64,sizeof(char));
+    sprintf(lib_path,"%s/%s.so",PLUGIN_DIR,format);
+    msg(DBG2,"Loading %s",lib_path);
+
+    if (access(lib_path,F_OK) != 0)
+    {
+        msg(ERROR,"File %s does not exist",lib_path);
+        return 1;
+    }
+    
+    // load fn from so lib
+    void* handle = dlopen(lib_path,RTLD_LAZY);
+    if (!handle)
+    {
+        fprintf(stderr,"%s\n",dlerror());
+        return 1;
+    }
+    int (*func)(char*,struct package*) = dlsym(handle,fn);
+    char* error = dlerror();
+    if (error != NULL)
+    {
+        fprintf(stderr,"%s\n",error);
+        return 1;
+    }
+    if (func(pkg_path,pkg) != 0)
+    {
+        return -1;
+    }
+
+    dlclose(handle);
+    return 0;
+
 }

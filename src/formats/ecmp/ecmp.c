@@ -4,16 +4,16 @@
 #include "malloc.h"
 #include <unistd.h>
 
-#include "../../include/utils.h"
-#include "../../include/libspm.h"
-#include "../../include/ecmp/ecmp.h"
+#include "spm/utils.h"
+#include "spm/libspm.h"
+#include "ecmp.h"
 
 
 
 
 
 
-int open_ecmp(char* path,struct package* pkg)
+int open(char* path,struct package* pkg)
 {
     struct ecmp_section** sections = calloc(32,sizeof(struct ecmp_section*));
     printf("sections address is %p\n",&sections);
@@ -118,7 +118,7 @@ int open_ecmp(char* path,struct package* pkg)
 
 }
 
-int create_ecmp(char* path,struct package* pkg)
+int create(char* path,struct package* pkg)
 {
     msg(DBG3,"Creating ecmp file %s",path);
     // create file
