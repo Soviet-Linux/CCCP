@@ -51,7 +51,9 @@ int open_pkg(char* path, struct package* pkg,char* format)
 
     if (format == NULL)
     {
+        msg(DBG2,"Getting format from file extension");
         format = strrchr( path, '.' ) + 1;
+        printf("Format : %s\n",format);
     }  
     
     if (format != NULL)

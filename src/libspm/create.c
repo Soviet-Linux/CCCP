@@ -1,7 +1,9 @@
 
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int createBinary(char* spm_path,char* bin_path)
 {
@@ -24,11 +26,13 @@ int createBinary(char* spm_path,char* bin_path)
          - keep it : 1
          - chnage it  : 0
     */
-    char* package_dir = format("%s/%s-%s",MAKE_DIR,pkg.name,pkg.version);
+    char* legacy_dir = malloc(strlen(MAKE_DIR)+strlen(pkg.name)+strlen(pkg.version)+2);
+    sprintf(legacy_dir,"%s/%s-%s",MAKE_DIR,pkg.name,pkg.version);
+    msg(DBG1,"Legacy dir : %s",legacy_dir);
 
     // making the package
     msg(DBG1,"Making %s",pkg.name);
-    make(package_dir,&pkg);
+    make(legacy_dir,&pkg);
     msg(DBG1,"Making %s done",pkg.name);
 
 
@@ -38,7 +42,11 @@ int createBinary(char* spm_path,char* bin_path)
 
     // creating spm file in BUILD_DIR
     msg(DBG1,"Creating spm file for %s",pkg.name);
-    create_pkg(format("%s/%s.%s",BUILD_DIR,pkg.name,DEFAULT_FORMAT),&pkg,NULL);
+
+    char* file_path = calloc(strlen(BUILD_DIR)+strlen(pkg.name)+strlen(DEFAULT_FORMAT)+2,sizeof(char));
+    sprintf(file_path, "%s/%s.%s",BUILD_DIR,pkg.name,DEFAULT_FORMAT);
+    create_pkg(file_path,&pkg,NULL);
+    free(file_path);
 
     // compressing stuff to package archive
     msg(DBG1,"Compressing binaries for %s",pkg.name);
@@ -51,8 +59,10 @@ int createBinary(char* spm_path,char* bin_path)
 
 int create_archive(char* DIR,char* out_path)
 {
-    char* archive_cmd = format("( cd %s && tar -czf %s . )",DIR,out_path);
+    char* archive_cmd = calloc(256,sizeof(char));
+    sprintf(archive_cmd,"( cd %s && tar -czf %s . )",DIR,out_path);
     msg(DBG2,"Creating archive with %s",archive_cmd);
-
-    return system(archive_cmd);
+    int EXIT = system(archive_cmd);
+    free(archive_cmd);
+    return EXIT;
 }

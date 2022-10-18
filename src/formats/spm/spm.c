@@ -299,24 +299,19 @@ int create(const char* newPath,struct package* pkg)
     // i thought about using a json library to create the json file
     // but i found that it was too complicated to use
     // so i decided to use a simple string buffer
-    char* s_json = format(
+    char* s_json = calloc(
+        strlen(pkg->name) + strlen(pkg->type) + strlen(pkg->version) + strlen(pkg->license) + strlen(pkg->url) + 
+        strlen(j_deps) + strlen(j_makedeps) + strlen(j_optdeps) + strlen(j_locations) + 
+        strlen(pkg->info.download) + strlen(pkg->info.prepare) + strlen(pkg->info.make) + 
+        strlen(pkg->info.install) + strlen(pkg->info.special) + strlen(pkg->info.test),
+        sizeof(char));
+
+    sprintf(s_json,
     PATTERN,// basic spm json pattern with %s to format
-    pkg->name,
-    pkg->type,
-    pkg->version,
-    pkg->license,
-    pkg->url,
-    j_deps,
-    j_makedeps,
-    j_optdeps,
-    pkg->info.download,
-    pkg->info.prepare,
-    pkg->info.make,
-    pkg->info.test,
-    pkg->info.install,
-    pkg->info.special,
-    j_locations
-    
+    pkg->name,pkg->type,pkg->version,pkg->license,pkg->url,
+    j_deps,j_makedeps,j_optdeps,j_locations,
+    pkg->info.download,pkg->info.prepare,pkg->info.make,
+    pkg->info.test,pkg->info.install,pkg->info.special
     );
 
 

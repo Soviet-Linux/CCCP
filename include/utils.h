@@ -12,9 +12,6 @@ enum level {
     FATAL,
     DOWNLOAD
 };
-
-// format string
-char* format( const char* strFmtString, ... );
 // like the rm -rf command
 int rmrf(char *path);
 // a little wrapper that make strcpy easier
@@ -58,7 +55,7 @@ int exec_special(char* cmd,char* package_dir);
 // untar a binary package to another dir
 int uncompress_binary(char* bin_path,char* dest_dir);
 // get package name from binray file
-char* get_bin_name(char* bin_path);
+int get_bin_name(char* bin_path,char* name);
 // cretae a binary spm package from dir
 int create_archive(char* DIR,char* out_path);
 //free string better
@@ -77,3 +74,5 @@ int pmkdir (const char *dir);
 int mvsp(char* old_path,char* new_path);
 // LIST  file in a dir
 char** ls(char* path);
+// free a package struct
+int free_pkg(struct package* pkg);

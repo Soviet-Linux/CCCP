@@ -50,7 +50,8 @@ int find_data_installed(char* DB_PATH,struct package* pkg,int* as_dep)
         return -1;
     }
     
-    char *sql = format("SELECT Version, Type, AsDep FROM Packages WHERE Name = '%s'",pkg->name);
+    char* sql = calloc(256,sizeof(char));
+    sprintf(sql,"SELECT Version, Type, AsDep FROM Packages WHERE Name = '%s'",pkg->name);
         
     rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
     
@@ -93,7 +94,8 @@ int find_data_repo(char* DB_PATH,struct package* pkg,char** fileFmt)
         return -1;
     }
     
-    char *sql = format("SELECT Version, Format FROM Packages WHERE Name = '%s'",pkg->name);
+    char* sql = calloc(256,sizeof(char));
+    sprintf(sql,"SELECT Version, Format FROM Packages WHERE Name = '%s'",pkg->name);
         
     rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
     
@@ -118,7 +120,7 @@ int find_data_repo(char* DB_PATH,struct package* pkg,char** fileFmt)
 
     sqlite3_finalize(res);
     sqlite3_close(db);
-    
+    free(sql);
     return 0;
 }
 
@@ -139,7 +141,8 @@ int store_data(char* DB_PATH,struct package* a_pkg,int as_dep)
         return 1;
     }
     
-    char *sql = format("INSERT INTO Packages VALUES('%s','%s','%s',%d);",a_pkg->name,a_pkg->version,a_pkg->type,as_dep);
+    char* sql = calloc(256,sizeof(char));
+    sprintf(sql,"INSERT INTO Packages VALUES('%s','%s','%s',%d);",a_pkg->name,a_pkg->version,a_pkg->type,as_dep);
 
 
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -155,6 +158,7 @@ int store_data(char* DB_PATH,struct package* a_pkg,int as_dep)
     } 
     
     sqlite3_close(db);
+    free(sql);
     return 0;
 }
 int remove_data (char* DB_PATH,char* name)
@@ -172,7 +176,8 @@ int remove_data (char* DB_PATH,char* name)
         return 1;
     }
     
-    char *sql = format("DELETE FROM Packages WHERE Name = '%s'",name);
+    char* sql = calloc(256,sizeof(char));
+    sprintf(sql,"DELETE FROM Packages WHERE Name = '%s'",name);
 
 
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -188,6 +193,7 @@ int remove_data (char* DB_PATH,char* name)
     } 
     
     sqlite3_close(db);
+    free(sql);
     return 0;
 }
 

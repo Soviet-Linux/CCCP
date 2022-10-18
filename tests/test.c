@@ -73,6 +73,7 @@ int main(int argc, char const *argv[])
     }
     else if (strcmp(argv[1],"install") == 0)
     {
+        init();
         installSpmFile(argv[2],0);
         return 0;
     }
@@ -104,6 +105,7 @@ int main(int argc, char const *argv[])
 
 int test_move()
 {
+    /* REMOVED DUE TO LAZINESS 
     init();
     printf("Testing move\n");
     ROOT = "/tmp/spm-testing";
@@ -169,8 +171,10 @@ int test_move()
         printf("%s ",l_s_j_k[i]);
     }
     printf("\n");
+    */
     return 0;
 }
+
 
 int test_split()
 {
@@ -342,6 +346,9 @@ int test_ecmp(int type)
 
     create_pkg("tests/vim-test.ecmp", &pkg,NULL);
 
+    free_pkg(&pkg);
+    
+
     return EXIT;
 }
 
@@ -360,6 +367,7 @@ char* assemble(char** list,int count)
 
 int test_dl()
 {
+    /*  removed due to laziness
     list_of_stuff = calloc(256,sizeof(char*));
     
     list_of_stuff[list_of_stuff_count++] = "Hello";
@@ -417,6 +425,7 @@ int test_dl()
     print_hello();
     // close library
     dlclose(lib);
+    */
     return 0;
 
 }

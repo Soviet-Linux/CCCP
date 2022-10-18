@@ -46,10 +46,15 @@ char* get(struct package *i_pkg,char* out_path)
     msg(DBG1,"Downloading %s %s %s",i_pkg->name,i_pkg->version,i_pkg->type);
 
     // loop through REPOS
-    if (downloadRepo(format("base/%s/%s.%s",i_pkg->type,i_pkg->name,pkg_format), out_path) != 0)
+    char* url = calloc(64+strlen(i_pkg->type)+strlen(i_pkg->name)+strlen(pkg_format),sizeof(char));
+    sprintf(url,"base/%s/%s.%s",i_pkg->type,i_pkg->name,pkg_format);
+
+    if (downloadRepo(url, out_path) != 0)
     {
+        msg(ERROR,"Failed to download %s",url);
         return NULL;
     } 
+    free(url);
 
     return pkg_format;
 }

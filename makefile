@@ -85,7 +85,7 @@ formats:
 .PHONY: clean test
 
 clean:
-	rm -f $(ODIR)/*.o $(BINDIR)/* 
+	rm -f $(ODIR)/*.o $(BINDIR)/$(LIBOUT) $(BINDIR)/$(EXEOUT) $(BINDIR)/plugins/*.so 
 
 install:
 	if [ ! -d "/usr/local/lib/spm" ]; then mkdir -p /usr/local/lib/spm; fi

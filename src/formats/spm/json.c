@@ -8,12 +8,15 @@
 #include "spm/utils.h"
 #include "spm/libspm.h"
 #include "json.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 
 char* jstrval (jsmntok_t t,char* jstr)
 {
-    char* jstrval = format("%.*s",t.end - t.start,jstr + t.start );
+    char* jstrval = calloc(t.end-t.start+1,sizeof(char)); 
+    sprintf(jstrval,"%.*s",t.end - t.start,jstr + t.start );
     return jstrval;
 }
 char** jarrtoarr (jsmntok_t t_list[],char* jstr,int pos)
@@ -56,11 +59,16 @@ char* arrtojarr (char** arr,int count)
     int i;
     for (i=0;i < (count - 1) ;i++)
     {
-        strcat(jarr,format("\"%s\"",arr[i]));
-        strcat(jarr,",");
+        msg(DBG3,"Adding %s to json array",arr[i]);
+        strcat(jarr,"\"");
+        strcat(jarr,arr[i]);
+        strcat(jarr,"\",");
     }
     msg(DBG3,"Adding %s to json array",arr[i]);
-    strcat(jarr,format("\"%s\"",arr[i]));
+    strcat(jarr,"\"");
+    strcat(jarr,arr[i]);
+    strcat(jarr,"\"");
+
     return jarr;
 }
 unsigned long jparse(jsmntok_t** t,char* jstr,unsigned long jsize)

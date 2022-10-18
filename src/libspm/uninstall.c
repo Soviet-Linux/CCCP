@@ -5,6 +5,8 @@
 #include  "../../include/libspm.h"
 #include "../../include/utils.h"
 #include "../../include/data.h"
+#include <stdlib.h>
+#include <string.h>
 
 /*
 To uninstall packages , we'll use the location data ( all the files that were installed by the program )
@@ -19,7 +21,8 @@ So dont touch this , except if there are a critical bug or an important missing 
 // this function is for uninstaling packages
 int uninstall(char* name)
 {       
-    char* dataSpmPath = format("%s/%s.%s",SPM_DIR,name,DEFAULT_FORMAT);
+    char* dataSpmPath = calloc(strlen(SPM_DIR)+strlen(name)+strlen(DEFAULT_FORMAT)+3,sizeof(char));
+    sprintf(dataSpmPath,"%s/%s.%s",SPM_DIR,name,DEFAULT_FORMAT);
     // verify if the package is installed
     msg(DBG3, "Verifying if the package is installed at %s" , dataSpmPath);
     // check if SPM_FILE exists

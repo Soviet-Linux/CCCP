@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 // class stuff
 
@@ -19,7 +20,11 @@ void move_binaries(char** locations,long loc_size)
     */
     for (int i = 0; i < loc_size; i++)
     {
-        char* dest_loc = format("%s/%s",ROOT,locations[i]);
+        char* dest_loc = calloc(strlen(locations[i]+strlen(ROOT))+1,sizeof(char));
+        sprintf(dest_loc,"%s/%s",ROOT,locations[i]);
+        char* build_loc = calloc(strlen(BUILD_DIR)+strlen(locations[i])+1,sizeof(char));
+        sprintf(build_loc,"%s/%s",BUILD_DIR,locations[i]);
+
         if (!(access(dest_loc,F_OK) == 0))
         {   if (locations[i] == NULL)
             {
@@ -30,7 +35,9 @@ void move_binaries(char** locations,long loc_size)
             //fflush(stdout);
             // now that we know it is empty , mov the stuff
             //msg(DBG1,"Moving %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
-            mvsp(format("%s/%s",BUILD_DIR,locations[i]),dest_loc);
+            
+            mvsp(build_loc,dest_loc);
+            free(build_loc);
             
             //smsg(DBG1,"Moved %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
         }
@@ -41,7 +48,7 @@ void move_binaries(char** locations,long loc_size)
 
             if (OVERWRITE) 
             {
-                rename(format("%s/%s",BUILD_DIR,locations[i]),dest_loc);
+                rename(build_loc,dest_loc);
             }
             else {
                 msg(FATAL, "Terminating the program");

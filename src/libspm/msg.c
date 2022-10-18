@@ -77,5 +77,9 @@ int msg(enum level msgLevel, const char* message,...)
             printf("UNKNOWN: %s\n",strDest);
             break;
     }
+    //free memory
+    free(strDest);
+    
+
     return 0;
 }

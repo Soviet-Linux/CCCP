@@ -54,13 +54,18 @@ int downloadRepo(const char* url_path,const char* file_path)
         // get the url
         char* repo = REPOS[i];
         printf("repo is %s\n",repo);
-        char* url = format("%s/%s",repo,url_path);
+
+        char* url = calloc(strlen(repo)+strlen(url_path)+1,sizeof(char));
+        sprintf(url,"%s/%s",repo,url_path);
+
         msg(INFO, "Downloading %s", url);
         
         if (downloadFile(url,file_path) == 0)
         {
+            free(url);
             return 0;
         }
+        free(url);
     
     }
     return 1;

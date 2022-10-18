@@ -233,5 +233,43 @@ int mvsp(char* old_path,char* new_path)
     return rename(old_path,new_path);
 }
 
+int free_pkg(struct package* pkg)
+{
+    free(pkg->name);
+    free(pkg->version);
+    free(pkg->url);
+    free(pkg->license);
+    for (int i = 0; i < pkg->dependenciesCount; i++)
+    {
+        free(pkg->dependencies[i]);
+    }
+    free(pkg->dependencies);
+    pkg->dependenciesCount = 0;
+    for (int i = 0; i < pkg->makedependenciesCount; i++)
+    {
+        free(pkg->makedependencies[i]);
+    }
+    free(pkg->makedependencies);
+    pkg->makedependenciesCount = 0;
+    for (int i = 0; i < pkg->optionaldependenciesCount; i++)
+    {
+        free(pkg->optionaldependencies[i]);
+    }
+    free(pkg->optionaldependencies);
+    pkg->optionaldependenciesCount = 0;
+    free(pkg->info.download);
+    free(pkg->info.install);
+    free(pkg->info.prepare);
+    free(pkg->info.make);
+    free(pkg->info.test);
+    for (int i = 0; i < pkg->locationsCount; i++)
+    {
+        free(pkg->locations[i]);
+    }
+    free(pkg->locations);
+
+    pkg = NULL;
+    return 0;
+}
 
 

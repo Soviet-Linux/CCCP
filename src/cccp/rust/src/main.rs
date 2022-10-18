@@ -93,6 +93,7 @@ fn main() {
                 .collect();
             println!("Installing package files {}", packagefiles.join(", "));
         	for file in packagefiles {
+                init();
 				install_spm_file(file.to_string(),0);
             }
 

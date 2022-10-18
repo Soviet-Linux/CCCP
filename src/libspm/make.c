@@ -1,5 +1,6 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -25,8 +26,6 @@
 int make (char* package_dir,struct package* pkg)
 {
 
-
-
     char *cmd_params;
     
     //If debug is not enabled , reidrecting all command output to /dev/null
@@ -36,8 +35,6 @@ int make (char* package_dir,struct package* pkg)
     else {
         cmd_params = "";
     }
-
-
     
 
     /*
@@ -71,21 +68,44 @@ int make (char* package_dir,struct package* pkg)
 
     // Idk why i havent done this before , but i moved the downloading here
     if (pkg->info.download != NULL && strlen(pkg->info.download) > 0) {
-        char* sources_cmd = format(" NAME=%s && VERSION=%s && URL=%s && cd %s && %s",pkg->name,pkg->version,pkg->url,MAKE_DIR,pkg->info.download);
+        char* sources_cmd = calloc(
+            64 + strlen(pkg->name) + strlen(pkg->version) + strlen(pkg->url) + 
+            strlen(MAKE_DIR) + strlen(pkg->info.download), 
+            sizeof(char));
+
+        sprintf(sources_cmd,
+            " NAME=%s && VERSION=%s && URL=%s && cd %s && %s",
+            pkg->name,pkg->version,pkg->url,MAKE_DIR,pkg->info.download);
+
         msg(DBG2,"Downloading sources with %s",sources_cmd);
-        if (system(sources_cmd) != 0) return 1;
+        if (system(sources_cmd) != 0) {
+            msg(ERROR,"Failed to download sources for %s",pkg->name);
+            free(sources_cmd);
+            return -1;
+        }
+        free(sources_cmd);
     }
     //checking is the command are used and formatting and executing them
     if (pkg->info.prepare != NULL && strlen(pkg->info.prepare) > 0) 
     {
         //formatting the prepare command
-        char* prepare_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) %s",BUILD_DIR,package_dir,pkg->info.prepare,cmd_params);
+        char* prepare_cmd = calloc(
+            64 + strlen(BUILD_DIR) + strlen(package_dir) + 
+            strlen(pkg->info.prepare) + strlen(cmd_params), 
+            sizeof(char));
+
+        sprintf(prepare_cmd,
+            "BUILD_ROOT=%s; ( cd %s && %s ) %s",
+            BUILD_DIR,package_dir,pkg->info.prepare,cmd_params);
 
         //Printing the command to the terminal
         msg(DBG2,"Executing prepare command : %s",prepare_cmd);
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        if (system(prepare_cmd) != 0) return 1;
+        if (system(prepare_cmd) != 0) {
+            free(prepare_cmd);
+            return 1;
+        }
         //debug
         msg(DBG1,"prepare command executed !");
 
@@ -95,13 +115,23 @@ int make (char* package_dir,struct package* pkg)
     if (pkg->info.make != NULL && strlen(pkg->info.make) > 0) 
     {
         //formatting the prepare command
-        char* make_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) %s",BUILD_DIR,package_dir,pkg->info.make,cmd_params);
+        char* make_cmd = calloc(
+            64 + strlen(BUILD_DIR) + strlen(package_dir) + 
+            strlen(pkg->info.make) + strlen(cmd_params), 
+            sizeof(char));
+
+        sprintf(make_cmd,
+            "BUILD_ROOT=%s; ( cd %s && %s ) %s",
+            BUILD_DIR,package_dir,pkg->info.make,cmd_params);
 
         //Printing the command to the terminal
         msg(DBG2,"Executing make command : %s",make_cmd);
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        if (system(make_cmd) != 0) return 1;
+        if (system(make_cmd) != 0) {
+            free(make_cmd);
+            return 1;
+        }
         //debug
         msg(DBG1,"make command executed !");
 
@@ -112,14 +142,25 @@ int make (char* package_dir,struct package* pkg)
     }
     if (pkg->info.test != NULL && TESTING && strlen(pkg->info.test) > 0) 
     {
-        //formatting the prepare command
-        char* test_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.test,TEST_LOG);
+        //formatting the  command
+        char* test_cmd = calloc(
+            64 + strlen(BUILD_DIR) + strlen(package_dir) + 
+            strlen(pkg->info.test) + strlen(cmd_params), 
+            sizeof(char));
+
+        sprintf(test_cmd,
+            "BUILD_ROOT=%s; ( cd %s && %s ) %s",
+            BUILD_DIR,package_dir,pkg->info.test,cmd_params);
+
 
         //Printing the command to the terminal
         msg(DBG2,"Executing test command : %s",test_cmd);
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        if (system(test_cmd) != 0) return 1;
+        if (system(test_cmd) != 0) {
+            free(test_cmd);
+            return 1;
+        };
         //debug
         msg(DBG1,"make command executed !");
 
@@ -129,13 +170,25 @@ int make (char* package_dir,struct package* pkg)
     if (pkg->info.install != NULL && strlen(pkg->info.install) > 0) 
     {
         //formatting the prepare command
-        char* install_cmd = format("BUILD_ROOT=%s; ( cd %s && %s ) > %s",BUILD_DIR,package_dir,pkg->info.install,TEST_LOG);
+        char* install_cmd = calloc(
+            64 + strlen(BUILD_DIR) + strlen(package_dir) + 
+            strlen(pkg->info.install) + strlen(cmd_params), 
+            sizeof(char));
+
+        sprintf(install_cmd,
+            "BUILD_ROOT=%s; ( cd %s && %s ) %s",
+            BUILD_DIR,package_dir,pkg->info.install,cmd_params);
 
         //Printing the command to the terminal
         msg(DBG2,"Executing Install command : %s",install_cmd);
         //executing the command
         // We add the extra command parameters to the command , so that the user can add extra parameters to the command
-        if (system(install_cmd) != 0) return 1;
+        if (system(install_cmd) != 0) 
+        {
+            free(install_cmd);
+            msg(FATAL,"Failed to install %s",pkg->name);
+            return -2;
+        }
         //debug
         msg(DBG1,"install command executed !");
 
@@ -151,8 +204,15 @@ int make (char* package_dir,struct package* pkg)
 int exec_special(char* cmd,char* package_dir)
 {
     msg(DBG2,"Executing special command : %s",cmd);
-    if (system(format("cd %s && %s",package_dir,cmd)) != 0) return 1;
-    
+    char* special_cmd = calloc(
+        64 +strlen(package_dir) + strlen(cmd), 
+        sizeof(char));
+
+    if (system(special_cmd) != 0) {
+        free(special_cmd);
+        return 1;
+    }
+    free(special_cmd);
     msg(DBG1,"special command executed !");
     return 0;
 }

@@ -6,11 +6,12 @@
 #include "../../include/globals.h"
 #include "../../include/libspm.h"
 #include "../../include/utils.h"
+#include <stdlib.h>
 
 long get_locations(char ***locations, char *loc_dir) {
   // Get package file location
-  char *files_location_cmd =
-      format("( cd %s && find . -type f | cut -c2- ) ", BUILD_DIR);
+  char *files_location_cmd = calloc(64+strlen(BUILD_DIR),sizeof(char));
+  sprintf(files_location_cmd,"( cd %s && find . -type f | cut -c2- ) ", BUILD_DIR);
   /*
   This way of getting locations is pretty bad , i should wite a proper way to do
   it But it works so its ok for now
