@@ -16,12 +16,10 @@ TODO: Rework it !
 */
 int readConfig(char* configFilePath)
 {
-    
+    msg(DBG2,"Reading config file %s",configFilePath);
     FILE* file = fopen(configFilePath, "r"); /* should check the result */
-    char line[256];
-    char* key;
-    char* value;
-    char** kvlist;
+    char line[1024];
+    char* kvlist[2];
     int count;
 
     while (fgets(line, sizeof(line), file)) {
@@ -29,64 +27,66 @@ int readConfig(char* configFilePath)
            presence would allow to handle lines longer that sizeof(line) */
         // removing the '\n' mentioned above
         line[strlen(line)-1] = 0;
+        count  = splitm(line,'=',kvlist,2);
+        msg(DBG3,"Key: %s Value: %s",kvlist[0],kvlist[1]);
 
-        kvlist = split(line,'=',&count);
         if (count == 0)
         {
             msg(ERROR,"Invalid config file format");
             continue;
         }
         else {
-            key = kvlist[0];
-            value = kvlist[1];
+            char* key = kvlist[0];
+            char* value = kvlist[1];
             if (strcmp(key,"ROOT") == 0)
             {
-                free(ROOT);
-                strcpa(&ROOT,value);
+                strcpy(ROOT,value);
             }
             else if (strcmp(key,"MAIN_DIR") == 0)
             {
-                free(MAIN_DIR);
-                strcpa(&MAIN_DIR,value);
+
+                strcpy(MAIN_DIR,value);
             }
             else if (strcmp(key,"WORK_DIR") == 0)
             {
-                free(WORK_DIR);
-                strcpa(&WORK_DIR,value);
+
+                strcpy(WORK_DIR,value);
             }
             else if (strcmp(key,"INSTALLED_FILE") == 0)
             {
-                free(INSTALLED_DB);
-                strcpa(&INSTALLED_DB,value);
+
+                strcpy(INSTALLED_DB,value);
             }
             else if (strcmp(key,"ALL_FILE") == 0)
             {
-                free(ALL_DB);
-                strcpa(&ALL_DB,value);
+                strcpy(ALL_DB,value);
             }
             else if (strcmp(key,"CONFIG_FILE") == 0)
             {
-                free(CONFIG_FILE);
-                strcpa(&CONFIG_FILE,value);
+
+                strcpy(CONFIG_FILE,value);
             }
             else if (strcmp(key,"REPOS") == 0)
             {
-                free(REPOS);
-                REPO_COUNT = 0;
-                REPOS = split(value,' ',&REPO_COUNT);
+                 
+                REPO_COUNT = splitm(value,' ',REPOS,MAX_REPOS);
                 
             }
             else if (strcmp(key,"FORMATS") == 0)
             {
-                free(FORMATS);
-                FORMAT_COUNT = 0;
-                FORMATS = split(value,' ',&FORMAT_COUNT);
+                msg(DBG3,"FORMATS: %s",value);
+                strcpy(REPO_ALLOC,value);
+                FORMAT_COUNT = splitm(REPO_ALLOC,' ',FORMATS,MAX_FORMATS);
+                for (int i = 0; i < FORMAT_COUNT; i++)
+                {
+                    msg(DBG3,"FORMATS: %s",FORMATS[i]);
+                }
             }
             else {
                 msg(ERROR,"Unknown key in config file : %s",key);
             }
-            free(kvlist);
-            kvlist = NULL;
+            
+
         }
 
     }

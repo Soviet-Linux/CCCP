@@ -26,7 +26,7 @@ int createBinary(char* spm_path,char* bin_path)
          - keep it : 1
          - chnage it  : 0
     */
-    char* legacy_dir = malloc(strlen(MAKE_DIR)+strlen(pkg.name)+strlen(pkg.version)+2);
+    char legacy_dir[MAX_PATH];
     sprintf(legacy_dir,"%s/%s-%s",MAKE_DIR,pkg.name,pkg.version);
     msg(DBG1,"Legacy dir : %s",legacy_dir);
 
@@ -43,10 +43,10 @@ int createBinary(char* spm_path,char* bin_path)
     // creating spm file in BUILD_DIR
     msg(DBG1,"Creating spm file for %s",pkg.name);
 
-    char* file_path = calloc(strlen(BUILD_DIR)+strlen(pkg.name)+strlen(DEFAULT_FORMAT)+2,sizeof(char));
+    char file_path[MAX_PATH];
     sprintf(file_path, "%s/%s.%s",BUILD_DIR,pkg.name,DEFAULT_FORMAT);
     create_pkg(file_path,&pkg,NULL);
-    free(file_path);
+
 
     // compressing stuff to package archive
     msg(DBG1,"Compressing binaries for %s",pkg.name);

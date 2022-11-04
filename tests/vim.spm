@@ -1,5 +1,5 @@
 {
-    "dependencies": [],
+    "dependencies": ["test","gnu"],
     "info": {
         "download": "curl $URL | tar -xz ",
         "install": "make DESTDIR=$BUILD_ROOT install",

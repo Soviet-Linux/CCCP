@@ -66,14 +66,15 @@ int find_data_installed(char* DB_PATH,struct package* pkg,int* as_dep)
     int step = sqlite3_step(res);
     
     if (step == SQLITE_ROW) {
-        strcpa(&pkg->version,(char*)sqlite3_column_text(res, 0));
-        strcpa(&pkg->type,(char*)sqlite3_column_text(res, 1));
+        pkg->version = strdup((char*)sqlite3_column_text(res, 0));
+        pkg->type = strdup((char*)sqlite3_column_text(res, 1));
         *as_dep = sqlite3_column_int(res, 2);
         
     } 
 
     sqlite3_finalize(res);
     sqlite3_close(db);
+    free(sql);
     
     return 0;
 }
@@ -110,10 +111,10 @@ int find_data_repo(char* DB_PATH,struct package* pkg,char** fileFmt)
     int step = sqlite3_step(res);
     
     if (step == SQLITE_ROW) {
-        strcpa(&pkg->version,(char*)sqlite3_column_text(res, 0));
+        pkg->version = strdup((char*)sqlite3_column_text(res, 0));
         if (fileFmt != NULL)
         {
-            strcpa(fileFmt,(char*)sqlite3_column_text(res, 1));
+            *fileFmt = strdup((char*)sqlite3_column_text(res, 1));
         }
         
     } 

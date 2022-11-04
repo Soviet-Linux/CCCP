@@ -20,9 +20,9 @@ void move_binaries(char** locations,long loc_size)
     */
     for (int i = 0; i < loc_size; i++)
     {
-        char* dest_loc = calloc(strlen(locations[i]+strlen(ROOT))+1,sizeof(char));
+        char dest_loc[PATH_MAX];
         sprintf(dest_loc,"%s/%s",ROOT,locations[i]);
-        char* build_loc = calloc(strlen(BUILD_DIR)+strlen(locations[i])+1,sizeof(char));
+        char build_loc[PATH_MAX];
         sprintf(build_loc,"%s/%s",BUILD_DIR,locations[i]);
 
         if (!(access(dest_loc,F_OK) == 0))
@@ -37,7 +37,6 @@ void move_binaries(char** locations,long loc_size)
             //msg(DBG1,"Moving %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
             
             mvsp(build_loc,dest_loc);
-            free(build_loc);
             
             //smsg(DBG1,"Moved %s/%s to %s",BUILD_DIR,locations[i],dest_loc);
         }
@@ -54,7 +53,6 @@ void move_binaries(char** locations,long loc_size)
                 msg(FATAL, "Terminating the program");
             }
         }
-        free(dest_loc);
     }
     return;
 

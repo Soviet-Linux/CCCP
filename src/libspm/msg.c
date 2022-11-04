@@ -37,11 +37,14 @@ int msg(enum level msgLevel, const char* message,...)
     //declare size_t size
     size_t size = vsnprintf(NULL, 0, message, args);
     //allocate memory for strDest
-    strDest = (char*) malloc(size * sizeof(char*) + 1);
+    strDest = (char*) calloc(size +2 ,sizeof(char));
     //initialize va_list args
     va_start(args,message);
     //initialize vsnprintf
-    vsnprintf(strDest, size + 1, message, args);
+    vsnprintf(strDest, size+1, message, args);
+
+    //initialize va_end
+    va_end(args);
 
 
     switch (msgLevel)
@@ -68,7 +71,8 @@ int msg(enum level msgLevel, const char* message,...)
             break;
         case FATAL:
             printf("%sFATAL: %s%s%s%s\n",BOLDBLUE,RESET,BLUE,strDest,RESET);
-            exit(1);
+            free(strDest);
+            quit(1);
         case DOWNLOAD:
             printf("%sDOWNLOAD: %s%s%s%s\r",BOLDBLUE,RESET,BLUE,strDest,RESET);
             fflush(stdin);

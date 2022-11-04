@@ -17,8 +17,11 @@
 
 
 
-
+#ifdef STATIC
+int open_spm(const char* PPath,struct package* pkg)
+#else
 int open(const char* PPath,struct package* pkg)
+#endif
 {
     if (access(PPath, F_OK) != 0)  msg(FATAL, "PPath not found !");
     char *jstr;
@@ -86,7 +89,7 @@ int open(const char* PPath,struct package* pkg)
     msg(DBG2,"Looping over tokens %d",t_size);
     // looop over json tokens
     int i;
-    for (i = 0; i < t_size; i++) 
+    for (i = 1; i < t_size; i++) 
     {
 
         switch (t[i].type)
@@ -273,14 +276,19 @@ int open(const char* PPath,struct package* pkg)
         msg(DBG3,"%s",pkg->makedependencies[i]);
     }
 
-
+    free(jstr);
+    free(t);
 
 
     return 0;
 
     
 }
+#ifdef STATIC
+int create_spm(const char* newPath,struct package* pkg)
+#else
 int create(const char* newPath,struct package* pkg)
+#endif
 {
     msg(DBG3,"Creating spm at %s",newPath);
 
@@ -295,17 +303,12 @@ int create(const char* newPath,struct package* pkg)
     printf("stage 3\n");
     char* j_locations = arrtojarr(pkg->locations,pkg->locationsCount);
 
-    printf("cretaing json\n");
+    printf("cretaing json 1 \n");
     // i thought about using a json library to create the json file
     // but i found that it was too complicated to use
     // so i decided to use a simple string buffer
-    char* s_json = calloc(
-        strlen(pkg->name) + strlen(pkg->type) + strlen(pkg->version) + strlen(pkg->license) + strlen(pkg->url) + 
-        strlen(j_deps) + strlen(j_makedeps) + strlen(j_optdeps) + strlen(j_locations) + 
-        strlen(pkg->info.download) + strlen(pkg->info.prepare) + strlen(pkg->info.make) + 
-        strlen(pkg->info.install) + strlen(pkg->info.special) + strlen(pkg->info.test),
-        sizeof(char));
-
+    char* s_json = calloc(1024*16,sizeof(char));
+    printf("allocated json\n");
     sprintf(s_json,
     PATTERN,// basic spm json pattern with %s to format
     pkg->name,pkg->type,pkg->version,pkg->license,pkg->url,
@@ -313,6 +316,9 @@ int create(const char* newPath,struct package* pkg)
     pkg->info.download,pkg->info.prepare,pkg->info.make,
     pkg->info.test,pkg->info.install,pkg->info.special
     );
+
+    printf("json created\n");
+    printf("%s\n",s_json);
 
 
     free(j_deps);
@@ -322,8 +328,9 @@ int create(const char* newPath,struct package* pkg)
     free(j_locations);
 
     // writing the json fil
-    return wrfile(newPath,s_json,strlen(s_json));
-
+    wrfile(newPath,s_json,strlen(s_json));
+    free(s_json);
+    return 0;
 }
 // This function is very important , it will store the install location data to the "DB"
 

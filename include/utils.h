@@ -1,6 +1,7 @@
 #pragma once
 
 #include "libspm.h"
+#include <limits.h> 
 
 enum level {
     DBG1,
@@ -15,13 +16,17 @@ enum level {
 // like the rm -rf command
 int rmrf(char *path);
 // a little wrapper that make strcpy easier
-int strcpa(char** dest,const char* value);
+//int strcpa(char** dest,const char* value);
 // to split strings into arrays  with a delimiter
-char** split (const char* string,char delim,int* returnCount);
+unsigned int splitm (char* string,char delim,char** dest,unsigned max);
+#define split(string,delim,dest) splitm(string,delim,dest,INT_MAX)
+
+// to count the number of occurences of a char in a string
+unsigned int countc(char* string,char c);
 // a tool to have cool terminal output
 int msg(enum level msgLevel, const char* message,...);
 // a small helper function to free an array
-int freearr(void*** arr,unsigned long count);
+//int freearr(void*** arr,unsigned long count);
 // read entire file safely
 long rdfile(const char* filePath,char** buffer);
 // write entire file safely
@@ -36,7 +41,7 @@ int downloadFile(const char* url,const char* file_path);
 int downloadRepo(const char* url_path,const char* file_path);
 // find last occurence of a char in a string.
 long findlast(char* str,char c);
-// remove a char with astring index
+// remove a char with a string index
 void popcharn(char* s,long s_size,int pos);
 // exec a command and return the output
 char* exec(const char* cmd);

@@ -4,7 +4,8 @@ version=8.2
 type=src
 
 [dependencies]
-ncurses>=6.1
+[download]
+curl $URL | tar -xz 
 
 
 [install]

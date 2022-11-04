@@ -9,7 +9,7 @@
 char* exec(const char* cmd) 
 {
   FILE *fp;
-  char path[1024];
+  char path[PATH_MAX];
   char* result = (char*)calloc(2048,sizeof(char));
 
   /* Open the command for reading. */

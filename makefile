@@ -67,7 +67,7 @@ rust-dev:
 	cp $(RSDIR)/target/debug/cccp $(BINDIR)/$(EXEOUT)
 
 test:
-	$(CC) $(CFLAGS) tests/test.c $(LIBS) -o bin/spm-test -lspm -L./bin
+	$(CC) $(CFLAGS) -DSTATIC src/formats/*/* tests/test.c $(LIBS) -o bin/spm-test -lspm -L./bin
 
 direct:
 	$(CC) $(CFLAGS) $(SRCS) $(LIBS) -shared -fPIC -o $(LIBOUT)

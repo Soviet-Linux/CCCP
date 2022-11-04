@@ -4,7 +4,8 @@
 name = vim
 version = 8.2
 type = src
-license = MIT
+license =MIT
+url=https://anduin.linuxfromscratch.org/BLFS/vim/vim-9.0.0228.tar.gz
 
 # package description , it can be on multiple lines and we support makdown
 [description] 
@@ -12,12 +13,11 @@ This package is really important.
 It is essential to the system.
 It is a dependency of many other packages.
 
-# the dependencies version support operators are: =, '<','>','<=','>='.
-[dependencies] 
-ncurses >= 6.1
 
 
-
+# the download url can be a local file or a remote url
+[download]
+curl $URL | tar -xz 
 
 
 # this is basically a bash script to install the package

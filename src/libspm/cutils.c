@@ -14,60 +14,37 @@
 
 #include "../../include/utils.h"
 
-int strcpa(char** dest,const char* value)
-{
-    *dest = strcpy(malloc((strlen(value)+1) * sizeof(char)),value);
-    return 0;
-}
-char** split (const char* string,char delim,int* returnCount)
-{
-    char** list = calloc(512,sizeof(char*));
-    char* buffer = calloc(256,sizeof(char));
 
-    char* ptr = string;
-
-    int count = 0;
-    while ((*ptr) != '\0')
+unsigned int splitm (char* string,char delim,char** dest,unsigned max)
+{
+    //msg(DBG3,"Splitting \"%s\" with delim '%c' and max %d",string,delim,max);
+    char* token = strtok(string, &delim);
+    unsigned int count = 0;
+    while (token != NULL && count < max)
     {
-        
-        if (*ptr == delim)
-        {
-            if (count > 512)
-            {
-                printf("Error : too many elements in list , reallocating\n");
-                list = realloc(list,(count+512) * sizeof(char*));
-            }
+        //msg(DBG3,"Token: %s",token);
+        dest[count] = token;
+        count++;
+        token = strtok(NULL, &delim);
+    }
+    return count;
+}
 
-            list[count] = buffer;
-            buffer = calloc(256,sizeof(char));
+
+
+unsigned int countc(char* string,char c)
+{
+    unsigned int count = 0;
+    for (int i = 0; i < strlen(string); i++)
+    {
+        if (string[i] == c)
+        {
             count++;
         }
-        else
-        {
-            buffer[strlen(buffer)] = *ptr;
-        }
-        ptr++;
-        
-
     }
-    list[count++] = buffer;
-
-
-
-    *returnCount = count;
-    return list;
+    return count;
 }
-int freearr(void*** arr,unsigned long count)
-{
-    unsigned long i;
-    for (i = 0; i < count; i++) {
-        printf("Freeing string %p\n",(*arr)[i]);
-        free((*arr)[i]);
-    }
-    printf("Freeing the array itself %p\n",*arr);
-    free((*arr));
-    return 0;
-}
+
 long rdfile(const char* filePath,char** buffer)
 {
     (*buffer) = 0;
@@ -79,7 +56,7 @@ long rdfile(const char* filePath,char** buffer)
         fseek (f, 0, SEEK_END);
         length = ftell (f);
         fseek (f, 0, SEEK_SET);
-        (*buffer) = calloc(length,sizeof(char));
+        (*buffer) = calloc(length+1,sizeof(char));
     if ((*buffer))
     {
         fread ((*buffer), 1, length, f);
@@ -99,11 +76,15 @@ long rdfile(const char* filePath,char** buffer)
 }
 int wrfile(const char* filePath,char* buffer,long size)
 {
+    msg(DBG3,"Writing %ld bytes to %s",size,filePath);
     FILE *fp;
-    fp = fopen ( filePath , "wb" );
-    if( !fp ) perror(filePath),exit(1);
+    printf("fp declared\n");
+    fp = fopen(filePath , "wb" );
+    printf("fopen returned %p\n",fp);
+    if( !fp )perror(filePath),exit(1);
     if(fwrite(buffer,size,1,fp) != 1) fclose(fp),fputs("entire write fails",stderr),exit(1);
     fclose(fp);
+    printf("Writing done\n");
     return 0;
 }
 int strinarr( char* val, char** arr,long arrsize)
@@ -182,22 +163,23 @@ int xis_dir (const char *d)
 
 int pmkdir (const char *dir)
 {
-    char* parent_path = calloc(256,sizeof(char));
-    strcpa(&parent_path,dir);
-    char* parent_pos = strrchr(parent_path, '/');
-    if (parent_pos == NULL) return -1;
+    char* parent_path = calloc(strlen(dir)+1,sizeof(char));
+    strncpy(parent_path,dir,strrchr(dir, '/')-dir);
+
     
-    parent_pos[0] = '\0';
+    printf("Parent path : %s\n",parent_path);
 
     // if parent dir does not exist, create it
     switch (xis_dir(parent_path))
     {
         case -1:
             if (pmkdir(parent_path) != 0) return -1;
+            free(parent_path);
             return mkdir(dir,0777);
         case -2:
             msg(FATAL,"pmkdir : not a directory");
         case 0:
+            free(parent_path);
             return mkdir(dir,0777); 
     }
     free(parent_path);
@@ -208,13 +190,11 @@ int pmkdir (const char *dir)
 int mvsp(char* old_path,char* new_path)
 {
     msg(DBG3,"MVSP : Moving %s to %s",old_path,new_path);
-    char* parent_path = calloc(256,sizeof(char));
-    strcpa(&parent_path,new_path);
+    char* parent_path = calloc(strlen(new_path)+1,sizeof(char));
+    strncpy(parent_path,new_path,strrchr(new_path, '/')-new_path);
 
-    char* parent_pos = strrchr(parent_path, '/');
-    if (parent_pos == NULL) return -1;
-
-    parent_pos[0] = '\0';
+    
+    printf("Parent path : %s\n",parent_path);
 
 
     switch (xis_dir(parent_path))
@@ -235,41 +215,38 @@ int mvsp(char* old_path,char* new_path)
 
 int free_pkg(struct package* pkg)
 {
+    msg(DBG3,"Freeing pkg %s",pkg->name);
+
     free(pkg->name);
     free(pkg->version);
     free(pkg->url);
     free(pkg->license);
-    for (int i = 0; i < pkg->dependenciesCount; i++)
-    {
-        free(pkg->dependencies[i]);
-    }
+
+    free(*pkg->dependencies);
     free(pkg->dependencies);
-    pkg->dependenciesCount = 0;
-    for (int i = 0; i < pkg->makedependenciesCount; i++)
-    {
-        free(pkg->makedependencies[i]);
-    }
+
+    free(*pkg->makedependencies);
     free(pkg->makedependencies);
-    pkg->makedependenciesCount = 0;
-    for (int i = 0; i < pkg->optionaldependenciesCount; i++)
-    {
-        free(pkg->optionaldependencies[i]);
-    }
+
+    free(*pkg->optionaldependencies);
     free(pkg->optionaldependencies);
-    pkg->optionaldependenciesCount = 0;
+
     free(pkg->info.download);
     free(pkg->info.install);
     free(pkg->info.prepare);
     free(pkg->info.make);
     free(pkg->info.test);
-    for (int i = 0; i < pkg->locationsCount; i++)
-    {
-        free(pkg->locations[i]);
-    }
+
+    free(*pkg->locations);
     free(pkg->locations);
+
+
 
     pkg = NULL;
     return 0;
 }
+
+
+
 
 

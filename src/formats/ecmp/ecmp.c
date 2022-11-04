@@ -12,11 +12,14 @@
 
 
 
-
+#ifdef STATIC
+int open_ecmp(char* path,struct package* pkg)
+#else
 int open(char* path,struct package* pkg)
+#endif
 {
     struct ecmp_section** sections = calloc(32,sizeof(struct ecmp_section*));
-    printf("sections address is %p\n",&sections);
+    printf("sections is %p\n",sections);
 
     // get sections from file
     // WARNING: this function allocates memory for sections
@@ -33,49 +36,47 @@ int open(char* path,struct package* pkg)
         {
             printf("parsing info section\n");
             // parse info section
-            int line_count;
+            
             // print buff
             printf("buff is \n%s\n",sections[i]->buff);
-            char** lines = split(sections[i]->buff,'\n',&line_count);
+            char* lines[64];
+            int line_count = split(sections[i]->buff,'\n',lines);
+            printf("line count is %d and lines is %p\n",line_count,lines);
             for (int j = 0; j < line_count-2; j++)
             {
                 printf("run %d\n",j);
                 printf("line is : %s\n",lines[j]);
-                int c_check;
-                char** line = split(lines[j],'=',&c_check);
-                printf("line[0] is %s and line[1] is %s\n",line[0],line[1]);
-                if (c_check != 2 )
-                {
-                    printf("Error parsing line %d in section %s\n",j,sections[i]->name);
-                    return 1;
-                }
+                char* key = strtok(lines[j],"=");
+                char* value = strtok(NULL,"=");
+                printf("key is %s and value is %s\n",key,value);
 
-                if (strcmp(line[0],"name") == 0)
+
+                if (strcmp(key,"name") == 0)
                 {
-                    pkg->name = line[1];
+                    pkg->name = value;
                 }
-                else if (strcmp(line[0],"type") == 0)
+                else if (strcmp(key,"type") == 0)
                 {
-                    pkg->type = line[1];
+                    pkg->type = value;
                 }
-                else if (strcmp(line[0],"version") == 0)
+                else if (strcmp(key,"version") == 0)
                 {
-                    pkg->version = line[1];
+                    pkg->version = value;
                 }
-                else if (strcmp(line[0],"license") == 0)
+                else if (strcmp(key,"license") == 0)
                 {
-                    printf("license is %s\n",line[1]);
-                    pkg->license = line[1];
+                    printf("license is %s\n",value);
+                    pkg->license = value;
                     printf("license is %s\n",pkg->license);
                 }
-                else if (strcmp(line[0],"url") == 0)
+                else if (strcmp(key,"url") == 0)
                 {
-            
-                    pkg->url = line[1];
+                    printf("url is %s\n",value);
+                    pkg->url = value;
                 }
                 else
                 {
-                    printf("Unknown info key: %s\n",line[0]);
+                    printf("Unknown info key: %s\n",key);
                 }
             }
 
@@ -84,24 +85,29 @@ int open(char* path,struct package* pkg)
         }
         else if (strcmp(sections[i]->name,"makedeps") == 0)
         {
-           pkg->makedependencies = split(sections[i]->buff,'\n',&pkg->makedependenciesCount);
+           pkg->makedependenciesCount = split(sections[i]->buff,'\n',pkg->makedependencies);
 
             
         }
         else if (strcmp(sections[i]->name,"dependencies") == 0)
         {
             // parse dependencies section
-            pkg->dependencies = split(sections[i]->buff,'\n',&pkg->dependenciesCount);
+            pkg->dependenciesCount = split(sections[i]->buff,'\n',pkg->dependencies);
         }
         else if (strcmp(sections[i]->name,"locations") == 0)
         {
             // parse scripts section
-            pkg->locations = split(sections[i]->buff,'\n',&pkg->locationsCount);
+            pkg->locationsCount = split(sections[i]->buff,'\n',pkg->locations);
         }
         else if (strcmp(sections[i]->name,"install") == 0)
         {
             // parse scripts section
             pkg->info.install = sections[i]->buff;
+        }
+        else if (strcmp(sections[i]->name,"download") == 0)
+        {
+            // parse scripts section
+            pkg->info.download = sections[i]->buff;
         }
         else if (strcmp(sections[i]->name,"special") == 0)
         {
@@ -118,7 +124,11 @@ int open(char* path,struct package* pkg)
 
 }
 
+#ifdef STATIC
+int create_ecmp(char* path,struct package* pkg)
+#else
 int create(char* path,struct package* pkg)
+#endif
 {
     msg(DBG3,"Creating ecmp file %s",path);
     // create file
@@ -164,14 +174,23 @@ int create(char* path,struct package* pkg)
     {
         fprintf(file,"%s\n",pkg->dependencies[i]);
     }
+
+    if (pkg->info.download != NULL) {
+        fprintf(file,"[download]\n");
+        fprintf(file, "%s\n",pkg->info.download);
+    }
+
     msg(DBG3,"Writing install section");
     fprintf(file,"\n[install]\n");
     // compatibility
-    if (pkg->info.download != NULL) fprintf(file, "%s\n",pkg->info.download);
     if (pkg->info.prepare != NULL) fprintf(file,"%s\n",pkg->info.prepare);
     if (pkg->info.make != NULL) fprintf(file,"%s\n",pkg->info.make);
-
     fprintf(file,"%s\n",pkg->info.install);
+
+    
+
+
+    
     msg(DBG3,"Writing special section : %s",pkg->info.special);
     if (pkg->info.special != NULL)
     {
@@ -197,7 +216,9 @@ int create(char* path,struct package* pkg)
 
 
 unsigned int ecmp_parse_file(struct ecmp_section*** sections,char* path)
-{
+{   
+    printf("sections is %p and size if %lu\n",*sections,malloc_usable_size(*sections));
+
     bool RM_SPACE = false;
 
     // check if file exists
@@ -293,6 +314,7 @@ unsigned int ecmp_parse_file(struct ecmp_section*** sections,char* path)
 
         // append line to buffer
         // check if buffer is full
+        printf("buff size: %lu, line is %s , appending\n",strlen((*sections)[sec_count]->buff),line);
         if ((strlen((*sections)[sec_count]->buff) + strlen(line)) * sizeof(char) > malloc_usable_size((*sections)[sec_count]->buff)) {
             printf("buffer full");
             // reallocate buffer
@@ -300,6 +322,7 @@ unsigned int ecmp_parse_file(struct ecmp_section*** sections,char* path)
             goto add_line;
         }
         strcat((*sections)[sec_count]->buff,line);
+        printf("buff: %s\n",(*sections)[sec_count]->buff);
     }
 
     fclose(fp);

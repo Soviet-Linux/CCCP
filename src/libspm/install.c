@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys/stat.h>
 #define _GNU_SOURCE
 
 
@@ -106,7 +107,7 @@ int installSpmFile(char* spm_path,int as_dep)
     // remove the deprecated unsafe format function call
     // format the path using sprintf
     char* file_path = calloc(strlen(SPM_DIR)+strlen(pkg.name)+strlen(pkg.version)+2,sizeof(char));
-    sprintf(file_path,"%s/%s-%s",SPM_DIR,pkg.name,pkg.version);
+    sprintf(file_path,"%s/%s.%s",SPM_DIR,pkg.name,DEFAULT_FORMAT);
     create_pkg(file_path,&pkg,NULL);
     free(file_path);
 
@@ -114,11 +115,11 @@ int installSpmFile(char* spm_path,int as_dep)
 
     // now we need to clean everything 
     clean();
+    // remove package from the queue
+    QUEUE_COUNT--;
+    PACKAGE_QUEUE[QUEUE_COUNT] = NULL;
 
-
-
-
-
+    free_pkg(&pkg);
     return 0;
 }
 

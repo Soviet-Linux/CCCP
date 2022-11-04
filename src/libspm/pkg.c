@@ -12,27 +12,8 @@ int open_pkg(char* path, struct package* pkg,char* format)
 {
     msg(DBG2,"Setting everything to NULL"); 
     //set all varibales t NULL
-    pkg->name = NULL;
-    pkg->type = NULL;
-    pkg->version = NULL;
-    pkg->license = NULL;
-    pkg->dependencies = NULL;
-    pkg->dependenciesCount = 0;
-    pkg->makedependencies = NULL;
-    pkg->makedependenciesCount = 0;
-    pkg->optionaldependencies = NULL;
-    pkg->optionaldependenciesCount = 0;
-    pkg->url = NULL;
-    pkg->locations = NULL;
-    pkg->locationsCount = 0;
-    pkg->info.download = NULL;
-    pkg->info.prepare = NULL;
-    pkg->info.make = NULL;
-    pkg->info.test = NULL;
-    pkg->info.install = NULL;
-    pkg->info.special = NULL;
-    pkg->info.download = NULL;
-    pkg->info.prepare = NULL;
+    
+    pkg = calloc(1,sizeof(struct package));
 
 
     // print make dependencies count
@@ -111,7 +92,7 @@ int create_pkg(char* path,struct package* pkg,char* format)
 
 int runFormatLib (char* format,char* fn,char* pkg_path,struct package* pkg)
 {
-    char* lib_path = calloc(64,sizeof(char));
+    char lib_path[MAX_PATH];
     sprintf(lib_path,"%s/%s.so",PLUGIN_DIR,format);
     msg(DBG2,"Loading %s",lib_path);
 

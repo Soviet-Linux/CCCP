@@ -21,14 +21,22 @@ char* jstrval (jsmntok_t t,char* jstr)
 }
 char** jarrtoarr (jsmntok_t t_list[],char* jstr,int pos)
 {
-    char** arr;
-    arr = calloc((t_list[pos].size) , sizeof(char*));
-    int i;
-    for (i = 1;i <= t_list[pos].size; i++)
+    // copy the json string array
+    char* jarr = jstrval(t_list[pos],jstr);
+    // remove the brackets
+    jarr = jarr+1;
+    jarr[strlen(jarr)-1] = '\0';
+    // remove the ""
+    for (int i = 0; i < strlen(jarr); i++)
     {
-        msg(DBG3,"%d - %s",i,jstrval(t_list[pos+i],jstr));
-        strcpa(&arr[i-1], jstrval(t_list[pos +i],jstr));
+        if (jarr[i] == '"')
+        {
+            popcharn(jarr,strlen(jarr),i);
+        }
     }
+    // split
+    char** arr = calloc(t_list[pos].size,sizeof(char*));
+    splitm(jarr,',',arr,t_list[pos].size);
     return arr;
 }
 char* arrtojarr (char** arr,int count)
@@ -86,3 +94,9 @@ unsigned long jparse(jsmntok_t** t,char* jstr,unsigned long jsize)
     msg(DBG3,"Parsed %d tokens",t_num);
     return p.toknext;
 }
+
+
+/*
+["a","b","c"]
+*/
+
