@@ -51,6 +51,7 @@ The package manager is written in Rust🦀
 * LibSPM
 * cargo/rust
 * git
+* make
 
 ### Installation
 
