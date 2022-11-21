@@ -1,0 +1,8 @@
+build: 
+    cargo build
+
+build-release:
+    cargo build --release
+
+install: build-release
+    sudo cp target/release/cccp /usr/bin/
