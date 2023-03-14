@@ -15,7 +15,7 @@ fn main() {
         .version(&*version)
         .subcommand_required(true)
         .arg_required_else_help(true) // if no args are supplied, then print help
-        .author("https://git.sovietlinux.ml/sovietlinux/CCCP/")
+        .author("https://github.com/Soviet-Linux/CCCP/")
         .subcommand(
             Command::new("install") // install
                 .short_flag('i') // -i 
