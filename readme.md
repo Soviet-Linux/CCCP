@@ -56,7 +56,7 @@ The package manager is written in C with the LibSPM library
 1. Clone the repo
 
 ```sh
-git clone https://git.sovietlinux.org/sovietlinux/CCCP
+https://github.com/Soviet-Linux/CCCP
 ```
 
 2. Cd into the repo
