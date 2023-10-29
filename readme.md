@@ -19,6 +19,7 @@
   </p>
 </p>
 
+# **EVERYTHING IS BEING REWORKED FOR THE OLD VERSION IN RUST SEE THE LEGACY BRANCH EVERYTHING BELLOW ABOUT THE PROGRAM IS NOT LONGER IMPLIED**
 ![Contributors](https://img.shields.io/github/contributors/Soviet-Linux/CCCP?color=dark-green) ![Forks](https://img.shields.io/github/forks/Soviet-Linux/CCCP?style=social) ![Stargazers](https://img.shields.io/github/stars/Soviet-Linux/CCCP?style=social) ![Issues](https://img.shields.io/github/issues/Soviet-Linux/CCCP) ![License](https://img.shields.io/github/license/Soviet-Linux/CCCP) 
 
 ## Table Of Contents
@@ -49,7 +50,6 @@ The package manager is written in Rust🦀
 ### Prerequisites
 
 * LibSPM
-* cargo/rust
 * git
 * make
 
