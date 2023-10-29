@@ -22,6 +22,8 @@ RUN git clone https://github.com/Soviet-Linux/libspm && \
     cd .. && \
     rm -rf libspm
 
+RUN touch /etc/cccp.conf
+
 # Set the working directory
 WORKDIR /root
 
