@@ -4,6 +4,8 @@ FROM debian:bullseye
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 
+ENV SOVIET_FORMATS=your_variable_value
+
 # Install required packages
 RUN apt-get update && apt-get install -y \
     git \
@@ -21,8 +23,6 @@ RUN git clone https://github.com/Soviet-Linux/libspm && \
     cp bin/spm-test /usr/bin/ && \
     cd .. && \
     rm -rf libspm
-
-RUN touch /etc/cccp.conf
 
 # Set the working directory
 WORKDIR /root
