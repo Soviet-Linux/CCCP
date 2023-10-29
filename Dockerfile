@@ -21,6 +21,7 @@ RUN git clone https://github.com/Soviet-Linux/libspm && \
     cp bin/spm-test /usr/bin/ && \
     cd .. && \
     rm -rf libspm
+    cat /etc/cccp.conf
 
 # Set the working directory
 WORKDIR /root
