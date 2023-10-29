@@ -1,8 +1,5 @@
-build: 
-    cargo build
+build:
+	gcc src/main.c -lspm -o bin/cccp 
 
-build-release:
-    cargo build --release
-
-install: build-release
-    sudo cp target/release/cccp /usr/bin/
+clean:
+	rm -rf bin/*
