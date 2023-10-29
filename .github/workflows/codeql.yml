@@ -63,8 +63,9 @@ jobs:
 
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
     # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
+    - name: configure libspm
       run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && sudo apt-get install libcurl4-gnutls-dev -y && make all && make formats && sudo make install 
+    - name: Autobuild
       uses: github/codeql-action/autobuild@v2
 
     # ℹ️ Command-line programs to run using the OS shell.
