@@ -23,6 +23,7 @@ RUN git clone https://github.com/Soviet-Linux/libspm && \
     rm -rf libspm
 
 RUN touch /etc/cccp.conf
+    echo "REPOS= https://github.com/Soviet-Linux/OUR/blob/main \nFORMATS= ecmp" >> /etc/cccp.conf
 
 # Set the working directory
 WORKDIR /root
