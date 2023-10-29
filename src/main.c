@@ -46,7 +46,6 @@ int _set_overwrite_(unsigned int* i);
 
 
 void* args[][2] = {
-    {"version",_print_version_},
     {"package",_install_source_},
     {"install",_install_repo_},
     {"remove",_remove_},
