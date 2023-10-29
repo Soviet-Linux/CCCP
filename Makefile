@@ -1,5 +1,5 @@
 build:
-	[ -d foo ] || mkdir foo
+	[ -d bin ] || mkdir bin
 	gcc src/main.c -lspm -o bin/cccp 
 
 clean:
