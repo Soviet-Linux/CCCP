@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: configure spm
-      run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && sudo mkdir -p /usr/include/spm/ && sudo cp include/*.h /usr/include/spm/ 
+      run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && make all && make formats && sudo make install 
     - name: make
       run: make
     - name: make clean
