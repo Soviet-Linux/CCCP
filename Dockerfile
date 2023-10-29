@@ -4,7 +4,7 @@ FROM debian:bullseye
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENV SOVIET_FORMATS=your_variable_value
+ENV SOVIET_FORMATS=ecmp
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
