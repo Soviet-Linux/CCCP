@@ -4,7 +4,7 @@
     <img src="https://camo.githubusercontent.com/89882f4a2ec88cf250e0ee3983a9e132613e8907612bc301fc0584dc1da446b8/68747470733a2f2f692e696d6775722e636f6d2f746a56643856792e706e67" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">CCCP-rs</h3>
+  <h3 align="center">CCCP</h3>
 
   <p align="center">
     The communist package manager
