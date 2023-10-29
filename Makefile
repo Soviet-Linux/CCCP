@@ -4,3 +4,6 @@ build:
 
 clean:
 	rm -rf bin/*
+
+install: build
+	cp bin/cccp /usr/bin
