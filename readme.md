@@ -5,7 +5,7 @@
   </a>
 
   <h3 align="center">CCCP</h3>
-
+  <h3 align="center">[![CodeFactor](https://www.codefactor.io/repository/github/soviet-linux/cccp/badge)](https://www.codefactor.io/repository/github/soviet-linux/cccp)</h3>
   <p align="center">
     The communist package manager
     <br/>

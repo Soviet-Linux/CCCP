@@ -34,8 +34,6 @@ char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
     "\x1b[32m Options: 1) -v Displays the version \n"
     "          2) -h Displays this message    \x1b[0m \n";
 
-int _print_version_(unsigned int* i);
-
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
 int _install_repo_(unsigned int* index);
@@ -48,7 +46,6 @@ int _set_overwrite_(unsigned int* i);
 
 
 void* args[][2] = {
-    {"version",_print_version_},
     {"package",_install_source_},
     {"install",_install_repo_},
     {"remove",_remove_},
@@ -115,11 +112,6 @@ int main(int argc, char *argv[]) {
     }
 
 
-}
-
-int _print_version_(unsigned int* i) {
-    printf(ART,C_FRONTEND_VERSION,version());
-    exit(0);
 }
 
 int _install_source_(unsigned int* i) {
