@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     // root check and --help and --version commands 
-    if (getuid() != 0 && 0 != strcmp(argv[1], "-h"), 0 != strcmp(argv[1], "-v")) {
+    if (getuid() != 0 && (0 != strcmp(argv[1], "-h") || 0 != strcmp(argv[1], "-v"))) {
         msg(ERROR, "You need to be root to run this program for help type -h");
         return 1;
     } else if (0 == strcmp(argv[1], "-v")) {
