@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
     hashtable* hm = hm_init(args, sizeof(args)/sizeof(args[0]));
 
-  
+    ARGV = argv;
 
     init(); 
     int (*func)(int*);
