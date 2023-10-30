@@ -9,7 +9,7 @@
 #include </usr/include/spm/globals.h>
 
 
-const float C_FRONTEND_VERSION = 0.1;
+const float C_FRONTEND_VERSION = 0.001;
 
 
 
