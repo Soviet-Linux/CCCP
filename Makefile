@@ -7,4 +7,4 @@ clean:
 
 install: build
 	cp bin/cccp /usr/bin
-	echo -e "https://raw.githubusercontent.com/Soviet-Linux/OUR/main\nSOVIET_FORMATS=ecmp" | tee /etc/cccp.conf > /dev/null
+	echo -e "SOVIET_REPOS=https://raw.githubusercontent.com/Soviet-Linux/OUR/main\nSOVIET_FORMATS=ecmp" | tee /etc/cccp.conf > /dev/null
