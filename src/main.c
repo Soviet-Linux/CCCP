@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     if (0 == strcmp(argv[1], "-h")) {
-        printf(HELP);
+        printf("%s", HELP);
         return 0;
     }
     // root check and --help and --version commands 
