@@ -68,17 +68,19 @@ int main(int argc, char *argv[]) {
        msg(ERROR, "No command specified add -h for information about how the command should be used.");
         return 1;
     }
-    if (0 == strcmp(argv[1], "-h")) {
+    if (0 == strcmp(argv[1], "-h") || 0 == strcmp(argv[1], "--help")) {
         printf("%s", HELP);
         return 0;
     }
+
+    if (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--version")){
+	    printf(ART,C_FRONTEND_VERSION,version());
+	    return 0;
+    }
     // root check and --help and --version commands 
-    if (getuid() != 0 && 0 != strcmp(argv[1], "-h"), 0 != strcmp(argv[1], "-v")) {
+    if (getuid() != 0) {
         msg(ERROR, "You need to be root to run this program for help type -h");
         return 1;
-    } else if (0 == strcmp(argv[1], "-v")) {
-        printf(ART,C_FRONTEND_VERSION,version());
-        return 0;
     } else {
         dbg(2,"Running as root");
     }
