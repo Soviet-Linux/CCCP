@@ -131,7 +131,6 @@ int _remove_(unsigned int* i) {
     exit(uninstall(pkg));
 }
 int _install_repo_(unsigned int* i) {
-    msg(INFO, "Quiet is now %d", QUIET);
     struct package* pkg = calloc(1, sizeof(struct package));
     pkg->name = ARGV[++(*i)];
 
@@ -159,6 +158,7 @@ int _set_debug_unit(unsigned int* i) {
 }
 int _set_verbose_(unsigned int* i) {
      QUIET = false;
+     return 0;
 }
 int _set_overwrite_(unsigned int* i) {
     OVERWRITE = true;
