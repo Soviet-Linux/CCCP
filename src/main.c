@@ -184,13 +184,16 @@ int _create_binary_from_file(unsigned int* i) {
 }
 int _list_(unsigned int* i)
 {
-    msg(ERROR, "this is just a dummy");
+    list_installed();
     return 0;
 }
 int _update_(unsigned int* i)
 {
     sync();
-    msg(ERROR, "this is just a dummy");
+    for(int i = 0; i<count_installed(); i++)
+    {
+        get_installed(i);
+    }
     return 0;
 }
 int _search_(unsigned int* i)
