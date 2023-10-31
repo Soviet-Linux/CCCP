@@ -49,12 +49,20 @@ int _set_debug_unit(unsigned int* i);
 int _set_verbose_(unsigned int* i);
 int _set_overwrite_(unsigned int* i);
 
+//test
+int _list_(unsigned int* i);
+int _update_(unsigned int* i);
+int _search_(unsigned int* i);
+
 
 void* args[][2] = {
     //will test those later
     {"package",_install_source_},
     {"install",_install_repo_},
+    {"list",_list_},
+    {"update",_update_},
     {"remove",_remove_},
+    {"search",_search_},
     //{"debug",_set_debug_level_},
     //{"unit",_set_debug_unit},
     {"verbose", _set_verbose_},
@@ -173,3 +181,16 @@ int _create_binary_from_file(unsigned int* i) {
 
     return 0;
 }
+int _list_(unsigned int* i)
+{
+    msg(ERROR, "this is just a dummy");
+}
+int _update_(unsigned int* i)
+{
+    msg(ERROR, "this is just a dummy");
+}
+int _search_(unsigned int* i)
+{
+    msg(ERROR, "this is just a dummy");
+}
+
