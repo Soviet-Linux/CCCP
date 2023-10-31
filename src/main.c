@@ -120,7 +120,9 @@ int _install_source_(unsigned int* i) {
     exit(install_package_source(ARGV[++(*i)],0));
 }
 int _remove_(unsigned int* i) {
-    exit(uninstall(ARGV[++(*i)]));
+    char* pkg = ARGV[++(*i)];
+    msg(INFO, "removing %s", pkg); 
+    exit(uninstall(pkg));
 }
 int _install_repo_(unsigned int* i) {
     struct package* pkg = calloc(1, sizeof(struct package));
