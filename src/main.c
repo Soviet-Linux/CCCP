@@ -189,6 +189,7 @@ int _list_(unsigned int* i)
 }
 int _update_(unsigned int* i)
 {
+    sync();
     msg(ERROR, "this is just a dummy");
     return 0;
 }
