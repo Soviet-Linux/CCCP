@@ -36,7 +36,7 @@ char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
     "          3) --install <package> Installs a package from OUR reopo    \n"
     "          4) --remove <package> Removes a package from the system    \n"
     "          5) --package <path/to/package.ecmp> Installs a package from file provided    \n"
-    "          6) --overwrite Will overwrite installed packages    \n"
+    "          6) --no-overwrite Will not overwrite installed packages    \n"
     "          7) --verbose Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
@@ -161,7 +161,7 @@ int _set_verbose_(unsigned int* i) {
      return 0;
 }
 int _set_overwrite_(unsigned int* i) {
-    OVERWRITE = true;
+    OVERWRITE = false;
     return 0;
 }
 
