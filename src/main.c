@@ -31,8 +31,13 @@ char* ART = "\033[31;1;5m"
     "\033[0m";
 
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
-    "\x1b[32m Options: 1) -v Displays the version \n"
-    "          2) -h Displays this message    \x1b[0m \n";
+    "\x1b[32m Options: 1) --version Displays the version \n"
+    "          2) --help Displays this message   \n"
+    "          3) --install <package> Installs a package from OUR reopo    \n"
+    "          4) --remove <package> Removes a package from the system    \n"
+    "          5) --package <path/to/package.ecmp> Installs a package from file provided    \n"
+    "          6) --no-overwrite Will overwrite installed packages    \n"
+    "          7) --verbose Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
@@ -44,16 +49,25 @@ int _set_debug_unit(unsigned int* i);
 int _set_verbose_(unsigned int* i);
 int _set_overwrite_(unsigned int* i);
 
+//test
+int _list_(unsigned int* i);
+int _update_(unsigned int* i);
+int _search_(unsigned int* i);
+
 
 void* args[][2] = {
+    //will test those later
     {"package",_install_source_},
     {"install",_install_repo_},
+    {"list",_list_},
+    {"update",_update_},
     {"remove",_remove_},
-    {"debug",_set_debug_level_},
-    {"unit",_set_debug_unit},
+    {"search",_search_},
+    //{"debug",_set_debug_level_},
+    //{"unit",_set_debug_unit},
     {"verbose", _set_verbose_},
-    {"overwrite", _set_overwrite_},
-    {"create", _create_binary_from_file}
+    {"overwrite", _set_overwrite_}
+    //{"create", _create_binary_from_file}
 };
 
 char** ARGV;
@@ -120,7 +134,9 @@ int _install_source_(unsigned int* i) {
     exit(install_package_source(ARGV[++(*i)],0));
 }
 int _remove_(unsigned int* i) {
-    exit(uninstall(ARGV[++(*i)]));
+    char* pkg = ARGV[++(*i)];
+    msg(INFO, "removing %s", pkg); 
+    exit(uninstall(pkg));
 }
 int _install_repo_(unsigned int* i) {
     struct package* pkg = calloc(1, sizeof(struct package));
@@ -149,8 +165,8 @@ int _set_debug_unit(unsigned int* i) {
     return 0;
 }
 int _set_verbose_(unsigned int* i) {
-    QUIET = false;
-    return 0;
+     QUIET = false;
+     return 0;
 }
 int _set_overwrite_(unsigned int* i) {
     OVERWRITE = true;
@@ -165,3 +181,16 @@ int _create_binary_from_file(unsigned int* i) {
 
     return 0;
 }
+int _list_(unsigned int* i)
+{
+    msg(ERROR, "this is just a dummy");
+}
+int _update_(unsigned int* i)
+{
+    msg(ERROR, "this is just a dummy");
+}
+int _search_(unsigned int* i)
+{
+    msg(ERROR, "this is just a dummy");
+}
+
