@@ -184,13 +184,16 @@ int _create_binary_from_file(unsigned int* i) {
 int _list_(unsigned int* i)
 {
     msg(ERROR, "this is just a dummy");
+    return 0;
 }
 int _update_(unsigned int* i)
 {
     msg(ERROR, "this is just a dummy");
+    return 0;
 }
 int _search_(unsigned int* i)
 {
     msg(ERROR, "this is just a dummy");
+    return 0;
 }
 
