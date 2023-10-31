@@ -31,8 +31,13 @@ char* ART = "\033[31;1;5m"
     "\033[0m";
 
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
-    "\x1b[32m Options: 1) -v Displays the version \n"
-    "          2) -h Displays this message    \x1b[0m \n";
+    "\x1b[32m Options: 1) --version Displays the version \n"
+    "          2) --help Displays this message   \n"
+    "          3) --install <package> Installs a package from OUR reopo    \n"
+    "          4) --remove <package> Removes a package from the system    \n"
+    "          5) --package <path/to/package.ecmp> Installs a package from file provided    \n"
+    "          6) --overwrite Will overwrite installed packages    \n"
+    "          7) --verbose Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
@@ -46,14 +51,15 @@ int _set_overwrite_(unsigned int* i);
 
 
 void* args[][2] = {
+    //will test those later
     {"package",_install_source_},
     {"install",_install_repo_},
     {"remove",_remove_},
-    {"debug",_set_debug_level_},
-    {"unit",_set_debug_unit},
+    //{"debug",_set_debug_level_},
+    //{"unit",_set_debug_unit},
     {"verbose", _set_verbose_},
-    {"overwrite", _set_overwrite_},
-    {"create", _create_binary_from_file}
+    {"overwrite", _set_overwrite_}
+    //{"create", _create_binary_from_file}
 };
 
 char** ARGV;
