@@ -13,7 +13,7 @@ const float C_FRONTEND_VERSION = 0.001;
 
 
 
-char* ART = "\033[31;1;5m"
+char* ART = "\033[31;1;1m"
     "    ⠀⠀⠀⠀⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
     "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⢹⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
     "⠀⠀⠀⠀⠀⠀⠀⠙⠿⣟⠛⠃⠀⠛⢛⡿⠟⠁⠀⠀⠀⠀⠀⠀       |============================|\n"
@@ -33,12 +33,13 @@ char* ART = "\033[31;1;5m"
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
     "\x1b[32m Options: 1) --version Displays the version \n"
     "          2) --help Displays this message   \n"
-    "          3) --install <package> Installs a package from OUR reopo    \n"
-    "          4) --remove <package> Removes a package from the system    \n"
-    "          5) --package <path/to/package.ecmp> Installs a package from file provided    \n"
-    "          6) --overwrite Will overwrite installed packages    \n"
-    "          7) --debug <level 0-4> Prints debug info    \n"
-    "          8) --verbose Switches to verbose output    \x1b[0m \n";
+    "          x) --install <package> Installs a package from OUR reopo    \n"
+    "          x) --remove <package> Removes a package from the system    \n"
+    "          x) --list Lists all packages installed on the system    \n"
+    "          x) --package <path/to/package.ecmp> Installs a package from file provided    \n"
+    "          x) --overwrite Will overwrite installed packages    \n"
+    "          x) --debug <level 0-4> Prints debug info    \n"
+    "          x) --verbose Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
@@ -53,6 +54,7 @@ int _set_overwrite_(unsigned int* i);
 //test
 int _list_(unsigned int* i);
 int _update_(unsigned int* i);
+int _upgrade_(unsigned int* i);
 int _search_(unsigned int* i);
 
 
@@ -62,6 +64,7 @@ void* args[][2] = {
     {"install",_install_repo_},
     {"list",_list_},
     {"update",_update_},
+    {"upgrade",_upgrade_},
     {"remove",_remove_},
     {"search",_search_},
     {"debug",_set_debug_level_},
@@ -190,10 +193,12 @@ int _list_(unsigned int* i)
 int _update_(unsigned int* i)
 {
     sync();
-    for(int i = 0; i<count_installed(); i++)
-    {
-        get_installed(i);
-    }
+    update();
+    return 0;
+}
+int _upgrade_(unsigned int* i)
+{
+    upgrade();
     return 0;
 }
 int _search_(unsigned int* i)
