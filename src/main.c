@@ -31,15 +31,17 @@ char* ART = "\033[31;1;1m"
     "\033[0m";
 
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
-    "\x1b[32m Options: 1) --version Displays the version \n"
-    "          2) --help Displays this message   \n"
-    "          x) --install <package> Installs a package from OUR reopo    \n"
-    "          x) --remove <package> Removes a package from the system    \n"
-    "          x) --list Lists all packages installed on the system    \n"
-    "          x) --package <path/to/package.ecmp> Installs a package from file provided    \n"
-    "          x) --overwrite Will overwrite installed packages    \n"
-    "          x) --debug <level 0-4> Prints debug info    \n"
-    "          x) --verbose Switches to verbose output    \x1b[0m \n";
+    "\x1b[32m Options: 1) --version\x1b[0m Displays the version \n"
+    "          \x1b[32m2) --help\x1b[0m Displays this message   \n"
+    "          \x1b[32m3) --install <package>\x1b[0m Installs a package from OUR reopo    \n"
+    "          \x1b[32m4) --remove <package>\x1b[0m Removes a package from the system    \n"
+    "          \x1b[32m5) --list\x1b[0m Lists all packages installed on the system    \n"
+    "          \x1b[32m6) --update\x1b[0m Checks if there are any updates to installed packages    \n"
+    "          \x1b[32m7) --upgrade\x1b[0m Upgrades outdated packages    \n"
+    "          \x1b[32m8) --package <path/to/package.ecmp>\x1b[0m Installs a package from file provided    \n"
+    "          \x1b[32m9) --overwrite\x1b[0m Will overwrite installed packages    \n"
+    "          \x1b[32m10) --debug <level 0-4>\x1b[0m Prints debug info    \n"
+    "          \x1b[32m11) --verbose\x1b[0m Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
