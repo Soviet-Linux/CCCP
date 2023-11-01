@@ -31,7 +31,7 @@ char* ART = "\033[31;1;1m"
     "\033[0m";
 
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
-    "\x1b[32m Options: 1) --version Displays the version \n"
+    "\x1b[32m Options: 1) --version\x1b[0 Displays the version \n"
     "          \x1b[32m2) --help\x1b[0m Displays this message   \n"
     "          \x1b[32m3) --install <package>\x1b[0m Installs a package from OUR reopo    \n"
     "          \x1b[32m4) --remove <package>\x1b[0m Removes a package from the system    \n"
