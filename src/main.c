@@ -84,21 +84,22 @@ int main(int argc, char *argv[]) {
     
 
     dbg(2,"DEBUG Enabled!");
-
+    // check if not enough arguments have been passed
     if (argc == 1) {
        msg(ERROR, "No command specified add -h for information about how the command should be used.");
         return 1;
     }
+    // -h and --help command
     if (0 == strcmp(argv[1], "-h") || 0 == strcmp(argv[1], "--help")) {
         printf("%s", HELP);
         return 0;
     }
-
+    // -v and --version command
     if (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--version")){
 	    printf(ART,C_FRONTEND_VERSION,version());
 	    return 0;
     }
-    // root check and --help and --version commands 
+    // root check 
     if (getuid() != 0) {
         msg(ERROR, "You need to be root to run this program for help type -h");
         return 1;
@@ -136,15 +137,17 @@ int main(int argc, char *argv[]) {
 
 
 }
-
+// install from source function
 int _install_source_(unsigned int* i) {
     exit(install_package_source(ARGV[++(*i)],0));
 }
+// remove a pkg function
 int _remove_(unsigned int* i) {
     char* pkg = ARGV[++(*i)];
     msg(INFO, "removing %s", pkg); 
     exit(uninstall(pkg));
 }
+// install from repo function 
 int _install_repo_(unsigned int* i) {
     struct package* pkg = calloc(1, sizeof(struct package));
     pkg->name = ARGV[++(*i)];
@@ -179,7 +182,7 @@ int _set_overwrite_(unsigned int* i) {
     OVERWRITE = true;
     return 0;
 }
-
+// Create Bin from file function 
 int _create_binary_from_file(unsigned int* i) {
     char* file = ARGV[++(*i)];
     char* binary = ARGV[++(*i)];
@@ -188,22 +191,26 @@ int _create_binary_from_file(unsigned int* i) {
 
     return 0;
 }
+// Installed pkgs list function
 int _list_(unsigned int* i)
 {
     list_installed();
     return 0;
 }
+// update function 
 int _update_(unsigned int* i)
 {
     sync();
     update();
     return 0;
 }
+// upgrade function
 int _upgrade_(unsigned int* i)
 {
     upgrade();
     return 0;
 }
+// search function
 int _search_(unsigned int* i)
 {
     char* input = ARGV[++(*i)];
