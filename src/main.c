@@ -36,6 +36,7 @@ char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
     "          \x1b[32m3) --install <package>\x1b[0m Installs a package from OUR reopo    \n"
     "          \x1b[32m4) --remove <package>\x1b[0m Removes a package from the system    \n"
     "          \x1b[32m5) --list\x1b[0m Lists all packages installed on the system    \n"
+    "          \x1b[32m5) --search <package>\x1b[0m Searches for packages that match the name provided    \n"
     "          \x1b[32m6) --update\x1b[0m Checks if there are any updates to installed packages    \n"
     "          \x1b[32m7) --upgrade\x1b[0m Upgrades outdated packages    \n"
     "          \x1b[32m8) --package <path/to/package.ecmp>\x1b[0m Installs a package from file provided    \n"
@@ -205,7 +206,8 @@ int _upgrade_(unsigned int* i)
 }
 int _search_(unsigned int* i)
 {
-    msg(ERROR, "this is just a dummy");
+    char* input = ARGV[++(*i)];
+    search(input);
     return 0;
 }
 
