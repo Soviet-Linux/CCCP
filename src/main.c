@@ -138,8 +138,37 @@ int main(int argc, char *argv[]) {
 }
 
 int _install_source_(unsigned int* i) {
-    exit(install_package_source(ARGV[++(*i)],0));
+    int result = install_package_source(ARGV[++(*i)], 0);
+    
+    switch (result) {
+        case 0:
+            printf("Package installed successfully.\n");
+            break;
+        case -1:
+            printf("Installation failed.\n");
+            break;
+        case -2:
+            printf("SOVIET_MAKE_DIR or SOVIET_BUILD_DIR is not set.\n");
+            break;
+        case -3:
+            printf("Failed to open package.\n");
+            break;
+        case -4:
+            printf("Failed to make the package.\n");
+            break;
+        case -5:
+            printf("Failed to get locations for the package.\n");
+            break;
+        case -6:
+            printf("Failed to store data in the installed database.\n");
+            break;
+        default:
+            printf("Unknown error occurred during installation.\n");
+    }
+    
+    exit(result);
 }
+
 int _remove_(unsigned int* i) {
     char* pkg = ARGV[++(*i)];
     msg(INFO, "removing %s", pkg); 
@@ -152,15 +181,42 @@ int _install_repo_(unsigned int* i) {
     char* format = get(pkg, pkg->name);
 
     if (format == NULL) {
-        msg(ERROR, "Failed to download package %s", pkg->name);
+        printf("Failed to download package %s.\n", pkg->name);
         return 1;
     }
 
-    f_install_package_source(pkg->name, 0, format);
+    int result = f_install_package_source(pkg->name, 0, format);
+
+    switch (result) {
+        case 0:
+            printf("Package installed successfully.\n");
+            break;
+        case -1:
+            printf("Installation failed.\n");
+            break;
+        case -2:
+            printf("SOVIET_MAKE_DIR or SOVIET_BUILD_DIR is not set.\n");
+            break;
+        case -3:
+            printf("Failed to open package.\n");
+            break;
+        case -4:
+            printf("Failed to make the package.\n");
+            break;
+        case -5:
+            printf("Failed to get locations for the package.\n");
+            break;
+        case -6:
+            printf("Failed to store data in the installed database.\n");
+            break;
+        default:
+            printf("Unknown error occurred during installation.\n");
+    }
 
     remove(pkg->name);
-    return 0;
+    exit(result);
 }
+
 
 
 int _set_debug_level_(unsigned int* i) {
