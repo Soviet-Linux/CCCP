@@ -11,7 +11,9 @@ RUN apt-get update && apt-get install -y \
     git \
     build-essential \
     libcurl4-gnutls-dev \
-    libsqlite3-dev
+    libsqlite3-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Clone the libspm repository and build it
 RUN git clone https://github.com/Soviet-Linux/libspm && \
