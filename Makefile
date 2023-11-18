@@ -9,6 +9,10 @@ build:
 	[ -d bin ] || mkdir bin
 	gcc src/main.c -lspm -O2 -o bin/cccp 
 
+buildnolib: 
+	[ -d bin ] || mkdir bin
+	gcc src/main.c -lspm -O2 -o bin/cccp	
+
 clean:
 	rm -rf bin/*
 
