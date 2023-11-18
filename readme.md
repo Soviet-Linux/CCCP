@@ -73,6 +73,12 @@ cd CCCP
 sudo make all
 ```
 
+3. Or if you have libspm run
+
+```sh
+make buildnolib
+```
+
 ## Usage
 
 Get the help message with:
