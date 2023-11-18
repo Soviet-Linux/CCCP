@@ -1,0 +1,3 @@
+[submodule "lib/libspm"]
+	path = lib/libspm
+	url = https://github.com/Soviet-Linux/libspm.git

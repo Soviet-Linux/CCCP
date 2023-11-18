@@ -1,6 +1,17 @@
+all: build install
+
 build:
+	cd lib/libspm
+	make all
+	make formats
+	make install
+	cd ../..
 	[ -d bin ] || mkdir bin
 	gcc src/main.c -lspm -O2 -o bin/cccp 
+
+buildnolib: 
+	[ -d bin ] || mkdir bin
+	gcc src/main.c -lspm -O2 -o bin/cccp	
 
 clean:
 	rm -rf bin/*

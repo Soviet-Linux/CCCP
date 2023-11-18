@@ -49,15 +49,16 @@ The package manager is written in C with the LibSPM library
 
 ### Prerequisites
 
-* LibSPM
+* LibSPM if you do a ``--recursive`` clone then you dont need this anymore just follow the instructions
 * make
+* Git
 
 ### Installation
 
 1. Clone the repo
 
-```sh
-https://github.com/Soviet-Linux/CCCP
+``` sh
+git clone https://github.com/Soviet-Linux/CCCP.git --recursive
 ```
 
 2. Cd into the repo
@@ -69,7 +70,7 @@ cd CCCP
 3. Compile and install it
 
 ```sh
-sudo make install
+sudo make all
 ```
 
 ## Usage
