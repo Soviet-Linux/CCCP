@@ -4,7 +4,7 @@ build:
 	cd lib/libspm
 	make all
 	make formats
-	sudo make install
+	make install
 	cd ../..
 	[ -d bin ] || mkdir bin
 	gcc src/main.c -lspm -O2 -o bin/cccp 
