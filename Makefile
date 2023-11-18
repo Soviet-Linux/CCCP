@@ -1,11 +1,11 @@
 all: build install
 
 build:
-	cd lib/libspm
-	make all
-	make formats
-	make install
-	cd ../..
+	cd lib/libspm; echo "Now on libspm"; \
+        make all; \
+		make formats; \
+		make install 
+	cd ../.. && echo "Now on CCCP"
 	[ -d bin ] || mkdir bin
 	gcc src/main.c -lspm -O2 -o bin/cccp 
 
