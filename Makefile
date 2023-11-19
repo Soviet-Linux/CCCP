@@ -18,7 +18,7 @@ clean:
 
 install: build
 	cp bin/cccp /usr/bin
-	curl https://raw.githubusercontent.com/Soviet-Linux/OUR/main/cccp.conf | tee /etc/cccp.conf > /dev/null
+	cp cccp.conf /etc/cccp.conf
 
 uninstall:
 	rm -rf /usr/bin/cccp && rm -rf /etc/cccp.conf && rm -rf /var/cccp/data
