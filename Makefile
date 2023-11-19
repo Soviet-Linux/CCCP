@@ -18,7 +18,7 @@ clean:
 
 install: build
 	cp bin/cccp /usr/bin
-	echo "SOVIET_REPOS=https://raw.githubusercontent.com/Soviet-Linux/OUR/main\nSOVIET_FORMATS=ecmp" | tee /etc/cccp.conf > /dev/null
+	curl https://raw.githubusercontent.com/Soviet-Linux/OUR/main/cccp.conf | tee /etc/cccp.conf > /dev/null
 
 uninstall:
 	rm -rf /usr/bin/cccp && rm -rf /etc/cccp.conf && rm -rf /var/cccp/data
