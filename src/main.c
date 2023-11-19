@@ -31,18 +31,18 @@ char* ART = "\033[31;1;1m"
     "\033[0m";
 
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
-    "\x1b[32m Options: 1) --version\x1b[0m Displays the version \n"
-    "          \x1b[32m2) --help\x1b[0m Displays this message   \n"
-    "          \x1b[32m3) --install <package>\x1b[0m Installs a package from OUR reopo    \n"
-    "          \x1b[32m4) --remove <package>\x1b[0m Removes a package from the system    \n"
-    "          \x1b[32m5) --list\x1b[0m Lists all packages installed on the system    \n"
-    "          \x1b[32m5) --search <package>\x1b[0m Searches for packages that match the name provided    \n"
-    "          \x1b[32m6) --update\x1b[0m Checks if there are any updates to installed packages    \n"
-    "          \x1b[32m7) --upgrade\x1b[0m Upgrades outdated packages    \n"
-    "          \x1b[32m8) --package <path/to/package.ecmp>\x1b[0m Installs a package from file provided    \n"
-    "          \x1b[32m9) --overwrite\x1b[0m Will overwrite installed packages    \n"
-    "          \x1b[32m10) --debug <level 0-4>\x1b[0m Prints debug info    \n"
-    "          \x1b[32m11) --verbose\x1b[0m Switches to verbose output    \x1b[0m \n";
+    "\x1b[32m Options: 1) -v,   --version \x1b[0m Displays the version \n"
+    "          \x1b[32m2) -h,   --help\x1b[0m Displays this message   \n"
+    "          \x1b[32m3) -i,   --install <package>\x1b[0m Installs a package from OUR reopo    \n"
+    "          \x1b[32m4) -r,   --remove <package>\x1b[0m Removes a package from the system    \n"
+    "          \x1b[32m5) -l,   --list\x1b[0m Lists all packages installed on the system    \n"
+    "          \x1b[32m5) -s,   --search <package>\x1b[0m Searches for packages that match the name provided    \n"
+    "          \x1b[32m6)       --update\x1b[0m Checks if there are any updates to installed packages    \n"
+    "          \x1b[32m7)       --upgrade\x1b[0m Upgrades outdated packages    \n"
+    "          \x1b[32m8) -pkg, --package <path/to/package.ecmp>\x1b[0m Installs a package from file provided    \n"
+    "          \x1b[32m9) -ow,  --overwrite\x1b[0m Will overwrite installed packages    \n"
+    "          \x1b[32m10)-dbg, --debug <level 0-4>\x1b[0m Prints debug info    \n"
+    "          \x1b[32m11)      --verbose\x1b[0m Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
@@ -63,17 +63,24 @@ int _search_(unsigned int* i);
 
 void* args[][2] = {
     //will test those later
-    {"package",_install_source_},
+{"package",_install_source_},
+    {"pkg",_install_source_},
     {"install",_install_repo_},
+    {"i",_install_repo_},
     {"list",_list_},
+    {"l",_list_},
     {"update",_update_},
     {"upgrade",_upgrade_},
     {"remove",_remove_},
+    {"r",_remove_},
     {"search",_search_},
+    {"s",_search_},
     {"debug",_set_debug_level_},
+    {"dbg",_set_debug_level_},
     //{"unit",_set_debug_unit},
     {"verbose", _set_verbose_},
-    {"overwrite", _set_overwrite_}
+    {"overwrite", _set_overwrite_},
+    {"ow",_set_overwrite_}
     //{"create", _create_binary_from_file}
 };
 
@@ -86,7 +93,7 @@ int main(int argc, char *argv[]) {
     dbg(2,"DEBUG Enabled!");
     // check if not enough arguments have been passed
     if (argc == 1) {
-       msg(ERROR, "No command specified add -h for information about how the command should be used.");
+        msg(ERROR, "No command specified add -h for information about how the command should be used.");
         return 1;
     }
     // -h and --help command
@@ -119,6 +126,8 @@ int main(int argc, char *argv[]) {
         // removz beginning -- in args
         if (argv[i][0] == '-' && argv[i][1] == '-') {
             argv[i] += 2;
+        } else if (argv[i][0] == '-'){
+            argv[i] += 1;
         }
 
         //hm_visualize(hm);
