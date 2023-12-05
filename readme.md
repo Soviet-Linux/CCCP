@@ -56,28 +56,34 @@ The package manager is written in C with the LibSPM library
 ### Installation
 
 1. Clone the repo
-
-``` sh
-git clone https://github.com/Soviet-Linux/CCCP.git --recursive
-```
+    ``` sh
+    git clone https://github.com/Soviet-Linux/CCCP.git --recursive
+    ```
 
 2. Cd into the repo
+    ```sh
+    cd CCCP
+    ```
 
-```sh
-cd CCCP
-```
+3. If you dont have libSPM run
+    **Note:** Run as root or with sudo
+    ```sh
+    make install-libspm
+    ```
 
-3. Compile and install it
+4. Build
+    ```sh
+    make 
+    ```
+5. Install
+    **Note:** Run as root or with sudo
+    ```sh
+    make install
+    ```
 
-```sh
-sudo make all
-```
 
-3. Or if you have libspm run
 
-```sh
-make buildnolib
-```
+
 
 ## Usage
 
