@@ -1,5 +1,3 @@
-all: build install clean
-
 build:
 	cd lib/libspm; echo "Now on libspm"; \
         make all; \
@@ -8,6 +6,8 @@ build:
 	cd ../.. && echo "Now on CCCP"
 	[ -d bin ] || mkdir bin
 	gcc src/main.c -lspm -O2 -o bin/cccp 
+
+all: build install clean
 
 buildnolib: 
 	[ -d bin ] || mkdir bin
