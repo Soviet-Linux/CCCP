@@ -13,7 +13,7 @@ all: build install clean
 
 buildnolib:
 	[ -d bin ] || mkdir -p bin
-	gcc src/main.c -lspm -O2 -o bin/cccp	
+	gcc src/main.c -lspm -O2 -o bin/cccp -L$(DESTDIR)/lib -I$(DESTDIR)/include
 
 clean:
 	rm -rf bin/*
