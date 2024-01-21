@@ -177,8 +177,9 @@ int _install_repo_(unsigned int* i) {
     return 0;
 }
 
+
 // install from repo without checking for the checksum
-int _install_repo_no_cheksum_(unsigned int* i) {
+int _install_repo_no_checksum_(unsigned int* i) {
   struct package* pkg = calloc(1, sizeof(struct package));
   pkg->name = ARGV[++(*i)];
 
