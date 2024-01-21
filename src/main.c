@@ -3,10 +3,11 @@
 #include <unistd.h>
 #include <string.h>
 
-#include </usr/include/spm/libspm.h>
-#include </usr/include/spm/cutils.h>
-#include </usr/include/spm/hashtable.h>
-#include </usr/include/spm/globals.h>
+#include <spm/libspm.h>
+#include <spm/cutils.h>
+#include <spm/hashtable.h>
+#include <spm/globals.h>
+
 
 
 const float C_FRONTEND_VERSION = 0.001;
