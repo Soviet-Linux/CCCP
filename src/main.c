@@ -33,7 +33,8 @@ char* ART = "\033[31;1;1m"
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
     "\x1b[32m Options: 1) -v,   --version \x1b[0m Displays the version \n"
     "          \x1b[32m2) -h,   --help\x1b[0m Displays this message   \n"
-    "          \x1b[32m3) -i,   --install <package>\x1b[0m Installs a package from OUR reopo    \n"
+    "          \x1b[32m3) -i,   --install <package>\x1b[0m Installs a package from OUR repo   \n"
+    "          \x1b[32m3)       --no-checksum <package>\x1b[0m Installs a package from OUR repo without checking the checksum  \n"
     "          \x1b[32m4) -r,   --remove <package>\x1b[0m Removes a package from the system    \n"
     "          \x1b[32m5) -l,   --list\x1b[0m Lists all packages installed on the system    \n"
     "          \x1b[32m5) -s,   --search <package>\x1b[0m Searches for packages that match the name provided    \n"
@@ -47,6 +48,7 @@ char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
 int _install_repo_(unsigned int* index);
+int _install_repo_no_checksum_(unsigned int* index);
 int _create_binary_from_file(unsigned int* i);
 
 int _set_debug_level_(unsigned int* i);
@@ -63,9 +65,10 @@ int _search_(unsigned int* i);
 
 void* args[][2] = {
     //will test those later
-{"package",_install_source_},
+    {"package",_install_source_},
     {"pkg",_install_source_},
     {"install",_install_repo_},
+    {"no-checksum",_install_repo_no_checksum_},
     {"i",_install_repo_},
     {"list",_list_},
     {"l",_list_},
@@ -148,7 +151,7 @@ int main(int argc, char *argv[]) {
 }
 // install from source function
 int _install_source_(unsigned int* i) {
-    exit(install_package_source(ARGV[++(*i)],0));
+    exit(install_package_source(ARGV[++(*i)],0,0));
 }
 // remove a pkg function
 int _remove_(unsigned int* i) {
@@ -168,12 +171,29 @@ int _install_repo_(unsigned int* i) {
         return 1;
     }
 
-    f_install_package_source(pkg->name, 0, format);
+    f_install_package_source(pkg->name, 0, 0, format);
 
     remove(pkg->name);
     return 0;
 }
 
+// install from repo without checking for the checksum
+int _install_repo_no_cheksum_(unsigned int* i) {
+  struct package* pkg = calloc(1, sizeof(struct package));
+  pkg->name = ARGV[++(*i)];
+
+  char* format = get(pkg, pkg->name);
+
+  if (format == NULL) {
+    msg(ERROR, "Failed to download package %s", pkg->name);
+    return 1;
+  }
+
+  f_install_package_source(pkg->name, 0, 1, format);
+
+  remove(pkg->name);
+  return 0;
+}
 
 int _set_debug_level_(unsigned int* i) {
     DEBUG = atoi(ARGV[++(*i)]);
