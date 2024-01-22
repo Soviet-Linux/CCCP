@@ -1,11 +1,10 @@
-build:
+lib:
 	cd lib/libspm && \
-	echo "Now on libspm" && \
-	make all && \
-	make formats && \
-	make install
-	cd ../.. && \
-	echo "Now on CCCP" && \
+	make DESTDIR=$(DESTDIR) all && \
+	make DESTDIR=$(DESTDIR) formats && \
+	make DESTDIR=$(DESTDIR) install
+
+build: lib
 	[ -d bin ] || mkdir -p bin && \
 	gcc src/main.c -lspm -O2 -o bin/cccp
 
