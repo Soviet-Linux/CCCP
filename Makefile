@@ -3,7 +3,7 @@ build:
 	echo "Now on libspm" && \
 	make all && \
 	make formats && \
-	make install
+	make install && \
 	cd ../.. && \
 	echo "Now on CCCP" && \
 	[ -d bin ] || mkdir -p bin && \
