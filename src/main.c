@@ -63,7 +63,6 @@ int _list_(unsigned int* i);
 int _update_(unsigned int* i);
 int _upgrade_(unsigned int* i);
 int _search_(unsigned int* i);
-int _upgrade_(unsigned int* i);
 int _set_yes_(unsigned int* i);
 int _set_no_(unsigned int* i);
 
