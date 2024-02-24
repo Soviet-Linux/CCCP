@@ -9,6 +9,7 @@ install-libspm:
 		make all; \
 		make formats; \
 		make install
+    
 install: build
 	install -D bin/cccp /usr/bin
 	install -D cccp.conf /etc/cccp.conf

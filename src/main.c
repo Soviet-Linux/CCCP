@@ -3,10 +3,11 @@
 #include <unistd.h>
 #include <string.h>
 
-#include </usr/include/spm/libspm.h>
-#include </usr/include/spm/cutils.h>
-#include </usr/include/spm/hashtable.h>
-#include </usr/include/spm/globals.h>
+#include <spm/libspm.h>
+#include <spm/cutils.h>
+#include <spm/hashtable.h>
+#include <spm/globals.h>
+
 
 
 const float C_FRONTEND_VERSION = 0.001;
@@ -33,7 +34,8 @@ char* ART = "\033[31;1;1m"
 char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
     "\x1b[32m Options: 1) -v,   --version \x1b[0m Displays the version \n"
     "          \x1b[32m2) -h,   --help\x1b[0m Displays this message   \n"
-    "          \x1b[32m3) -i,   --install <package>\x1b[0m Installs a package from OUR reopo    \n"
+    "          \x1b[32m3) -i,   --install <package>\x1b[0m Installs a package from OUR repo   \n"
+    "          \x1b[32m3)       --no-checksum \x1b[0m Bypasses cheking the hash  \n"
     "          \x1b[32m4) -r,   --remove <package>\x1b[0m Removes a package from the system    \n"
     "          \x1b[32m5) -l,   --list\x1b[0m Lists all packages installed on the system    \n"
     "          \x1b[32m5) -s,   --search <package>\x1b[0m Searches for packages that match the name provided    \n"
@@ -47,6 +49,7 @@ char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
 int _install_repo_(unsigned int* index);
+int _install_repo_no_checksum_(unsigned int* index);
 int _create_binary_from_file(unsigned int* i);
 
 int _set_debug_level_(unsigned int* i);
@@ -63,9 +66,10 @@ int _search_(unsigned int* i);
 
 void* args[][2] = {
     //will test those later
-{"package",_install_source_},
+    {"package",_install_source_},
     {"pkg",_install_source_},
     {"install",_install_repo_},
+    {"no-checksum",_install_repo_no_checksum_},
     {"i",_install_repo_},
     {"list",_list_},
     {"l",_list_},
@@ -174,6 +178,12 @@ int _install_repo_(unsigned int* i) {
     return 0;
 }
 
+
+// install from repo without checking for the checksum
+int _install_repo_no_checksum_(unsigned int* i) {
+     INSECURE = true;
+     return 0;
+}
 
 int _set_debug_level_(unsigned int* i) {
     DEBUG = atoi(ARGV[++(*i)]);

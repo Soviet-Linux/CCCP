@@ -1,7 +1,7 @@
 <br/>
 <p align="center">
   <a href="https://github.com/Soviet-Linux/CCCP">
-    <img src="https://camo.githubusercontent.com/89882f4a2ec88cf250e0ee3983a9e132613e8907612bc301fc0584dc1da446b8/68747470733a2f2f692e696d6775722e636f6d2f746a56643856792e706e67" alt="Logo" width="80" height="80">
+    <img src="https://camo.githubusercontent.com/f51ef40e5c340c16f8697534e2f6e2b57fc87e410e8cbabf03b2f1a99704033c/68747470733a2f2f692e696d6775722e636f6d2f746a56643856792e706e67" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">CCCP</h3> 
