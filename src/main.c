@@ -262,6 +262,10 @@ int _install_repo_(unsigned int* i) {
         if((strcmp(str_2, "Q") == 0 || strcmp(str_2, "q") == 0))
         {
             remove(pkg->name);
+
+            free(str);
+            free(str_2);
+
             msg(FATAL, "Aborting...");
             return 0;
         }
@@ -270,6 +274,7 @@ int _install_repo_(unsigned int* i) {
             msg(INFO, "Continuing...");
         }
 
+        free(str_2);
     }
     else
     {
@@ -279,6 +284,9 @@ int _install_repo_(unsigned int* i) {
     f_install_package_source(pkg->name, 0, format);
 
     remove(pkg->name);
+
+    free(str);
+
     return 0;
 }
 
