@@ -16,4 +16,4 @@ jobs:
     - name: configure spm
       run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && sudo apt-get install libcurl4-gnutls-dev -y && make all && make formats && sudo make install 
     - name: make
-      run: make buildnolib
+      run: make build
