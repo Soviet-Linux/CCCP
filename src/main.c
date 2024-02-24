@@ -178,6 +178,104 @@ int _install_repo_(unsigned int* i) {
         return 1;
     }
 
+
+    char* str = calloc(2, sizeof(char));
+
+    msg(INFO, "Do you want to view the source for %s before installing? y/N", pkg->name);
+    if(OVERWRITE_CHOISE != true)
+    {
+        char* res = fgets(str, 2, stdin);
+
+        if(str[0]!= '\n')
+        {
+            while ((getchar()) != '\n');
+        }
+
+        int j = 0;
+
+        while (str[j] != '\n' && str[j] != '\0')
+        {
+            j++;
+        }
+
+        if (str[j] == '\n')
+        {
+            str[j] = '\0';
+        }
+    }
+    else
+    {
+        if(sizeof(USER_CHOISE[0]) == sizeof(str))
+        {
+            sprintf(str, USER_CHOISE[0]);
+        }
+        else
+        {
+            msg(FATAL, "something somwhere went wrong");
+        }
+    }
+
+    if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
+    {
+        char* cmd = calloc(MAX_PATH, sizeof(char));
+        sprintf(cmd, "cat %s", pkg->name);
+        char* output = exec(cmd);
+
+        printf(output);
+
+        char* str_2 = calloc(2, sizeof(char));
+
+        msg(INFO, "Press q to abort the installation, hit enter to continue");
+        if(OVERWRITE_CHOISE != true)
+        {
+            char* res_2 = fgets(str_2, 2, stdin);
+            if(str[0]!= '\n')
+            {
+                while ((getchar()) != '\n');
+            }
+
+
+            int k = 0;
+
+            while (str_2[k] != '\n' && str_2[k] != '\0')
+            {
+                k++;
+            }
+
+            if (str_2[k] == '\n')
+            {
+                str_2[k] = '\0';
+            }
+        }
+        else
+        {
+            if(sizeof(USER_CHOISE[0]) == sizeof(str_2))
+            {
+                sprintf(str_2, USER_CHOISE[0]);
+            }
+            else
+            {
+                msg(FATAL, "something somwhere went wrong");
+            }
+        }
+
+        if((strcmp(str_2, "Q") == 0 || strcmp(str_2, "q") == 0))
+        {
+            remove(pkg->name);
+            msg(FATAL, "Aborting...");
+            return 0;
+        }
+        else
+        {
+            msg(INFO, "Continuing...");
+        }
+
+    }
+    else
+    {
+        msg(INFO, "Continuing...");
+    }
+
     f_install_package_source(pkg->name, 0, format);
 
     remove(pkg->name);
