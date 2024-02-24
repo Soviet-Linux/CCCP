@@ -31,20 +31,21 @@ char* ART = "\033[31;1;1m"
     "⠀⠀⠀⠀⠀⠑⠒⠚⠛⣩⠞⠁⠀⠙⢮⠛⠛⠒⠊⠀⠀⠀⠀⠀\n"
     "\033[0m";
 
-char* HELP = "\x1b[34m Usage cccp [options/package] \x1b[0m \n"
-    "\x1b[32m Options: 1) -v,   --version \x1b[0m Displays the version \n"
-    "          \x1b[32m2) -h,   --help\x1b[0m Displays this message   \n"
-    "          \x1b[32m3) -i,   --install <package>\x1b[0m Installs a package from OUR repo   \n"
-    "          \x1b[32m3)       --no-checksum \x1b[0m Bypasses cheking the hash  \n"
-    "          \x1b[32m4) -r,   --remove <package>\x1b[0m Removes a package from the system    \n"
-    "          \x1b[32m5) -l,   --list\x1b[0m Lists all packages installed on the system    \n"
-    "          \x1b[32m5) -s,   --search <package>\x1b[0m Searches for packages that match the name provided    \n"
-    "          \x1b[32m6)       --update\x1b[0m Checks if there are any updates to installed packages    \n"
-    "          \x1b[32m7)       --upgrade\x1b[0m Upgrades outdated packages    \n"
-    "          \x1b[32m8) -pkg, --package <path/to/package.ecmp>\x1b[0m Installs a package from file provided    \n"
-    "          \x1b[32m9) -ow,  --overwrite\x1b[0m Will overwrite installed packages    \n"
-    "          \x1b[32m10)-dbg, --debug <level 0-4>\x1b[0m Prints debug info    \n"
-    "          \x1b[32m11)      --verbose\x1b[0m Switches to verbose output    \x1b[0m \n";
+char* HELP = "\x1b[34m Usage cccp [options/package] (Options are evaluated in order form left to right)\x1b[0m \n"
+    "\x1b[32m Options:  -v,   --version \x1b[0m                          Displays the version \n"
+    "          \x1b[32m -h,   --help\x1b[0m                              Displays this message   \n"
+    "          \x1b[32m -Yy,  -Nn\x1b[0m                                 Passes Y/N to promts by default   \n"
+    "          \x1b[32m -i,   --install <package>\x1b[0m                 Installs a package from OUR repo   \n"
+    "          \x1b[32m       --no-checksum \x1b[0m                      Bypasses cheking the hash  \n"
+    "          \x1b[32m -r,   --remove <package>\x1b[0m                  Removes a package from the system    \n"
+    "          \x1b[32m -l,   --list\x1b[0m                              Lists all packages installed on the system    \n"
+    "          \x1b[32m -s,   --search <package>\x1b[0m                  Searches for packages that match the name provided    \n"
+    "          \x1b[32m       --update\x1b[0m                            Checks if there are any updates to installed packages    \n"
+    "          \x1b[32m       --upgrade\x1b[0m                           Upgrades outdated packages    \n"
+    "          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Installs a package from file provided    \n"
+    "          \x1b[32m -ow,  --overwrite\x1b[0m                         Will overwrite installed packages    \n"
+    "          \x1b[32m -dbg, --debug <level 0-4>\x1b[0m                 Prints debug info    \n"
+    "          \x1b[32m       --verbose\x1b[0m                           Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
 int _remove_(unsigned int* index);
@@ -62,6 +63,8 @@ int _list_(unsigned int* i);
 int _update_(unsigned int* i);
 int _upgrade_(unsigned int* i);
 int _search_(unsigned int* i);
+int _set_yes_(unsigned int* i);
+int _set_no_(unsigned int* i);
 
 
 void* args[][2] = {
@@ -84,6 +87,8 @@ void* args[][2] = {
     //{"unit",_set_debug_unit},
     {"verbose", _set_verbose_},
     {"overwrite", _set_overwrite_},
+    {"Yy", _set_yes_},
+    {"Nn", _set_no_},
     {"ow",_set_overwrite_}
     //{"create", _create_binary_from_file}
 };
@@ -123,6 +128,7 @@ int main(int argc, char *argv[]) {
     ARGV = argv;
 
     init(); 
+
     int (*func)(int*);
     for (int i = 1; i < argc; i++) {
         dbg(3, "argv[%d] = %s", i, argv[i]);
@@ -237,3 +243,14 @@ int _search_(unsigned int* i)
     return 0;
 }
 
+int _set_yes_(unsigned int* i) {
+    OVERWRITE_CHOISE = true;
+    USER_CHOISE[0] = "Y";
+    return 0;
+}
+
+int _set_no_(unsigned int* i) {
+    OVERWRITE_CHOISE = true;
+    USER_CHOISE[0] = "N";
+    return 0;
+}
