@@ -6,9 +6,9 @@ dev-buildall: install-libspm build
 
 install-libspm:
 	cd lib/libspm; echo "Now on libspm"; \
-		make all; \
-		make formats; \
-		make install
+		make  DESTDIR=$(DESTDIR) all; \
+		make  DESTDIR=$(DESTDIR) formats; \
+		make  DESTDIR=$(DESTDIR) install
     
 install: build
 	install -D bin/cccp /usr/bin
