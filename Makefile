@@ -9,7 +9,7 @@ install-libspm:
 		make  DESTDIR=$(DESTDIR) all; \
 		make  DESTDIR=$(DESTDIR) formats; \
 		make  DESTDIR=$(DESTDIR) install
-    
+
 install: build
 	install -D bin/cccp /usr/bin
 	install -D cccp.conf /etc/cccp.conf
