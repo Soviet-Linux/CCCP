@@ -1,26 +1,21 @@
-build:
-	cd lib/libspm && \
-	echo "Now on libspm" && \
-	make all && \
-	make formats && \
-	make install && \
-	cd ../.. && \
-	echo "Now on CCCP" && \
-	[ -d bin ] || mkdir -p bin && \
-	gcc src/main.c -lspm -O2 -o bin/cccp
+build: 
+	[ -d bin ] || mkdir bin
+	gcc src/main.c -lspm -O2 -o bin/cccp	
 
-all: build install clean
+dev-buildall: install-libspm build
 
-buildnolib:
-	[ -d bin ] || mkdir -p bin
-	gcc src/main.c -lspm -O2 -o bin/cccp -L$(DESTDIR)/usr/lib -I$(DESTDIR)/usr/include
+install-libspm:
+	cd lib/libspm; echo "Now on libspm"; \
+		make  DESTDIR=$(DESTDIR) all; \
+		make  DESTDIR=$(DESTDIR) formats; \
+		make  DESTDIR=$(DESTDIR) install
+    
+install: build
+	install -D bin/cccp /usr/bin
+	install -D cccp.conf /etc/cccp.conf
+
+uninstall:
+	rm -rf /usr/bin/cccp && rm -rf /etc/cccp.conf && rm -rf /var/cccp/data
 
 clean:
 	rm -rf bin/*
-
-install: build
-	cp bin/cccp $(DESTDIR)/bin
-	cp cccp.conf $(DESTDIR)/etc/cccp.conf
-
-uninstall:
-	rm -rf $(DESTDIR)/bin/cccp && rm -rf $(DESTDIR)/etc/cccp.conf && rm -rf $(DESTDIR)/var/cccp/data
