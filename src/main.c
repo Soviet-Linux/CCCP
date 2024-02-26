@@ -186,7 +186,7 @@ int _install_repo_(unsigned int* i) {
     {
         char* res = fgets(str, 2, stdin);
 
-        if(str[0]!= '\n')
+        if ( strchr(str, '\n') == NULL )
         {
             while ((getchar()) != '\n');
         }
@@ -229,11 +229,11 @@ int _install_repo_(unsigned int* i) {
         if(OVERWRITE_CHOISE != true)
         {
             char* res_2 = fgets(str_2, 2, stdin);
-            if(str[0]!= '\n')
+
+            if ( strchr(str, '\n') == NULL )
             {
                 while ((getchar()) != '\n');
             }
-
 
             int k = 0;
 
