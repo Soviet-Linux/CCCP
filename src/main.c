@@ -230,6 +230,11 @@ int _install_repo_(unsigned int* i) {
         {
             char* res_2 = fgets(str_2, 2, stdin);
 
+            if ( strchr(str_2, '\n') == NULL )
+            {
+                while ((getchar()) != '\n');
+            }
+
             int k = 0;
 
             while (str_2[k] != '\n' && str_2[k] != '\0')
