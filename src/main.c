@@ -170,14 +170,12 @@ int _remove_(unsigned int* i) {
 int _install_repo_(unsigned int* i) {
     struct package* pkg = calloc(1, sizeof(struct package));
     pkg->name = ARGV[++(*i)];
+    char* repo = get(pkg, pkg->name);
 
-    char* format = get(pkg, pkg->name);
-
-    if (format == NULL) {
+    if (repo == NULL) {
         msg(ERROR, "Failed to download package %s", pkg->name);
         return 1;
     }
-
 
     char* str = calloc(2, sizeof(char));
 
@@ -281,7 +279,7 @@ int _install_repo_(unsigned int* i) {
         msg(INFO, "Continuing...");
     }
 
-    f_install_package_source(pkg->name, 0, format);
+    f_install_package_source(pkg->name, 0, repo);
 
     remove(pkg->name);
 
