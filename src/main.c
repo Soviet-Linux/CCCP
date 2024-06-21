@@ -59,7 +59,6 @@ int _set_verbose_(unsigned int* i);
 int _set_overwrite_(unsigned int* i);
 
 //test
-int _list_(unsigned int* i);
 int _update_(unsigned int* i);
 int _upgrade_(unsigned int* i);
 int _search_(unsigned int* i);
@@ -74,8 +73,6 @@ void* args[][2] = {
     {"install",_install_repo_},
     {"no-checksum",_install_repo_no_checksum_},
     {"i",_install_repo_},
-    {"list",_list_},
-    {"l",_list_},
     {"update",_update_},
     {"upgrade",_upgrade_},
     {"remove",_remove_},
@@ -97,8 +94,6 @@ char** ARGV;
 
 int main(int argc, char *argv[]) {
 
-    
-
     dbg(2,"DEBUG Enabled!");
     // check if not enough arguments have been passed
     if (argc == 1) {
@@ -113,6 +108,12 @@ int main(int argc, char *argv[]) {
     // -v and --version command
     if (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--version")){
 	    printf(ART,C_FRONTEND_VERSION,version());
+	    return 0;
+    }
+    // -l and --list command
+    if (0 == strcmp(argv[1], "-l") || 0 == strcmp(argv[1], "--list")){
+        readConfig("/etc/cccp.conf");
+        list_installed();
 	    return 0;
     }
     // root check 
@@ -320,12 +321,7 @@ int _create_binary_from_file(unsigned int* i) {
 
     return 0;
 }
-// Installed pkgs list function
-int _list_(unsigned int* i)
-{
-    list_installed();
-    return 0;
-}
+
 // update function 
 int _update_(unsigned int* i)
 {
