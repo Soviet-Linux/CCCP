@@ -12,7 +12,7 @@ install-libspm:
 
 install: build
 	install -D bin/cccp /usr/bin
-	install -D cccp.conf /etc/cccp.conf
+	if ! [ -f /etc/cccp.conf ]; then install -D cccp.conf /etc/cccp.conf; fi
 
 uninstall:
 	rm -rf /usr/bin/cccp && rm -rf /etc/cccp.conf && rm -rf /var/cccp/data

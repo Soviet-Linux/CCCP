@@ -59,7 +59,6 @@ int _set_verbose_(unsigned int* i);
 int _set_overwrite_(unsigned int* i);
 
 //test
-int _list_(unsigned int* i);
 int _update_(unsigned int* i);
 int _upgrade_(unsigned int* i);
 int _search_(unsigned int* i);
@@ -74,8 +73,6 @@ void* args[][2] = {
     {"install",_install_repo_},
     {"no-checksum",_install_repo_no_checksum_},
     {"i",_install_repo_},
-    {"list",_list_},
-    {"l",_list_},
     {"update",_update_},
     {"upgrade",_upgrade_},
     {"remove",_remove_},
@@ -97,8 +94,6 @@ char** ARGV;
 
 int main(int argc, char *argv[]) {
 
-    
-
     dbg(2,"DEBUG Enabled!");
     // check if not enough arguments have been passed
     if (argc == 1) {
@@ -113,6 +108,12 @@ int main(int argc, char *argv[]) {
     // -v and --version command
     if (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--version")){
 	    printf(ART,C_FRONTEND_VERSION,version());
+	    return 0;
+    }
+    // -l and --list command
+    if (0 == strcmp(argv[1], "-l") || 0 == strcmp(argv[1], "--list")){
+        readConfig("/etc/cccp.conf");
+        list_installed();
 	    return 0;
     }
     // root check 
@@ -171,121 +172,84 @@ int _install_repo_(unsigned int* i) {
     struct package* pkg = calloc(1, sizeof(struct package));
     pkg->name = ARGV[++(*i)];
 
-    char* format = get(pkg, pkg->name);
+    char* pkg_name = calloc(strlen(pkg->name) + strlen(getenv("SOVIET_DEFAULT_FORMAT")) + 2, sizeof(char));
+    if(!strstr(pkg->name, ".ecmp"))
+    {
+        sprintf(pkg_name, "%s.%s", pkg->name, getenv("SOVIET_DEFAULT_FORMAT"));
+    }
+        else
+        {
+            pkg_name = strdup(pkg->name);
+        }
 
-    if (format == NULL) {
+    int num_results;
+    char** results = search(pkg_name, &num_results);
+
+    char* repo;
+
+    if(results != NULL)
+    {
+        for ( int i = 0; i < num_results; i++)
+        {
+            // Package name
+            char* temp_1 = strtok(results[i], ">");
+            // Repo it's in
+            char* temp_2 = strchr(results[i], '\0') + 1;
+
+            if(strcmp(getenv("SOVIET_DEFAULT_REPO"), temp_2) == 0)
+            {
+                repo = temp_2;
+                break;
+            }
+                else if (i == num_results) 
+                {
+                    repo = temp_2;
+                }
+        }
+    }
+    
+    if (repo == NULL) {
         msg(ERROR, "Failed to download package %s", pkg->name);
         return 1;
     }
 
+    get(pkg, repo, pkg->name);
 
-    char* str = calloc(2, sizeof(char));
+    ask_to_preview_pkg(pkg->name);
 
-    msg(INFO, "Do you want to view the source for %s before installing? y/N", pkg->name);
-    if(OVERWRITE_CHOISE != true)
-    {
-        char* res = fgets(str, 2, stdin);
+    // TODO:
+    // Accept a --opt "opt" argument then 
+    // Check if a dependency is in the opt string
 
-        if ( strchr(str, '\n') == NULL )
-        {
-            while ((getchar()) != '\n');
-        }
-
-        int j = 0;
-
-        while (str[j] != '\n' && str[j] != '\0')
-        {
-            j++;
-        }
-
-        if (str[j] == '\n')
-        {
-            str[j] = '\0';
-        }
-    }
-    else
-    {
-        if(sizeof(USER_CHOISE[0]) == sizeof(str))
-        {
-            sprintf(str, USER_CHOISE[0]);
-        }
-        else
-        {
-            msg(FATAL, "something somwhere went wrong");
-        }
+    // Attempt to open the package archive
+    if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
+        msg(ERROR, "Failed to open package");
+        return -1;
     }
 
-    if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
-    {
-        char* cmd = calloc(MAX_PATH, sizeof(char));
-        sprintf(cmd, "cat %s", pkg->name);
-        char* output = exec(cmd);
+    dbg(1, "Checking optional dependencies...");
 
-        printf(output);
 
-        char* str_2 = calloc(2, sizeof(char));
-
-        msg(INFO, "Press q to abort the installation, hit enter to continue");
-        if(OVERWRITE_CHOISE != true)
-        {
-            char* res_2 = fgets(str_2, 2, stdin);
-
-            if ( strchr(str_2, '\n') == NULL )
-            {
-                while ((getchar()) != '\n');
-            }
-
-            int k = 0;
-
-            while (str_2[k] != '\n' && str_2[k] != '\0')
-            {
-                k++;
-            }
-
-            if (str_2[k] == '\n')
-            {
-                str_2[k] = '\0';
-            }
-        }
-        else
-        {
-            if(sizeof(USER_CHOISE[0]) == sizeof(str_2))
-            {
-                sprintf(str_2, USER_CHOISE[0]);
-            }
-            else
-            {
-                msg(FATAL, "something somwhere went wrong");
-            }
-        }
-
-        if((strcmp(str_2, "Q") == 0 || strcmp(str_2, "q") == 0))
-        {
-            remove(pkg->name);
-
-            free(str);
-            free(str_2);
-
-            msg(FATAL, "Aborting...");
-            return 0;
-        }
-        else
-        {
-            msg(INFO, "Continuing...");
-        }
-
-        free(str_2);
-    }
-    else
-    {
-        msg(INFO, "Continuing...");
+    // Checking optional dependencies
+    if (pkg->optionalCount > 0) {
+        dbg(1, "Checking optional dependencies...");
+        check_optional_dependencies(pkg->optional, pkg->optionalCount);
     }
 
-    f_install_package_source(pkg->name, 0, format);
+    // TODO:
+    // Accept a --in "in or --in def argument 
+    // Then check if the number of arguments in
+    // The string is equal to number of inputs
+    // If so, supply the inputs NQA
+    dbg(1, "Handling inputs...");
+
+    handle_inputs(pkg);
+    
+    dbg(1, "Installing %s...", pkg->name);
+
+    f_install_package_source(pkg->name, 0, repo);
 
     remove(pkg->name);
-
-    free(str);
 
     return 0;
 }
@@ -322,12 +286,7 @@ int _create_binary_from_file(unsigned int* i) {
 
     return 0;
 }
-// Installed pkgs list function
-int _list_(unsigned int* i)
-{
-    list_installed();
-    return 0;
-}
+
 // update function 
 int _update_(unsigned int* i)
 {
@@ -345,7 +304,20 @@ int _upgrade_(unsigned int* i)
 int _search_(unsigned int* i)
 {
     char* input = ARGV[++(*i)];
-    search(input);
+    int num_results;
+    char** results = search(input, &num_results);
+
+    if(results != NULL)
+    {
+        for ( int i = 0; i < num_results; i++)
+        {
+            // Package name
+            char* temp_1 = strtok(results[i], ">");
+            // Repo it's in
+            char* temp_2 = strchr(results[i], '\0') + 1;
+            printf("Found %s in %s \n", temp_1, temp_2);
+        }
+    }
     return 0;
 }
 
@@ -359,4 +331,187 @@ int _set_no_(unsigned int* i) {
     OVERWRITE_CHOISE = true;
     USER_CHOISE[0] = "N";
     return 0;
+}
+
+void ask_to_preview_pkg(char* name)
+{
+    char* str = calloc(2, sizeof(char));
+
+    msg(INFO, "Do you want to view the source for %s before installing? y/N", name);
+    if(OVERWRITE_CHOISE != true)
+    {
+        char* res = fgets(str, 2, stdin);
+
+        if ( strchr(str, '\n') == NULL )
+        {
+            while ((getchar()) != '\n');
+        }
+
+        int j = 0;
+
+        while (str[j] != '\n' && str[j] != '\0')
+        {
+            j++;
+        }
+
+        if (str[j] == '\n')
+        {
+            str[j] = '\0';
+        }
+    }
+        else
+        {
+            if(sizeof(USER_CHOISE[0]) == sizeof(str))
+            {
+                sprintf(str, USER_CHOISE[0]);
+            }
+                else
+                {
+                    msg(FATAL, "something somwhere went wrong");
+                }
+        }
+    if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
+    {
+        char* cmd = calloc(MAX_PATH, sizeof(char));
+        sprintf(cmd, "cat %s", name);
+        char* output = exec(cmd);
+
+        printf(output);
+
+        char* str_2 = calloc(2, sizeof(char));
+
+        msg(INFO, "Press q to abort the installation, hit enter to continue");
+        if(OVERWRITE_CHOISE != true)
+        {
+            char* res_2 = fgets(str_2, 2, stdin);
+
+            if ( strchr(str_2, '\n') == NULL )
+            {
+                while ((getchar()) != '\n');
+            }
+
+            int k = 0;
+
+            while (str_2[k] != '\n' && str_2[k] != '\0')
+            {
+                k++;
+            }
+
+            if (str_2[k] == '\n')
+            {
+                str_2[k] = '\0';
+            }
+        }
+            else
+            {
+                if(sizeof(USER_CHOISE[0]) == sizeof(str_2))
+                {
+                    sprintf(str_2, USER_CHOISE[0]);
+                }
+                    else
+                    {
+                        msg(FATAL, "something somwhere went wrong");
+                    }
+            }
+
+        if((strcmp(str_2, "Q") == 0 || strcmp(str_2, "q") == 0))
+        {
+            remove(name);
+
+            free(str);
+            free(str_2);
+
+            msg(FATAL, "Aborting...");
+            return 0;
+        }
+            else
+            {
+                msg(INFO, "Continuing...");
+            }
+
+        free(str_2);
+    }
+        else
+        {
+            msg(INFO, "Continuing...");
+        }
+    free(str);
+
+}
+
+void handle_inputs(struct package* pkg)
+{
+    if(pkg->inputsCount > 0)
+    {
+        for (int i = 0; i < pkg->inputsCount; i++) 
+            {
+                msg(INFO, "%s", pkg->inputs[i]);
+                char* str = calloc(MAX_PATH, sizeof(char));
+
+                if(!OVERWRITE_CHOISE)
+                {
+                    char* res = fgets(str, MAX_PATH-1, stdin);
+                    dbg(1, "Checking if enter was pressed");
+                    if ( strchr(str, '\n') == NULL )
+                    {
+                        while ((getchar()) != '\n');
+                    }
+
+                    int k = 0;
+
+                    while (str[k] != '\n' && str[k] != '\0')
+                    {
+                        dbg(1, "Checking if input %c is bad", str[k]);
+
+                        if(str[k] == '~' 
+                        | str[k] == '`' 
+                        | str[k] == '#' 
+                        | str[k] == '$' 
+                        | str[k] == '&' 
+                        | str[k] == '*' 
+                        | str[k] == '(' 
+                        | str[k] == ')' 
+                        | str[k] == '\\'  
+                        | str[k] == '|' 
+                        | str[k] == '[' 
+                        | str[k] == ']' 
+                        | str[k] == '{'
+                        | str[k] == '}' 
+                        | str[k] == '\'' 
+                        | str[k] == ';' 
+                        | str[k] == '\\' 
+                        | str[k] == '<' 
+                        | str[k] == '>' 
+                        | str[k] == '?' 
+                        | str[k] == '!')
+                        {
+                            str[k] = ' ';
+                        }
+                        k++;
+                    }
+
+                    dbg(1, "replacing last new line");
+
+
+                    if (str[k] == '\n')
+                    {
+                        str[k] = '\0';
+                    }
+
+                    char* in = calloc(128, sizeof(char));
+                    sprintf(in, "INPUT_%d", i);
+                    setenv(in, str, 0);
+                    free(in);
+                }
+                    else
+                    {
+                        sprintf(str, "%s", USER_CHOISE[0]);
+                        char* in = calloc(128, sizeof(char));
+                        sprintf(in, "INPUT_%d", i);
+                        setenv(in, str, 0);
+                        free(in);
+                    }
+                    free(str);
+            }
+    }    
 }
