@@ -158,8 +158,48 @@ int main(int argc, char *argv[]) {
 
 }
 // install from source function
-int _install_source_(unsigned int* i) {
-    exit(install_package_source(ARGV[++(*i)],0));
+int _install_source_(unsigned int* i) 
+{
+    struct package* pkg = calloc(1, sizeof(struct package));
+    char* name = ARGV[++(*i)];
+
+    ask_to_preview_pkg(name);
+
+    // TODO:
+    // Accept a --opt "opt" argument then 
+    // Check if a dependency is in the opt string
+
+    // Attempt to open the package archive
+    if (open_pkg(name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
+        msg(ERROR, "Failed to open package");
+        return -1;
+    }
+
+    dbg(1, "Checking optional dependencies...");
+
+
+    // Checking optional dependencies
+    if (pkg->optionalCount > 0) {
+        dbg(1, "Checking optional dependencies...");
+        check_optional_dependencies(pkg->optional, pkg->optionalCount);
+    }
+
+    // TODO:
+    // Accept a --in "in or --in def argument 
+    // Then check if the number of arguments in
+    // The string is equal to number of inputs
+    // If so, supply the inputs NQA
+    dbg(1, "Handling inputs...");
+
+    handle_inputs(pkg);
+    
+    dbg(1, "Installing %s...", pkg->name);
+
+    f_install_package_source(name, 0, "local");
+
+    remove(name);
+
+    return 0;
 }
 // remove a pkg function
 int _remove_(unsigned int* i) {
