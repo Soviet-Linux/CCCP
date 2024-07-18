@@ -197,8 +197,6 @@ int _install_source_(unsigned int* i)
 
     f_install_package_source(name, 0, "local");
 
-    remove(name);
-
     return 0;
 }
 // remove a pkg function
