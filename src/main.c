@@ -58,6 +58,8 @@ int _set_debug_unit(unsigned int* i);
 int _set_verbose_(unsigned int* i);
 int _set_overwrite_(unsigned int* i);
 
+int _clean_up_(unsigned int* i);
+
 //test
 int _update_(unsigned int* i);
 int _upgrade_(unsigned int* i);
@@ -65,9 +67,11 @@ int _search_(unsigned int* i);
 int _set_yes_(unsigned int* i);
 int _set_no_(unsigned int* i);
 
+void handle_inputs(struct package* pkg);
+void ask_to_preview_pkg(char* name);
+
 
 void* args[][2] = {
-    //will test those later
     {"package",_install_source_},
     {"pkg",_install_source_},
     {"install",_install_repo_},
@@ -86,6 +90,7 @@ void* args[][2] = {
     {"overwrite", _set_overwrite_},
     {"Yy", _set_yes_},
     {"Nn", _set_no_},
+    {"clean", _clean_up_},
     {"ow",_set_overwrite_}
     //{"create", _create_binary_from_file}
 };
@@ -297,7 +302,6 @@ int _install_repo_(unsigned int* i) {
         }
 }
 
-
 // install from repo without checking for the checksum
 int _install_repo_no_checksum_(unsigned int* i) {
      INSECURE = true;
@@ -320,6 +324,7 @@ int _set_overwrite_(unsigned int* i) {
     OVERWRITE = true;
     return 0;
 }
+
 // Create Bin from file function 
 int _create_binary_from_file(unsigned int* i) {
     char* file = ARGV[++(*i)];
@@ -465,7 +470,6 @@ void ask_to_preview_pkg(char* name)
             free(str_2);
 
             msg(FATAL, "Aborting...");
-            return 0;
         }
             else
             {
@@ -557,4 +561,18 @@ void handle_inputs(struct package* pkg)
                     free(str);
             }
     }    
+}
+
+// update function 
+int _clean_up_(unsigned int* i)
+{
+    if(getenv("SOVIET_SOURCE_DIR") != NULL)
+    {
+        rmrf(getenv("SOVIET_SOURCE_DIR"));
+        return 0;
+    } 
+    else
+    {
+        msg(FATAL, "No source directory exists");
+    }
 }
