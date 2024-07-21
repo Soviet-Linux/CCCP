@@ -45,6 +45,7 @@ char* HELP = "\x1b[34m Usage cccp [options/package] (Options are evaluated in or
     "          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Installs a package from file provided    \n"
     "          \x1b[32m -ow,  --overwrite\x1b[0m                         Will overwrite installed packages    \n"
     "          \x1b[32m -dbg, --debug <level 0-4>\x1b[0m                 Prints debug info    \n"
+    "          \x1b[32m       --clean\x1b[0m                             Cleans up the cache directory    \n"
     "          \x1b[32m       --verbose\x1b[0m                           Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
