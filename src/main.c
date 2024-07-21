@@ -563,7 +563,7 @@ void handle_inputs(struct package* pkg)
     }    
 }
 
-// update function 
+// cleanup function 
 int _clean_up_(unsigned int* i)
 {
     if(getenv("SOVIET_SOURCE_DIR") != NULL)
