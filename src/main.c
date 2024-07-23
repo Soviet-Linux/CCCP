@@ -10,7 +10,7 @@
 
 
 
-const float C_FRONTEND_VERSION = 0.001;
+const float C_FRONTEND_VERSION = 1.000;
 
 
 
@@ -45,6 +45,7 @@ char* HELP = "\x1b[34m Usage cccp [options/package] (Options are evaluated in or
     "          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Installs a package from file provided    \n"
     "          \x1b[32m -ow,  --overwrite\x1b[0m                         Will overwrite installed packages    \n"
     "          \x1b[32m -dbg, --debug <level 0-4>\x1b[0m                 Prints debug info    \n"
+    "          \x1b[32m       --clean\x1b[0m                             Cleans up the cache directory    \n"
     "          \x1b[32m       --verbose\x1b[0m                           Switches to verbose output    \x1b[0m \n";
 
 int _install_source_(unsigned int* index);
@@ -58,6 +59,8 @@ int _set_debug_unit(unsigned int* i);
 int _set_verbose_(unsigned int* i);
 int _set_overwrite_(unsigned int* i);
 
+int _clean_up_(unsigned int* i);
+
 //test
 int _update_(unsigned int* i);
 int _upgrade_(unsigned int* i);
@@ -65,9 +68,11 @@ int _search_(unsigned int* i);
 int _set_yes_(unsigned int* i);
 int _set_no_(unsigned int* i);
 
+void handle_inputs(struct package* pkg);
+void ask_to_preview_pkg(char* name);
+
 
 void* args[][2] = {
-    //will test those later
     {"package",_install_source_},
     {"pkg",_install_source_},
     {"install",_install_repo_},
@@ -86,6 +91,7 @@ void* args[][2] = {
     {"overwrite", _set_overwrite_},
     {"Yy", _set_yes_},
     {"Nn", _set_no_},
+    {"clean", _clean_up_},
     {"ow",_set_overwrite_}
     //{"create", _create_binary_from_file}
 };
@@ -158,8 +164,46 @@ int main(int argc, char *argv[]) {
 
 }
 // install from source function
-int _install_source_(unsigned int* i) {
-    exit(install_package_source(ARGV[++(*i)],0));
+int _install_source_(unsigned int* i) 
+{
+    struct package* pkg = calloc(1, sizeof(struct package));
+    char* name = ARGV[++(*i)];
+
+    ask_to_preview_pkg(name);
+
+    // TODO:
+    // Accept a --opt "opt" argument then 
+    // Check if a dependency is in the opt string
+
+    // Attempt to open the package archive
+    if (open_pkg(name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
+        msg(ERROR, "Failed to open package");
+        return -1;
+    }
+
+    dbg(1, "Checking optional dependencies...");
+
+
+    // Checking optional dependencies
+    if (pkg->optionalCount > 0) {
+        dbg(1, "Checking optional dependencies...");
+        check_optional_dependencies(pkg->optional, pkg->optionalCount);
+    }
+
+    // TODO:
+    // Accept a --in "in or --in def argument 
+    // Then check if the number of arguments in
+    // The string is equal to number of inputs
+    // If so, supply the inputs NQA
+    dbg(1, "Handling inputs...");
+
+    handle_inputs(pkg);
+    
+    dbg(1, "Installing %s...", pkg->name);
+
+    f_install_package_source(name, 0, "local");
+
+    return 0;
 }
 // remove a pkg function
 int _remove_(unsigned int* i) {
@@ -187,7 +231,7 @@ int _install_repo_(unsigned int* i) {
 
     char* repo;
 
-    if(results != NULL)
+    if(results != NULL && num_results > 0)
     {
         for ( int i = 0; i < num_results; i++)
         {
@@ -206,54 +250,58 @@ int _install_repo_(unsigned int* i) {
                     repo = temp_2;
                 }
         }
-    }
     
-    if (repo == NULL) {
-        msg(ERROR, "Failed to download package %s", pkg->name);
-        return 1;
-    }
+        if (repo == NULL) {
+            msg(ERROR, "Failed to download package %s", pkg->name);
+            return 1;
+        }
 
-    get(pkg, repo, pkg->name);
+        get(pkg, repo, pkg->name);
 
-    ask_to_preview_pkg(pkg->name);
+        ask_to_preview_pkg(pkg->name);
 
-    // TODO:
-    // Accept a --opt "opt" argument then 
-    // Check if a dependency is in the opt string
+        // TODO:
+        // Accept a --opt "opt" argument then 
+        // Check if a dependency is in the opt string
 
-    // Attempt to open the package archive
-    if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
-        msg(ERROR, "Failed to open package");
-        return -1;
-    }
+        // Attempt to open the package archive
+        if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
+            msg(ERROR, "Failed to open package");
+            return -1;
+        }
 
-    dbg(1, "Checking optional dependencies...");
-
-
-    // Checking optional dependencies
-    if (pkg->optionalCount > 0) {
         dbg(1, "Checking optional dependencies...");
-        check_optional_dependencies(pkg->optional, pkg->optionalCount);
+
+
+        // Checking optional dependencies
+        if (pkg->optionalCount > 0) {
+            dbg(1, "Checking optional dependencies...");
+            check_optional_dependencies(pkg->optional, pkg->optionalCount);
+        }
+
+        // TODO:
+        // Accept a --in "in or --in def argument 
+        // Then check if the number of arguments in
+        // The string is equal to number of inputs
+        // If so, supply the inputs NQA
+        dbg(1, "Handling inputs...");
+
+        handle_inputs(pkg);
+        
+        dbg(1, "Installing %s...", pkg->name);
+
+        f_install_package_source(pkg->name, 0, repo);
+
+        remove(pkg->name);
+
+        return 0;
     }
-
-    // TODO:
-    // Accept a --in "in or --in def argument 
-    // Then check if the number of arguments in
-    // The string is equal to number of inputs
-    // If so, supply the inputs NQA
-    dbg(1, "Handling inputs...");
-
-    handle_inputs(pkg);
-    
-    dbg(1, "Installing %s...", pkg->name);
-
-    f_install_package_source(pkg->name, 0, repo);
-
-    remove(pkg->name);
-
-    return 0;
+    else 
+        {
+            msg(ERROR, "No such package %s", pkg_name);
+            return -1;
+        }
 }
-
 
 // install from repo without checking for the checksum
 int _install_repo_no_checksum_(unsigned int* i) {
@@ -277,6 +325,7 @@ int _set_overwrite_(unsigned int* i) {
     OVERWRITE = true;
     return 0;
 }
+
 // Create Bin from file function 
 int _create_binary_from_file(unsigned int* i) {
     char* file = ARGV[++(*i)];
@@ -422,7 +471,6 @@ void ask_to_preview_pkg(char* name)
             free(str_2);
 
             msg(FATAL, "Aborting...");
-            return 0;
         }
             else
             {
@@ -514,4 +562,18 @@ void handle_inputs(struct package* pkg)
                     free(str);
             }
     }    
+}
+
+// cleanup function 
+int _clean_up_(unsigned int* i)
+{
+    if(getenv("SOVIET_SOURCE_DIR") != NULL)
+    {
+        rmrf(getenv("SOVIET_SOURCE_DIR"));
+        return 0;
+    } 
+    else
+    {
+        msg(FATAL, "No source directory exists");
+    }
 }

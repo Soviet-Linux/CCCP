@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: configure spm
-      run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && sudo apt-get install libcurl4-gnutls-dev -y && make all && make formats && sudo make install 
+      run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && sudo apt-get install libcurl4-gnutls-dev -y && git submodule init && git submodule update &&make all && make formats && sudo make install 
     - name: make
       run: make build
