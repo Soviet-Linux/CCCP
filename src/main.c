@@ -10,7 +10,7 @@
 
 
 
-const float C_FRONTEND_VERSION = 0.001;
+const float C_FRONTEND_VERSION = 1.000;
 
 
 
