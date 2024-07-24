@@ -339,7 +339,7 @@ int _create_binary_from_file(unsigned int* i) {
 // update function 
 int _update_(unsigned int* i)
 {
-    sync();
+    repo_sync();
     update();
     return 0;
 }
