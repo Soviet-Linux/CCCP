@@ -1,6 +1,10 @@
 build: 
 	[ -d bin ] || mkdir bin
-	gcc src/main.c -lspm -O2 -o bin/cccp	
+	gcc src/main.c -lspm -O2 -o bin/cccp
+
+debug:
+	[ -d bin ] || mkdir bin
+	gcc src/main.c -lspm -g -fsanitize=address -o bin/cccp
 
 dev-buildall: install-libspm build
 
