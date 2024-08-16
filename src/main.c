@@ -421,12 +421,26 @@ void ask_to_preview_pkg(char* name)
         }
     if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
     {
-        char* cmd = calloc(MAX_PATH, sizeof(char));
-        sprintf(cmd, "cat %s", name);
-        char* output = exec(cmd);
-
-        printf(output);
-
+        FILE *fptr; 
+    
+        // Open file 
+        fptr = fopen(name, "r"); 
+        if (fptr == NULL) 
+        { 
+            printf("Cannot open file \n"); 
+            exit(0); 
+        } 
+    
+        // Read contents from file 
+        char c = fgetc(fptr); 
+        while (c != EOF) 
+        { 
+            printf ("%c", c); 
+            c = fgetc(fptr); 
+        } 
+    
+        fclose(fptr); 
+        
         char* str_2 = calloc(2, sizeof(char));
 
         msg(INFO, "Press q to abort the installation, hit enter to continue");
