@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
     }
     // -l and --list command
     if (0 == strcmp(argv[1], "-l") || 0 == strcmp(argv[1], "--list")){
-        readConfig("/etc/cccp.conf");
+        readConfig("/etc/cccp.conf", 0);
         list_installed();
 	    return 0;
     }
