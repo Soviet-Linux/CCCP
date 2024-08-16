@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
         // call function
         func(&i);
     }
-
+  hm_destroy(hm);
 
 }
 // install from source function
