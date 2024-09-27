@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
     }
     // -l and --list command
     if (0 == strcmp(argv[1], "-l") || 0 == strcmp(argv[1], "--list")){
-        readConfig("/etc/cccp.conf");
+        readConfig("/etc/cccp.conf", 0);
         list_installed();
 	    return 0;
     }
@@ -260,21 +260,29 @@ int _install_repo_(unsigned int* i) {
 
         ask_to_preview_pkg(pkg->name);
 
-        // TODO:
-        // Accept a --opt "opt" argument then 
-        // Check if a dependency is in the opt string
-
         // Attempt to open the package archive
         if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
             msg(ERROR, "Failed to open package");
             return -1;
         }
 
+        dbg(1, "Checking dependencies...");
+        
+        // Check package dependencies
+
+        if (pkg->dependencies != NULL && pkg->dependenciesCount > 0 && strlen(pkg->dependencies[0]) > 0) {
+            check_dependencies(pkg->dependencies, pkg->dependenciesCount);
+        }
+
         dbg(1, "Checking optional dependencies...");
 
-
         // Checking optional dependencies
-        if (pkg->optionalCount > 0) {
+
+        // TODO:
+        // Accept a --opt "opt" argument then 
+        // Check if a dependency is in the opt string
+
+        if (pkg->optional != NULL && pkg->optionalCount > 0 && strlen(pkg->optional[0]) > 0) {
             dbg(1, "Checking optional dependencies...");
             check_optional_dependencies(pkg->optional, pkg->optionalCount);
         }
@@ -339,7 +347,7 @@ int _create_binary_from_file(unsigned int* i) {
 // update function 
 int _update_(unsigned int* i)
 {
-    sync();
+    repo_sync();
     update();
     return 0;
 }
@@ -421,12 +429,26 @@ void ask_to_preview_pkg(char* name)
         }
     if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
     {
-        char* cmd = calloc(MAX_PATH, sizeof(char));
-        sprintf(cmd, "cat %s", name);
-        char* output = exec(cmd);
-
-        printf(output);
-
+        FILE *fptr; 
+    
+        // Open file 
+        fptr = fopen(name, "r"); 
+        if (fptr == NULL) 
+        { 
+            printf("Cannot open file \n"); 
+            exit(0); 
+        } 
+    
+        // Read contents from file 
+        char c = fgetc(fptr); 
+        while (c != EOF) 
+        { 
+            printf ("%c", c); 
+            c = fgetc(fptr); 
+        } 
+    
+        fclose(fptr); 
+        
         char* str_2 = calloc(2, sizeof(char));
 
         msg(INFO, "Press q to abort the installation, hit enter to continue");
@@ -576,4 +598,290 @@ int _clean_up_(unsigned int* i)
     {
         msg(FATAL, "No source directory exists");
     }
+}
+
+// Function to check if all dependencies of a package are installed
+
+int check_dependencies(char **dependencies, int dependenciesCount) {
+    dbg(1, "Checking dependencies...");
+
+    for (int i = 0; i < dependenciesCount; i++) {
+        dbg(3, "Checking if %s is installed", dependencies[i]);
+        if (!is_installed(dependencies[i])) {
+            dbg(3, "Dependency %s is not installed", dependencies[i]);
+            msg(INFO, "Installing %s", dependencies[i]);
+
+            // Check if the dependency is in the queue
+            int in_queue = 0;
+            for (int j = 0; j < QUEUE_COUNT; j++) {
+                if (strcmp(PACKAGE_QUEUE[j], dependencies[i]) == 0) {
+                    in_queue = 1;
+                    break;
+                }
+            }
+
+            if (in_queue) {
+                dbg(1, "Package %s is already in the queue", dependencies[i]);
+                continue;
+            }
+
+            struct package* pkg = calloc(1, sizeof(struct package));
+            pkg->name = dependencies[i];
+
+            char* pkg_name = calloc(strlen(pkg->name) + 1, sizeof(char));
+            if(!strstr(pkg->name, ".ecmp"))
+            {
+                sprintf(pkg_name, "%s.%s", pkg->name, getenv("SOVIET_DEFAULT_FORMAT"));
+            }
+                else
+                {
+                    pkg_name = strdup(pkg->name);
+                }
+
+            int num_results;
+            char** results = search(pkg_name, &num_results);
+                
+            char* format;
+
+            if(results != NULL)
+            {
+                for ( int i = 0; i < num_results; i++)
+                {
+                    // Package name
+                    char* temp_1 = strtok(results[i], ">");
+                    // Repo it's in
+                    char* temp_2 = strchr(results[i], '\0') + 1;
+
+                    if(strcmp(getenv("SOVIET_DEFAULT_REPO"), temp_2) == 0)
+                    {
+                        format = temp_2;
+                        break;
+                    }
+                        else if (i == num_results) 
+                        {
+                            format = temp_2;
+                        }
+                }
+            }
+            
+            if (format == NULL) {
+                msg(ERROR, "Failed to download package %s", pkg->name);
+                return 1;
+            }
+
+            get(pkg, format, pkg->name);
+
+            ask_to_preview_pkg(pkg->name);
+
+            // Attempt to open the package archive
+            if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
+                msg(ERROR, "Failed to open package");
+                return -1;
+            }
+
+            dbg(1, "Checking dependencies...");
+            
+            // Check package dependencies
+
+            if (pkg->dependencies != NULL && pkg->dependenciesCount > 0 && strlen(pkg->dependencies[0]) > 0) {
+                check_dependencies(pkg->dependencies, pkg->dependenciesCount);
+            }
+
+            dbg(1, "Checking optional dependencies...");
+
+            // Checking optional dependencies
+
+            // TODO:
+            // Accept a --opt "opt" argument then 
+            // Check if a dependency is in the opt string
+
+            if (pkg->optional != NULL && pkg->optionalCount > 0 && strlen(pkg->optional[0]) > 0) {
+                dbg(1, "Checking optional dependencies...");
+                check_optional_dependencies(pkg->optional, pkg->optionalCount);
+            }
+
+            // TODO:
+            // Accept a --in "in or --in def argument 
+            // Then check if the number of arguments in
+            // The string is equal to number of inputs
+            // If so, supply the inputs NQA
+            dbg(1, "Handling inputs...");
+
+            handle_inputs(pkg);
+
+            f_install_package_source(pkg->name, 0, format);
+
+            remove(pkg_name);
+
+        } else {
+            dbg(3, "Dependency %s is installed", dependencies[i]);
+        }
+    }
+
+    return 0;
+}
+
+
+// Function to check if all optional dependencies of a package are installed
+
+int check_optional_dependencies(char **dependencies, int dependenciesCount) {
+    dbg(1, "Checking optional dependencies...");
+
+    for (int i = 0; i < dependenciesCount; i++) {
+        dbg(3, "Checking if %s is installed", dependencies[i]);
+        if (!is_installed(dependencies[i])) {
+            dbg(3, "Dependency %s is not installed", dependencies[i]);
+
+
+            char* str = calloc(2, sizeof(char));
+
+            msg(INFO, "Do you want to download optional package %s, y/N", dependencies[i]);
+            if(!OVERWRITE_CHOISE)
+            {
+                char* res = fgets(str, 2, stdin);
+
+                if ( strchr(str, '\n') == NULL )
+                {
+                    while ((getchar()) != '\n');
+                }
+
+                int k = 0;
+
+                while (str[k] != '\n' && str[k] != '\0')
+                {
+                    k++;
+                }
+
+                if (str[k] == '\n')
+                {
+                    str[k] = '\0';
+                }
+            }
+                else
+                {
+                    sprintf(str, "%s", USER_CHOISE[0]);
+                }
+
+            if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
+            {
+                msg(INFO, "Installing %s", dependencies[i]);
+
+                // Check if the dependency is in the queue
+                int in_queue = 0;
+                for (int j = 0; j < QUEUE_COUNT; j++) {
+                    if (strcmp(PACKAGE_QUEUE[j], dependencies[i]) == 0) {
+                        in_queue = 1;
+                        break;
+                    }
+                }
+
+                if (in_queue) {
+                    dbg(1, "Package %s is already in the queue", dependencies[i]);
+                    continue;
+                }
+
+                struct package* pkg = calloc(1, sizeof(struct package));
+                pkg->name = dependencies[i];
+
+                char* format;
+                char* pkg_name = calloc(strlen(pkg->name) + 1, sizeof(char));
+                if(!strstr(pkg->name, ".ecmp"))
+                {
+                    sprintf(pkg_name, "%s.%s", pkg->name, getenv("SOVIET_DEFAULT_FORMAT"));
+                }
+                    else
+                    {
+                        pkg_name = strdup(pkg->name);
+                    }
+
+                int num_results;
+                char** results = search(pkg_name, &num_results);
+                    
+                if(results != NULL)
+                {
+                    for ( int i = 0; i < num_results; i++)
+                    {
+                        // Package name
+                        char* temp_1 = strtok(results[i], ">");
+                        // Repo it's in
+                        char* temp_2 = strchr(results[i], '\0') + 1;
+
+                        if(strcmp(getenv("SOVIET_DEFAULT_REPO"), temp_2) == 0)
+                        {
+                            format = temp_2;
+                            break;
+                        }
+                            else if (i == num_results) 
+                            {
+                                format = temp_2;
+                            }
+                    }
+                }
+                
+                if (format == NULL) {
+                    msg(ERROR, "Failed to download package %s", pkg->name);
+                    return 1;
+                }
+
+                if (format == NULL) {
+                msg(ERROR, "Failed to download package %s", pkg->name);
+                return 1;
+                }
+
+                get(pkg, format, pkg->name);
+
+                ask_to_preview_pkg(pkg->name);
+
+                // Attempt to open the package archive
+                if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
+                    msg(ERROR, "Failed to open package");
+                    return -1;
+                }
+
+                dbg(1, "Checking dependencies...");
+                
+                // Check package dependencies
+
+                if (pkg->dependencies != NULL && pkg->dependenciesCount > 0 && strlen(pkg->dependencies[0]) > 0) {
+                    check_dependencies(pkg->dependencies, pkg->dependenciesCount);
+                }
+
+                dbg(1, "Checking optional dependencies...");
+
+                // Checking optional dependencies
+
+                // TODO:
+                // Accept a --opt "opt" argument then 
+                // Check if a dependency is in the opt string
+
+                if (pkg->optional != NULL && pkg->optionalCount > 0 && strlen(pkg->optional[0]) > 0) {
+                    dbg(1, "Checking optional dependencies...");
+                    check_optional_dependencies(pkg->optional, pkg->optionalCount);
+                }
+
+                // TODO:
+                // Accept a --in "in or --in def argument 
+                // Then check if the number of arguments in
+                // The string is equal to number of inputs
+                // If so, supply the inputs NQA
+                dbg(1, "Handling inputs...");
+
+                handle_inputs(pkg);
+
+                f_install_package_source(pkg->name, 0, format);
+
+                remove(pkg_name);
+            }
+            else
+            {
+                msg(INFO, "Skipping %s", dependencies[i]);
+            }
+            free(str);
+
+        } else {
+            dbg(3, "Dependency %s is installed", dependencies[i]);
+        }
+    }
+
+    return 0;
 }
