@@ -70,6 +70,9 @@ int _set_no_(unsigned int* i);
 
 void handle_inputs(struct package* pkg);
 void ask_to_preview_pkg(char* name);
+int check_dependencies(char **dependencies, int dependenciesCount);
+int check_optional_dependencies(char **dependencies, int dependenciesCount);
+
 
 
 void* args[][2] = {
