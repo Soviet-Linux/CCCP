@@ -15,7 +15,7 @@ install-libspm:
 		make  DESTDIR=$(DESTDIR) install
 
 install: build
-	install -D bin/cccp $(DESTDIR)/usr/bin
+	install -D bin/cccp $(DESTDIR)/usr/bin/cccp
 	if ! [ -f $(DESTDIR)/etc/cccp.conf ]; then install -D cccp.conf $(DESTDIR)/etc/cccp.conf; fi
 
 uninstall:
