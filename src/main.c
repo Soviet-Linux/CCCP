@@ -240,6 +240,7 @@ int _install_repo_(unsigned int* i) {
         {
             // Package name
             char* temp_1 = strtok(results[i], ">");
+	    (void)temp_1;
             // Repo it's in
             char* temp_2 = strchr(results[i], '\0') + 1;
 
@@ -393,24 +394,21 @@ int _set_no_(unsigned int* i) {
     return 0;
 }
 
-void ask_to_preview_pkg(char* name)
-{
-    char* str = calloc(2, sizeof(char));
+void ask_to_preview_pkg(char* name) {
+    char* str = calloc(10, sizeof(char));
 
     msg(INFO, "Do you want to view the source for %s before installing? y/N", name);
     if(OVERWRITE_CHOISE != true)
     {
         char* res = fgets(str, 2, stdin);
 
-        if ( strchr(str, '\n') == NULL )
-        {
+	if (res != NULL && strchr(str, '\n') == NULL){
             while ((getchar()) != '\n');
         }
 
         int j = 0;
 
-        while (str[j] != '\n' && str[j] != '\0')
-        {
+        while (str[j] != '\n' && str[j] != '\0'){
             j++;
         }
 
@@ -455,9 +453,9 @@ void ask_to_preview_pkg(char* name)
         char* str_2 = calloc(2, sizeof(char));
 
         msg(INFO, "Press q to abort the installation, hit enter to continue");
-        if(OVERWRITE_CHOISE != true)
-        {
+        if(OVERWRITE_CHOISE != true) {
             char* res_2 = fgets(str_2, 2, stdin);
+	    (void)res_2;
 
             if ( strchr(str_2, '\n') == NULL )
             {
@@ -524,6 +522,7 @@ void handle_inputs(struct package* pkg)
                 if(!OVERWRITE_CHOISE)
                 {
                     char* res = fgets(str, MAX_PATH-1, stdin);
+		    (void)res;
                     dbg(1, "Checking if enter was pressed");
                     if ( strchr(str, '\n') == NULL )
                     {
@@ -536,27 +535,27 @@ void handle_inputs(struct package* pkg)
                     {
                         dbg(1, "Checking if input %c is bad", str[k]);
 
-                        if(str[k] == '~' 
-                        | str[k] == '`' 
-                        | str[k] == '#' 
-                        | str[k] == '$' 
-                        | str[k] == '&' 
-                        | str[k] == '*' 
-                        | str[k] == '(' 
-                        | str[k] == ')' 
-                        | str[k] == '\\'  
-                        | str[k] == '|' 
-                        | str[k] == '[' 
-                        | str[k] == ']' 
-                        | str[k] == '{'
-                        | str[k] == '}' 
-                        | str[k] == '\'' 
-                        | str[k] == ';' 
-                        | str[k] == '\\' 
-                        | str[k] == '<' 
-                        | str[k] == '>' 
-                        | str[k] == '?' 
-                        | str[k] == '!')
+                        if((str[k] == '~') 
+                        | (str[k] == '`') 
+                        | (str[k] == '#') 
+                        | (str[k] == '$') 
+                        | (str[k] == '&') 
+                        | (str[k] == '*') 
+                        | (str[k] == '(') 
+                        | (str[k] == ')') 
+                        | (str[k] == '\\')  
+                        | (str[k] == '|') 
+                        | (str[k] == '[') 
+                        | (str[k] == ']') 
+                        | (str[k] == '{')
+                        | (str[k] == '}') 
+                        | (str[k] == '\'') 
+                        | (str[k] == ';') 
+                        | (str[k] == '\\') 
+                        | (str[k] == '<') 
+                        | (str[k] == '>') 
+                        | (str[k] == '?') 
+                        | (str[k] == '!'))
                         {
                             str[k] = ' ';
                         }
@@ -601,6 +600,8 @@ int _clean_up_(unsigned int* i)
     {
         msg(FATAL, "No source directory exists");
     }
+
+    return 0;
 }
 
 // Function to check if all dependencies of a package are installed
@@ -652,6 +653,7 @@ int check_dependencies(char **dependencies, int dependenciesCount) {
                 {
                     // Package name
                     char* temp_1 = strtok(results[i], ">");
+		    (void)temp_1;
                     // Repo it's in
                     char* temp_2 = strchr(results[i], '\0') + 1;
 
@@ -742,6 +744,7 @@ int check_optional_dependencies(char **dependencies, int dependenciesCount) {
             if(!OVERWRITE_CHOISE)
             {
                 char* res = fgets(str, 2, stdin);
+		(void)res;
 
                 if ( strchr(str, '\n') == NULL )
                 {
@@ -806,6 +809,7 @@ int check_optional_dependencies(char **dependencies, int dependenciesCount) {
                     {
                         // Package name
                         char* temp_1 = strtok(results[i], ">");
+			(void)temp_1;
                         // Repo it's in
                         char* temp_2 = strchr(results[i], '\0') + 1;
 
