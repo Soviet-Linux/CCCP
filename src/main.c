@@ -11,7 +11,6 @@
 const float C_FRONTEND_VERSION = 1.001;
 // This is very stupid, but I don't want to work on this right now.
 #define QUEUE_MAX 65536
-int QUEUE_SIZE = 0;
 
 struct packages* install_queue;
 struct packages* update_queue;
@@ -58,8 +57,8 @@ int _clean_up_(unsigned int* i);            // works
 int _update_(unsigned int* i);              // works
 int _search_(unsigned int* i);              // works
 
-int add_to_queue(struct package* pkg);
-void ask_to_preview_pkg(char* name);
+int add_to_queue(struct package* pkg, struct packages* queue);
+void ask_to_preview_pkg(char* path);
 void populate_installed_db();               // works
 void populate_remote_db();                  // works
 int check_optional_dependencies(char **dependencies, int dependenciesCount);
@@ -138,6 +137,10 @@ int main(int argc, char *argv[])
         dbg(2,"Running as root");
     }
 
+    install_queue = create_pkgs(0);
+    update_queue  = create_pkgs(0);
+    remove_queue  = create_pkgs(0);
+
     hashtable* hm = hm_init(args, sizeof(args)/sizeof(args[0]));
 
     ARGV = argv;
@@ -166,7 +169,35 @@ int main(int argc, char *argv[])
     }
     hm_destroy(hm);
 
-    populate_installed_db();
+    if((install_queue->count != 0) || (update_queue->count != 0) || (remove_queue->count != 0))
+    {
+        msg(INFO, "INSTALL QUEUE:");
+        for(int iq = 0; iq < install_queue->count; iq++)
+        {
+            printf("%d - %s\n", iq, install_queue->buffer[iq].name);
+        }
+
+        msg(INFO, "UPDATE QUEUE:");
+        for(int uq = 0; uq < update_queue->count; uq++)
+        {
+            printf("%d - %s\n", uq, update_queue->buffer[uq].name);
+        }
+
+        msg(INFO, "REMOVE QUEUE:");
+        for(int rq = 0; rq < remove_queue->count; rq++)
+        {
+            printf("%d - %s\n", rq, remove_queue->buffer[rq].name);
+        }
+
+        printf("writing changes to the database...\n");
+        populate_installed_db();
+        printf("done.\n");
+    }
+
+    free_pkgs(install_queue);
+    free_pkgs(update_queue);
+    free_pkgs(remove_queue);
+
 }
 
 // install from source function
@@ -180,7 +211,7 @@ int _install_source_(unsigned int* i)
     pkg.path = strdup(path);
     pkg.name = strdup(path);
     open_pkg(pkg_path, &pkg);
-    add_to_queue(&pkg);
+    add_to_queue(&pkg, install_queue);
     return 0;
 }
 
@@ -210,10 +241,8 @@ int _remove_(unsigned int* i)
                         if(get_input(pkg->name, 1))
                         {
                             open_pkg(getenv("SOVIET_SPM_DIR"), pkg);
-                            // In the future, the package should be added to the queue, so cccp can continue parsing flags
-                            // The queue can be installed at the end of the main function
-                            uninstall(pkg);
-                            return 0;
+                            add_to_queue(pkg, remove_queue);
+                            break;
                         }
                         else
                         {
@@ -271,10 +300,10 @@ int _install_repo_(unsigned int* i)
                             if(check(pkg) == 0)
                             {
                                 printf("package %s is already installed\n", pkg->name);
-                                return 0;
+                                break;
                             }
-                            add_to_queue(pkg);
-                            return 0;
+                            add_to_queue(pkg, install_queue);
+                            break;
                         }
                         else
                         {
@@ -318,7 +347,7 @@ int _update_(unsigned int* i)
                 open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
                 // In the future, the package should be added to the queue, so cccp can continue parsing flags
                 // The queue can be installed at the end of the main function
-                add_to_queue(pkg);
+                add_to_queue(pkg, update_queue);
             }
             else
             {
@@ -340,7 +369,6 @@ int _search_(unsigned int* i)
     struct packages* pkgs = search_pkgs(getenv("SOVIET_ALL_DB"), name);
     for(int i = 0; pkgs->count > 0; i++)
     {
-        // A hacky way to make sure we don't install the entire repo
         struct package* pkg = pop_pkg(pkgs);
         printf("%s\n", pkg->name);
         free_pkg(pkg);
@@ -426,11 +454,11 @@ int add_to_queue(struct package* pkg, struct packages* queue)
         check_optional_dependencies(pkg->optional, pkg->optionalCount);
     }
     dbg(2, "%s added to queue", pkg->name);
-    if(QUEUE_SIZE++ > QUEUE_MAX)
+    push_pkg(queue, pkg);
+    if(queue->count > QUEUE_MAX)
     {
-        msg(FATAL, "dependency tree too large");
+        msg(FATAL, "dependency tree too large"); /*or you just decided to update/remove 65k packages*/
     }
-    printf("Queue size: %d\n", QUEUE_SIZE);
     return 0;
 }
 
@@ -506,7 +534,7 @@ int check_dependencies(char **dependencies, int dependenciesCount)
                     if(strcmp(pkg->name, name) == 0)
                     {
                         open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
-                        add_to_queue(pkg);
+                        add_to_queue(pkg, install_queue);
                         break;
                     }
                     else
@@ -586,7 +614,7 @@ int check_optional_dependencies(char **dependencies, int dependenciesCount)
                         if(get_input(pkg->name, 1))
                         {
                             open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
-                            add_to_queue(pkg);
+                            add_to_queue(pkg, install_queue);
                             break;
                         }
                         else
