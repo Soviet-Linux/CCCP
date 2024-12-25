@@ -8,11 +8,14 @@
 #include <spm/hashtable.h>
 #include <spm/globals.h>
 
+const float C_FRONTEND_VERSION = 1.001;
+// This is very stupid, but I don't want to work on this right now.
+#define QUEUE_MAX 65536
+int QUEUE_SIZE = 0;
 
-
-const float C_FRONTEND_VERSION = 1.000;
-
-
+struct packages* install_queue;
+struct packages* update_queue;
+struct packages* remove_queue;
 
 char* ART = "\033[31;1;1m"
     "    ⠀⠀⠀⠀⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
@@ -34,128 +37,126 @@ char* ART = "\033[31;1;1m"
 char* HELP = "\x1b[34m Usage cccp [options/package] (Options are evaluated in order form left to right)\x1b[0m \n"
     "\x1b[32m Options:  -v,   --version \x1b[0m                          Displays the version \n"
     "          \x1b[32m -h,   --help\x1b[0m                              Displays this message   \n"
-    "          \x1b[32m -Yy,  -Nn\x1b[0m                                 Passes Y/N to promts by default   \n"
-    "          \x1b[32m -i,   --install <package>\x1b[0m                 Installs a package from OUR repo   \n"
-    "          \x1b[32m       --no-checksum \x1b[0m                      Bypasses cheking the hash  \n"
-    "          \x1b[32m -r,   --remove <package>\x1b[0m                  Removes a package from the system    \n"
-    "          \x1b[32m -l,   --list\x1b[0m                              Lists all packages installed on the system    \n"
-    "          \x1b[32m -s,   --search <package>\x1b[0m                  Searches for packages that match the name provided    \n"
-    "          \x1b[32m       --update\x1b[0m                            Checks if there are any updates to installed packages    \n"
-    "          \x1b[32m       --upgrade\x1b[0m                           Upgrades outdated packages    \n"
-    "          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Installs a package from file provided    \n"
-    "          \x1b[32m -ow,  --overwrite\x1b[0m                         Will overwrite installed packages    \n"
-    "          \x1b[32m -dbg, --debug <level 0-4>\x1b[0m                 Prints debug info    \n"
-    "          \x1b[32m       --clean\x1b[0m                             Cleans up the cache directory    \n"
-    "          \x1b[32m       --verbose\x1b[0m                           Switches to verbose output    \x1b[0m \n";
+    "          \x1b[32m -i,   --install <package>\x1b[0m                 Install a package   \n"
+    "          \x1b[32m -r,   --remove <package>\x1b[0m                  Remove a package    \n"
+    "          \x1b[32m -l,   --list\x1b[0m                              List all packages installed on the system    \n"
+    "          \x1b[32m -s,   --search <package>\x1b[0m                  Search for packages    \n"
+    "          \x1b[32m -u,   --update\x1b[0m                            Update installed packages    \n"
+    "          \x1b[32m -a,   --auto\x1b[0m                              Use defaults and ignore prompts   \n"
+    "          \x1b[32m -c,   --clean\x1b[0m                             Clean up the cache directory    \n"
+    "          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Install a package from file    \n"
+    "          \x1b[32m -dbg, --debug <level 0-4>\x1b[0m                 Print debug info    \n"
+    "          \x1b[32m -q,   --quiet           \x1b[0m                  Ignore make output    \n";
 
 int _install_source_(unsigned int* index);
-int _remove_(unsigned int* index);
 int _install_repo_(unsigned int* index);
-int _install_repo_no_checksum_(unsigned int* index);
-int _create_binary_from_file(unsigned int* i);
+int _remove_(unsigned int* index);
+int _set_debug_level_(unsigned int* i);     // works
+int _set_auto_(unsigned int* i);            // works
+int _set_quiet_(unsigned int* i);           // works
+int _clean_up_(unsigned int* i);            // works
+int _update_(unsigned int* i);              // works
+int _search_(unsigned int* i);              // works
 
-int _set_debug_level_(unsigned int* i);
-int _set_debug_unit(unsigned int* i);
-int _set_verbose_(unsigned int* i);
-int _set_overwrite_(unsigned int* i);
-
-int _clean_up_(unsigned int* i);
-
-//test
-int _update_(unsigned int* i);
-int _upgrade_(unsigned int* i);
-int _search_(unsigned int* i);
-int _set_yes_(unsigned int* i);
-int _set_no_(unsigned int* i);
-
-void handle_inputs(struct package* pkg);
+int add_to_queue(struct package* pkg);
 void ask_to_preview_pkg(char* name);
-int check_dependencies(char **dependencies, int dependenciesCount);
+void populate_installed_db();               // works
+void populate_remote_db();                  // works
 int check_optional_dependencies(char **dependencies, int dependenciesCount);
+int check_dependencies(char **dependencies, int dependenciesCount);
 
-
-
-void* args[][2] = {
-    {"package",_install_source_},
-    {"pkg",_install_source_},
-    {"install",_install_repo_},
-    {"no-checksum",_install_repo_no_checksum_},
-    {"i",_install_repo_},
-    {"update",_update_},
-    {"upgrade",_upgrade_},
-    {"remove",_remove_},
-    {"r",_remove_},
-    {"search",_search_},
-    {"s",_search_},
-    {"debug",_set_debug_level_},
-    {"dbg",_set_debug_level_},
-    //{"unit",_set_debug_unit},
-    {"verbose", _set_verbose_},
-    {"overwrite", _set_overwrite_},
-    {"Yy", _set_yes_},
-    {"Nn", _set_no_},
-    {"clean", _clean_up_},
-    {"ow",_set_overwrite_}
-    //{"create", _create_binary_from_file}
+void* args[][2] = 
+{
+    {"--package"  , _install_source_   },
+    {"-pkg"      , _install_source_    },
+    {"--install"  , _install_repo_     },
+    {"-i"        , _install_repo_      },
+    {"--update"   , _update_           },
+    {"-u"        , _update_            },
+    {"--remove"   , _remove_           },
+    {"-r"        , _remove_            },
+    {"--search"   , _search_           },
+    {"-s"        , _search_            },
+    {"--debug"    , _set_debug_level_  },
+    {"-dbg"      , _set_debug_level_   },
+    {"--auto"     , _set_auto_         },
+    {"-a"        , _set_auto_          },
+    {"--clean"    , _clean_up_         },
+    {"-c"        , _clean_up_          },
+    {"--quite"    , _set_quiet_        },
+    {"-q"        , _set_quiet_         },
 };
 
 char** ARGV;
+int ARGC;
 
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[]) 
+{
     dbg(2,"DEBUG Enabled!");
     // check if not enough arguments have been passed
-    if (argc == 1) {
+    if (argc == 1) 
+    {
         msg(ERROR, "No command specified add -h for information about how the command should be used.");
         return 1;
     }
     // -h and --help command
-    if (0 == strcmp(argv[1], "-h") || 0 == strcmp(argv[1], "--help")) {
+    if (0 == strcmp(argv[1], "-h") || 0 == strcmp(argv[1], "--help")) 
+    {
         printf("%s", HELP);
         return 0;
     }
     // -v and --version command
-    if (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--version")){
+    if (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--version"))
+    {
 	    printf(ART,C_FRONTEND_VERSION,version());
 	    return 0;
     }
     // -l and --list command
-    if (0 == strcmp(argv[1], "-l") || 0 == strcmp(argv[1], "--list")){
+    if (0 == strcmp(argv[1], "-l") || 0 == strcmp(argv[1], "--list"))
+    {
         readConfig("/etc/cccp.conf", 0);
-        list_installed();
+        struct packages* installed_packages = dump_db(getenv("SOVIET_INSTALLED_DB"));
+        if(installed_packages->count > 0)
+        {
+            for(int i = 0; i < installed_packages->count; i++)
+            {
+                printf("%s\n", installed_packages->buffer[i].name);
+            }
+        }
+        free_pkgs(installed_packages);
 	    return 0;
     }
     // root check 
-    if (getuid() != 0) {
+    if (getuid() != 0) 
+    {
+        // In the future, we might want to just set SOVIET_ROOT to SOVIET_USER_ROOT and continue
         msg(ERROR, "You need to be root to run this program for help type -h");
         return 1;
-    } else {
+    } 
+    else 
+    {
         dbg(2,"Running as root");
     }
 
     hashtable* hm = hm_init(args, sizeof(args)/sizeof(args[0]));
 
     ARGV = argv;
+    ARGC = argc;
 
     init(); 
 
     int (*func)(int*);
-    for (int i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; i++) 
+    {
         dbg(3, "argv[%d] = %s", i, argv[i]);
-
-        // removz beginning -- in args
-        if (argv[i][0] == '-' && argv[i][1] == '-') {
-            argv[i] += 2;
-        } else if (argv[i][0] == '-'){
-            argv[i] += 1;
-        }
 
         //hm_visualize(hm);
         // function pointer
 
         // get function pointer
         func = hm_get(hm, argv[i]);
-        if (func == NULL) {
+        if (func == NULL) 
+        {
             msg(ERROR, "Invalid argument %s", argv[i]);
             return 1;
         }
@@ -163,188 +164,141 @@ int main(int argc, char *argv[]) {
         // call function
         func(&i);
     }
-  hm_destroy(hm);
+    hm_destroy(hm);
 
+    populate_installed_db();
 }
+
 // install from source function
 int _install_source_(unsigned int* i) 
 {
-    struct package* pkg = calloc(1, sizeof(struct package));
-    char* name = ARGV[++(*i)];
+    // Get the name and search it in the database
+    char* path = ARGV[++(*i)];
 
-    ask_to_preview_pkg(name);
-
-    // TODO:
-    // Accept a --opt "opt" argument then 
-    // Check if a dependency is in the opt string
-
-    // Attempt to open the package archive
-    if (open_pkg(name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
-        msg(ERROR, "Failed to open package");
-        return -1;
-    }
-
-    dbg(1, "Checking optional dependencies...");
-
-
-    // Checking optional dependencies
-    if (pkg->optionalCount > 0) {
-        dbg(1, "Checking optional dependencies...");
-        check_optional_dependencies(pkg->optional, pkg->optionalCount);
-    }
-
-    // TODO:
-    // Accept a --in "in or --in def argument 
-    // Then check if the number of arguments in
-    // The string is equal to number of inputs
-    // If so, supply the inputs NQA
-    dbg(1, "Handling inputs...");
-
-    handle_inputs(pkg);
-    
-    dbg(1, "Installing %s...", pkg->name);
-
-    f_install_package_source(name, 0, "local");
-
+    char* pkg_path = path;
+    struct package pkg = {0};
+    pkg.path = strdup(path);
+    pkg.name = strdup(path);
+    open_pkg(pkg_path, &pkg);
+    add_to_queue(&pkg);
     return 0;
 }
-// remove a pkg function
-int _remove_(unsigned int* i) {
-    char* pkg = ARGV[++(*i)];
-    msg(INFO, "removing %s", pkg); 
-    exit(uninstall(pkg));
-}
-// install from repo function 
-int _install_repo_(unsigned int* i) {
-    struct package* pkg = calloc(1, sizeof(struct package));
-    pkg->name = ARGV[++(*i)];
 
-    char* pkg_name = calloc(strlen(pkg->name) + strlen(getenv("SOVIET_DEFAULT_FORMAT")) + 2, sizeof(char));
-    if(!strstr(pkg->name, ".ecmp"))
+// remove a pkg function
+int _remove_(unsigned int* i) 
+{
+    // While not next argument
+    while((*i) < ARGC - 1)
     {
-        sprintf(pkg_name, "%s.%s", pkg->name, getenv("SOVIET_DEFAULT_FORMAT"));
-    }
+        if (ARGV[(*i) + 1][0] != '-')
+        {
+            // Get the name and search it in the database
+            char* name = ARGV[++(*i)];
+            struct packages* pkgs = search_pkgs(getenv("SOVIET_INSTALLED_DB"), name);
+            if(pkgs->count == 0)
+            {
+                printf("Could not find '%s' in installed packages\n", name);
+            }
+            else
+            {
+                for(int i = 0; pkgs->count > 0; i++)
+                {
+                    struct package* pkg = pop_pkg(pkgs);
+                    if(strcmp(pkg->name, name) == 0)
+                    {
+                        printf("Uninstall ");
+                        if(get_input(pkg->name, 1))
+                        {
+                            open_pkg(getenv("SOVIET_SPM_DIR"), pkg);
+                            // In the future, the package should be added to the queue, so cccp can continue parsing flags
+                            // The queue can be installed at the end of the main function
+                            uninstall(pkg);
+                            return 0;
+                        }
+                        else
+                        {
+                            printf("skipping…\n"); 
+                            free_pkg(pkg);
+                        }
+                    }
+                    else
+                    {
+                        free_pkg(pkg);
+                        if(pkgs->count == 0)
+                        {
+                            printf("Could not find '%s' in installed packages\n", name);
+                        }
+                    }
+                }
+            }
+            free_pkgs(pkgs);
+        }
         else
         {
-            pkg_name = strdup(pkg->name);
+            return 0;
         }
-
-    int num_results;
-    char** results = search(pkg_name, &num_results);
-
-    char* repo;
-
-    if(results != NULL && num_results > 0)
-    {
-        for ( int i = 0; i < num_results; i++)
-        {
-            // Package name
-            char* temp_1 = strtok(results[i], ">");
-	    (void)temp_1;
-            // Repo it's in
-            char* temp_2 = strchr(results[i], '\0') + 1;
-
-            if(strcmp(getenv("SOVIET_DEFAULT_REPO"), temp_2) == 0)
-            {
-                repo = temp_2;
-                break;
-            }
-                else if (i == num_results) 
-                {
-                    repo = temp_2;
-                }
-        }
-    
-        if (repo == NULL) {
-            msg(ERROR, "Failed to download package %s", pkg->name);
-            return 1;
-        }
-
-        get(pkg, repo, pkg->name);
-
-        ask_to_preview_pkg(pkg->name);
-
-        // Attempt to open the package archive
-        if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
-            msg(ERROR, "Failed to open package");
-            return -1;
-        }
-
-        dbg(1, "Checking dependencies...");
-        
-        // Check package dependencies
-
-        if (pkg->dependencies != NULL && pkg->dependenciesCount > 0 && strlen(pkg->dependencies[0]) > 0) {
-            check_dependencies(pkg->dependencies, pkg->dependenciesCount);
-        }
-
-        dbg(1, "Checking optional dependencies...");
-
-        // Checking optional dependencies
-
-        // TODO:
-        // Accept a --opt "opt" argument then 
-        // Check if a dependency is in the opt string
-
-        if (pkg->optional != NULL && pkg->optionalCount > 0 && strlen(pkg->optional[0]) > 0) {
-            dbg(1, "Checking optional dependencies...");
-            check_optional_dependencies(pkg->optional, pkg->optionalCount);
-        }
-
-        // TODO:
-        // Accept a --in "in or --in def argument 
-        // Then check if the number of arguments in
-        // The string is equal to number of inputs
-        // If so, supply the inputs NQA
-        dbg(1, "Handling inputs...");
-
-        handle_inputs(pkg);
-        
-        dbg(1, "Installing %s...", pkg->name);
-
-        f_install_package_source(pkg->name, 0, repo);
-
-        remove(pkg->name);
-
-        return 0;
     }
-    else 
+    return 0;
+}
+
+// install from repo function 
+int _install_repo_(unsigned int* i) 
+{
+    // While not next argument
+    while((*i) < ARGC - 1)
+    {
+        if (ARGV[(*i) + 1][0] != '-')
         {
-            msg(ERROR, "No such package %s", pkg_name);
-            return -1;
+            // Get the name and search it in the database
+            char* name = ARGV[++(*i)];
+            struct packages* pkgs = search_pkgs(getenv("SOVIET_ALL_DB"), name);
+            
+            if(pkgs->count == 0)
+            {
+                printf("0 matches for '%s'\n", name);
+            }
+            else
+            {
+                for(int i = 0; pkgs->count > 0; i++)
+                {
+                    struct package* pkg = pop_pkg(pkgs);
+                    if(strcmp(pkg->name, name) == 0)
+                    {
+                        printf("Install ");
+                        if(get_input(pkg->name, 1))
+                        {
+                            open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
+                            if(check(pkg) == 0)
+                            {
+                                printf("package %s is already installed\n", pkg->name);
+                                return 0;
+                            }
+                            add_to_queue(pkg);
+                            return 0;
+                        }
+                        else
+                        {
+                            printf("skipping…\n"); 
+                            free_pkg(pkg);
+                        }
+                    }
+                    else
+                    {
+                        free_pkg(pkg);
+                        if(pkgs->count == 0)
+                        {
+                            printf("Could not find '%s', try searching with cccp -s '%s'\n", name, name);
+                        }
+                    }
+                }
+            }
+            free_pkgs(pkgs);
         }
-}
-
-// install from repo without checking for the checksum
-int _install_repo_no_checksum_(unsigned int* i) {
-     INSECURE = true;
-     return 0;
-}
-
-int _set_debug_level_(unsigned int* i) {
-    DEBUG = atoi(ARGV[++(*i)]);
-    return 0;
-}
-int _set_debug_unit(unsigned int* i) {
-    DEBUG_UNIT = ARGV[++(*i)];
-    return 0;
-}
-int _set_verbose_(unsigned int* i) {
-     QUIET = false;
-     return 0;
-}
-int _set_overwrite_(unsigned int* i) {
-    OVERWRITE = true;
-    return 0;
-}
-
-// Create Bin from file function 
-int _create_binary_from_file(unsigned int* i) {
-    char* file = ARGV[++(*i)];
-    char* binary = ARGV[++(*i)];
-
-    create_binary_from_source(file,binary);
-
+        else
+        {
+            return 0;
+        }
+    }
     return 0;
 }
 
@@ -352,88 +306,92 @@ int _create_binary_from_file(unsigned int* i) {
 int _update_(unsigned int* i)
 {
     repo_sync();
-    update();
+    struct packages* need_updating = update_pkg();
+    if(need_updating->count > 0)
+    {
+        for(int i = 0; need_updating->count > 0; i++)
+        {
+            struct package* pkg = pop_pkg(need_updating);
+            printf("Update ");
+            if(get_input(pkg->name, 1))
+            {
+                open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
+                // In the future, the package should be added to the queue, so cccp can continue parsing flags
+                // The queue can be installed at the end of the main function
+                add_to_queue(pkg);
+            }
+            else
+            {
+                printf("skipping…\n"); 
+                free_pkg(pkg);
+            }
+        }
+    }
+    free_pkgs(need_updating);
+    populate_remote_db();
     return 0;
 }
-// upgrade function
-int _upgrade_(unsigned int* i)
-{
-    upgrade();
-    return 0;
-}
+
 // search function
 int _search_(unsigned int* i)
 {
-    char* input = ARGV[++(*i)];
-    int num_results;
-    char** results = search(input, &num_results);
-
-    if(results != NULL)
+    // Get the name and search it in the database
+    char* name = ARGV[++(*i)];
+    struct packages* pkgs = search_pkgs(getenv("SOVIET_ALL_DB"), name);
+    for(int i = 0; pkgs->count > 0; i++)
     {
-        for ( int i = 0; i < num_results; i++)
-        {
-            // Package name
-            char* temp_1 = strtok(results[i], ">");
-            // Repo it's in
-            char* temp_2 = strchr(results[i], '\0') + 1;
-            printf("Found %s in %s \n", temp_1, temp_2);
-        }
+        // A hacky way to make sure we don't install the entire repo
+        struct package* pkg = pop_pkg(pkgs);
+        printf("%s\n", pkg->name);
+        free_pkg(pkg);
     }
-    return 0;
+    free_pkgs(pkgs);
 }
 
-int _set_yes_(unsigned int* i) {
-    OVERWRITE_CHOISE = true;
-    USER_CHOISE[0] = "Y";
-    return 0;
-}
-
-int _set_no_(unsigned int* i) {
-    OVERWRITE_CHOISE = true;
-    USER_CHOISE[0] = "N";
-    return 0;
-}
-
-void ask_to_preview_pkg(char* name) {
-    char* str = calloc(10, sizeof(char));
-
-    msg(INFO, "Do you want to view the source for %s before installing? y/N", name);
-    if(OVERWRITE_CHOISE != true)
+// cleanup function
+int _clean_up_(unsigned int* i)
+{
+    if(getenv("SOVIET_SOURCE_DIR") != NULL)
     {
-        char* res = fgets(str, 2, stdin);
-
-	if (res != NULL && strchr(str, '\n') == NULL){
-            while ((getchar()) != '\n');
-        }
-
-        int j = 0;
-
-        while (str[j] != '\n' && str[j] != '\0'){
-            j++;
-        }
-
-        if (str[j] == '\n')
-        {
-            str[j] = '\0';
-        }
+        rmrf(getenv("SOVIET_SOURCE_DIR"));
+        return 0;
+    } 
+    else
+    {
+        msg(FATAL, "No source directory exists");
     }
-        else
-        {
-            if(sizeof(USER_CHOISE[0]) == sizeof(str))
-            {
-                sprintf(str, USER_CHOISE[0]);
-            }
-                else
-                {
-                    msg(FATAL, "something somwhere went wrong");
-                }
-        }
-    if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
+
+    return 0;
+}
+
+// flags
+int _set_debug_level_(unsigned int* i)
+{
+    DEBUG = atoi(ARGV[++(*i)]);
+    return 0;
+}
+
+int _set_quiet_(unsigned int* i) 
+{
+    QUIET = true;
+    return 0;
+}
+
+int _set_auto_(unsigned int* i) 
+{
+    AUTO = true;
+    return 0;
+}
+
+// helpful functions
+void ask_to_preview_pkg(char* path) 
+{
+    if(get_input("View package file ", 0))
     {
         FILE *fptr; 
     
         // Open file 
-        fptr = fopen(name, "r"); 
+        fptr = fopen(path, "r"); 
         if (fptr == NULL) 
         { 
             printf("Cannot open file \n"); 
@@ -450,445 +408,208 @@ void ask_to_preview_pkg(char* name) {
     
         fclose(fptr); 
         
-        char* str_2 = calloc(2, sizeof(char));
-
-        msg(INFO, "Press q to abort the installation, hit enter to continue");
-        if(OVERWRITE_CHOISE != true) {
-            char* res_2 = fgets(str_2, 2, stdin);
-	    (void)res_2;
-
-            if ( strchr(str_2, '\n') == NULL )
-            {
-                while ((getchar()) != '\n');
-            }
-
-            int k = 0;
-
-            while (str_2[k] != '\n' && str_2[k] != '\0')
-            {
-                k++;
-            }
-
-            if (str_2[k] == '\n')
-            {
-                str_2[k] = '\0';
-            }
-        }
-            else
-            {
-                if(sizeof(USER_CHOISE[0]) == sizeof(str_2))
-                {
-                    sprintf(str_2, USER_CHOISE[0]);
-                }
-                    else
-                    {
-                        msg(FATAL, "something somwhere went wrong");
-                    }
-            }
-
-        if((strcmp(str_2, "Q") == 0 || strcmp(str_2, "q") == 0))
+        if(!get_input("Continue", 1))
         {
-            remove(name);
-
-            free(str);
-            free(str_2);
-
             msg(FATAL, "Aborting...");
         }
-            else
-            {
-                msg(INFO, "Continuing...");
-            }
-
-        free(str_2);
     }
-        else
-        {
-            msg(INFO, "Continuing...");
-        }
-    free(str);
-
 }
 
-void handle_inputs(struct package* pkg)
+int add_to_queue(struct package* pkg, struct packages* queue)
 {
-    if(pkg->inputsCount > 0)
+    if(pkg->dependenciesCount > 0)
     {
-        for (int i = 0; i < pkg->inputsCount; i++) 
-            {
-                msg(INFO, "%s", pkg->inputs[i]);
-                char* str = calloc(MAX_PATH, sizeof(char));
-
-                if(!OVERWRITE_CHOISE)
-                {
-                    char* res = fgets(str, MAX_PATH-1, stdin);
-		    (void)res;
-                    dbg(1, "Checking if enter was pressed");
-                    if ( strchr(str, '\n') == NULL )
-                    {
-                        while ((getchar()) != '\n');
-                    }
-
-                    int k = 0;
-
-                    while (str[k] != '\n' && str[k] != '\0')
-                    {
-                        dbg(1, "Checking if input %c is bad", str[k]);
-
-                        if((str[k] == '~') 
-                        | (str[k] == '`') 
-                        | (str[k] == '#') 
-                        | (str[k] == '$') 
-                        | (str[k] == '&') 
-                        | (str[k] == '*') 
-                        | (str[k] == '(') 
-                        | (str[k] == ')') 
-                        | (str[k] == '\\')  
-                        | (str[k] == '|') 
-                        | (str[k] == '[') 
-                        | (str[k] == ']') 
-                        | (str[k] == '{')
-                        | (str[k] == '}') 
-                        | (str[k] == '\'') 
-                        | (str[k] == ';') 
-                        | (str[k] == '\\') 
-                        | (str[k] == '<') 
-                        | (str[k] == '>') 
-                        | (str[k] == '?') 
-                        | (str[k] == '!'))
-                        {
-                            str[k] = ' ';
-                        }
-                        k++;
-                    }
-
-                    dbg(1, "replacing last new line");
-
-
-                    if (str[k] == '\n')
-                    {
-                        str[k] = '\0';
-                    }
-
-                    char* in = calloc(128, sizeof(char));
-                    sprintf(in, "INPUT_%d", i);
-                    setenv(in, str, 0);
-                    free(in);
-                }
-                    else
-                    {
-                        sprintf(str, "%s", USER_CHOISE[0]);
-                        char* in = calloc(128, sizeof(char));
-                        sprintf(in, "INPUT_%d", i);
-                        setenv(in, str, 0);
-                        free(in);
-                    }
-                    free(str);
-            }
+        check_dependencies(pkg->dependencies, pkg->dependenciesCount);
     }    
-}
-
-// cleanup function 
-int _clean_up_(unsigned int* i)
-{
-    if(getenv("SOVIET_SOURCE_DIR") != NULL)
+    if(pkg->optionalCount > 0)
     {
-        rmrf(getenv("SOVIET_SOURCE_DIR"));
-        return 0;
-    } 
-    else
-    {
-        msg(FATAL, "No source directory exists");
+        check_optional_dependencies(pkg->optional, pkg->optionalCount);
     }
-
+    dbg(2, "%s added to queue", pkg->name);
+    if(QUEUE_SIZE++ > QUEUE_MAX)
+    {
+        msg(FATAL, "dependency tree too large");
+    }
+    printf("Queue size: %d\n", QUEUE_SIZE);
     return 0;
 }
+
+void populate_installed_db()
+{
+    rmany(getenv("SOVIET_INSTALLED_DB"));
+    struct packages* installed = get_pkgs(getenv("SOVIET_SPM_DIR"));
+    create_pkg_db(getenv("SOVIET_INSTALLED_DB"), installed);
+    free_pkgs(installed);
+}
+
+void populate_remote_db()
+{
+    rmany(getenv("SOVIET_ALL_DB"));
+    struct packages* remote = get_pkgs(getenv("SOVIET_REPOS_DIR"));
+    create_pkg_db(getenv("SOVIET_ALL_DB"), remote);
+    free_pkgs(remote);
+}
+
 
 // Function to check if all dependencies of a package are installed
-
-int check_dependencies(char **dependencies, int dependenciesCount) {
+int check_dependencies(char **dependencies, int dependenciesCount) 
+{
     dbg(1, "Checking dependencies...");
 
-    for (int i = 0; i < dependenciesCount; i++) {
-        dbg(3, "Checking if %s is installed", dependencies[i]);
-        if (!is_installed(dependencies[i])) {
-            dbg(3, "Dependency %s is not installed", dependencies[i]);
-            msg(INFO, "Installing %s", dependencies[i]);
-
-            // Check if the dependency is in the queue
-            int in_queue = 0;
-            for (int j = 0; j < QUEUE_COUNT; j++) {
-                if (strcmp(PACKAGE_QUEUE[j], dependencies[i]) == 0) {
-                    in_queue = 1;
+    for (int i = 0; i < dependenciesCount; i++) 
+    {
+        // Get the name and search it in the database
+        // It's kinda stupid
+        int is_installed = 0;
+        char* name = dependencies[i];
+        struct packages* pkgs = search_pkgs(getenv("SOVIET_INSTALLED_DB"), name);
+        if(pkgs->count != 0)
+        {
+            for(int j = 0; pkgs->count > 0; j++)
+            {
+                struct package* pkg = pop_pkg(pkgs);
+                if(strcmp(pkg->name, name) == 0)
+                {
+                    free_pkg(pkg);
+                    dbg(2, "dependency %s is installed", name);
+                    is_installed = 1;
                     break;
                 }
-            }
-
-            if (in_queue) {
-                dbg(1, "Package %s is already in the queue", dependencies[i]);
-                continue;
-            }
-
-            struct package* pkg = calloc(1, sizeof(struct package));
-            pkg->name = dependencies[i];
-
-            char* pkg_name = calloc(strlen(pkg->name) + 1, sizeof(char));
-            if(!strstr(pkg->name, ".ecmp"))
-            {
-                sprintf(pkg_name, "%s.%s", pkg->name, getenv("SOVIET_DEFAULT_FORMAT"));
-            }
                 else
                 {
-                    pkg_name = strdup(pkg->name);
-                }
-
-            int num_results;
-            char** results = search(pkg_name, &num_results);
-                
-            char* format;
-
-            if(results != NULL)
-            {
-                for ( int i = 0; i < num_results; i++)
-                {
-                    // Package name
-                    char* temp_1 = strtok(results[i], ">");
-		    (void)temp_1;
-                    // Repo it's in
-                    char* temp_2 = strchr(results[i], '\0') + 1;
-
-                    if(strcmp(getenv("SOVIET_DEFAULT_REPO"), temp_2) == 0)
+                    if(pkgs->count == 0)
                     {
-                        format = temp_2;
+                        free_pkg(pkg);
                         break;
                     }
-                        else if (i == num_results) 
-                        {
-                            format = temp_2;
-                        }
+                    free_pkg(pkg);
                 }
             }
-            
-            if (format == NULL) {
-                msg(ERROR, "Failed to download package %s", pkg->name);
-                return 1;
-            }
-
-            get(pkg, format, pkg->name);
-
-            ask_to_preview_pkg(pkg->name);
-
-            // Attempt to open the package archive
-            if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
-                msg(ERROR, "Failed to open package");
-                return -1;
-            }
-
-            dbg(1, "Checking dependencies...");
-            
-            // Check package dependencies
-
-            if (pkg->dependencies != NULL && pkg->dependenciesCount > 0 && strlen(pkg->dependencies[0]) > 0) {
-                check_dependencies(pkg->dependencies, pkg->dependenciesCount);
-            }
-
-            dbg(1, "Checking optional dependencies...");
-
-            // Checking optional dependencies
-
-            // TODO:
-            // Accept a --opt "opt" argument then 
-            // Check if a dependency is in the opt string
-
-            if (pkg->optional != NULL && pkg->optionalCount > 0 && strlen(pkg->optional[0]) > 0) {
-                dbg(1, "Checking optional dependencies...");
-                check_optional_dependencies(pkg->optional, pkg->optionalCount);
-            }
-
-            // TODO:
-            // Accept a --in "in or --in def argument 
-            // Then check if the number of arguments in
-            // The string is equal to number of inputs
-            // If so, supply the inputs NQA
-            dbg(1, "Handling inputs...");
-
-            handle_inputs(pkg);
-
-            f_install_package_source(pkg->name, 0, format);
-
-            remove(pkg_name);
-
-        } else {
-            dbg(3, "Dependency %s is installed", dependencies[i]);
         }
-    }
+        if(!is_installed)
+        {
+            dbg(2, "dependency %s is missing", name);
 
-    return 0;
-}
-
-
-// Function to check if all optional dependencies of a package are installed
-
-int check_optional_dependencies(char **dependencies, int dependenciesCount) {
-    dbg(1, "Checking optional dependencies...");
-
-    for (int i = 0; i < dependenciesCount; i++) {
-        dbg(3, "Checking if %s is installed", dependencies[i]);
-        if (!is_installed(dependencies[i])) {
-            dbg(3, "Dependency %s is not installed", dependencies[i]);
-
-
-            char* str = calloc(2, sizeof(char));
-
-            msg(INFO, "Do you want to download optional package %s, y/N", dependencies[i]);
-            if(!OVERWRITE_CHOISE)
+            // Get the name and search it in the database
+            free_pkgs(pkgs);
+            pkgs = search_pkgs(getenv("SOVIET_ALL_DB"), name);
+            
+            if(pkgs->count == 0)
             {
-                char* res = fgets(str, 2, stdin);
-		(void)res;
-
-                if ( strchr(str, '\n') == NULL )
-                {
-                    while ((getchar()) != '\n');
-                }
-
-                int k = 0;
-
-                while (str[k] != '\n' && str[k] != '\0')
-                {
-                    k++;
-                }
-
-                if (str[k] == '\n')
-                {
-                    str[k] = '\0';
-                }
-            }
-                else
-                {
-                    sprintf(str, "%s", USER_CHOISE[0]);
-                }
-
-            if((strcmp(str, "Y") == 0 || strcmp(str, "y") == 0))
-            {
-                msg(INFO, "Installing %s", dependencies[i]);
-
-                // Check if the dependency is in the queue
-                int in_queue = 0;
-                for (int j = 0; j < QUEUE_COUNT; j++) {
-                    if (strcmp(PACKAGE_QUEUE[j], dependencies[i]) == 0) {
-                        in_queue = 1;
-                        break;
-                    }
-                }
-
-                if (in_queue) {
-                    dbg(1, "Package %s is already in the queue", dependencies[i]);
-                    continue;
-                }
-
-                struct package* pkg = calloc(1, sizeof(struct package));
-                pkg->name = dependencies[i];
-
-                char* format;
-                char* pkg_name = calloc(strlen(pkg->name) + 1, sizeof(char));
-                if(!strstr(pkg->name, ".ecmp"))
-                {
-                    sprintf(pkg_name, "%s.%s", pkg->name, getenv("SOVIET_DEFAULT_FORMAT"));
-                }
-                    else
-                    {
-                        pkg_name = strdup(pkg->name);
-                    }
-
-                int num_results;
-                char** results = search(pkg_name, &num_results);
-                    
-                if(results != NULL)
-                {
-                    for ( int i = 0; i < num_results; i++)
-                    {
-                        // Package name
-                        char* temp_1 = strtok(results[i], ">");
-			(void)temp_1;
-                        // Repo it's in
-                        char* temp_2 = strchr(results[i], '\0') + 1;
-
-                        if(strcmp(getenv("SOVIET_DEFAULT_REPO"), temp_2) == 0)
-                        {
-                            format = temp_2;
-                            break;
-                        }
-                            else if (i == num_results) 
-                            {
-                                format = temp_2;
-                            }
-                    }
-                }
-                
-                if (format == NULL) {
-                    msg(ERROR, "Failed to download package %s", pkg->name);
-                    return 1;
-                }
-
-                if (format == NULL) {
-                msg(ERROR, "Failed to download package %s", pkg->name);
-                return 1;
-                }
-
-                get(pkg, format, pkg->name);
-
-                ask_to_preview_pkg(pkg->name);
-
-                // Attempt to open the package archive
-                if (open_pkg(pkg->name, pkg, getenv("SOVIET_DEFAULT_FORMAT")) != 0) {
-                    msg(ERROR, "Failed to open package");
-                    return -1;
-                }
-
-                dbg(1, "Checking dependencies...");
-                
-                // Check package dependencies
-
-                if (pkg->dependencies != NULL && pkg->dependenciesCount > 0 && strlen(pkg->dependencies[0]) > 0) {
-                    check_dependencies(pkg->dependencies, pkg->dependenciesCount);
-                }
-
-                dbg(1, "Checking optional dependencies...");
-
-                // Checking optional dependencies
-
-                // TODO:
-                // Accept a --opt "opt" argument then 
-                // Check if a dependency is in the opt string
-
-                if (pkg->optional != NULL && pkg->optionalCount > 0 && strlen(pkg->optional[0]) > 0) {
-                    dbg(1, "Checking optional dependencies...");
-                    check_optional_dependencies(pkg->optional, pkg->optionalCount);
-                }
-
-                // TODO:
-                // Accept a --in "in or --in def argument 
-                // Then check if the number of arguments in
-                // The string is equal to number of inputs
-                // If so, supply the inputs NQA
-                dbg(1, "Handling inputs...");
-
-                handle_inputs(pkg);
-
-                f_install_package_source(pkg->name, 0, format);
-
-                remove(pkg_name);
+                printf("Could not resolve dependency '%s'\n", name);
             }
             else
             {
-                msg(INFO, "Skipping %s", dependencies[i]);
+                for(int j = 0; pkgs->count > 0; j++)
+                {
+                    struct package* pkg = pop_pkg(pkgs);
+                    if(strcmp(pkg->name, name) == 0)
+                    {
+                        open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
+                        add_to_queue(pkg);
+                        break;
+                    }
+                    else
+                    {
+                        free_pkg(pkg);
+                        if(pkgs->count == 0)
+                        {
+                            printf("Could not resolve dependency '%s'\n", name);
+                            break;
+                        }
+                    }
+                }
             }
-            free(str);
-
-        } else {
-            dbg(3, "Dependency %s is installed", dependencies[i]);
         }
-    }
 
+        free_pkgs(pkgs);
+    }
+    return 0;
+}
+
+// Function to check if all optional dependencies of a package are installed
+int check_optional_dependencies(char **dependencies, int dependenciesCount) 
+{
+    dbg(1, "Checking dependencies...");
+
+    for (int i = 0; i < dependenciesCount; i++) 
+    {
+        // Get the name and search it in the database
+        // It's kinda stupid
+        int is_installed = 0;
+        char* name = dependencies[i];
+        struct packages* pkgs = search_pkgs(getenv("SOVIET_INSTALLED_DB"), name);
+        if(pkgs->count != 0)
+        {
+            for(int j = 0; pkgs->count > 0; j++)
+            {
+                struct package* pkg = pop_pkg(pkgs);
+                if(strcmp(pkg->name, name) == 0)
+                {
+                    free_pkg(pkg);
+                    dbg(2, "dependency %s is installed", name);
+                    is_installed = 1;
+                    break;
+                }
+                else
+                {
+                    if(pkgs->count == 0)
+                    {
+                        free_pkg(pkg);
+                        break;
+                    }
+                    free_pkg(pkg);
+                }
+            }
+        }
+
+        if(!is_installed)
+        {
+            dbg(2, "dependency %s is missing", name);
+
+            // Get the name and search it in the database
+            free_pkgs(pkgs);
+            pkgs = search_pkgs(getenv("SOVIET_ALL_DB"), name);
+            
+            if(pkgs->count == 0)
+            {
+                printf("Could not resolve dependency '%s'\n", name);
+            }
+            else
+            {
+                for(int j = 0; pkgs->count > 0; j++)
+                {
+                    struct package* pkg = pop_pkg(pkgs);
+                    if(strcmp(pkg->name, name) == 0)
+                    {
+                        printf("Install ");
+                        if(get_input(pkg->name, 1))
+                        {
+                            open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
+                            add_to_queue(pkg);
+                            break;
+                        }
+                        else
+                        {
+                            printf("skipping…\n"); 
+                            free_pkg(pkg);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        free_pkg(pkg);
+                        if(pkgs->count == 0)
+                        {
+                            printf("Could not resolve dependency '%s'\n", name);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        free_pkgs(pkgs);
+    }
     return 0;
 }
