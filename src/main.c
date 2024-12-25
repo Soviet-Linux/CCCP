@@ -9,8 +9,6 @@
 #include <spm/globals.h>
 
 const float C_FRONTEND_VERSION = 1.001;
-// This is very stupid, but I don't want to work on this right now.
-#define QUEUE_MAX 65536
 
 struct packages* install_queue;
 struct packages* update_queue;
@@ -45,6 +43,7 @@ char* HELP = "\x1b[34m Usage cccp [options/package] (Options are evaluated in or
     "          \x1b[32m -c,   --clean\x1b[0m                             Clean up the cache directory    \n"
     "          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Install a package from file    \n"
     "          \x1b[32m -dbg, --debug <level 0-4>\x1b[0m                 Print debug info    \n"
+    "          \x1b[32m -f,   --fix\x1b[0m                               Fix database desync after a crash    \n"
     "          \x1b[32m -q,   --quiet           \x1b[0m                  Ignore make output    \n";
 
 int _install_source_(unsigned int* index);
@@ -56,9 +55,10 @@ int _set_quiet_(unsigned int* i);           // works
 int _clean_up_(unsigned int* i);            // works
 int _update_(unsigned int* i);              // works
 int _search_(unsigned int* i);              // works
+int _rebuild_all_(unsigned int* i);         // works
 
 int add_to_queue(struct package* pkg, struct packages* queue);
-void ask_to_preview_pkg(char* path);
+int ask_to_preview_pkg(char* path);
 void populate_installed_db();               // works
 void populate_remote_db();                  // works
 int check_optional_dependencies(char **dependencies, int dependenciesCount);
@@ -84,6 +84,8 @@ void* args[][2] =
     {"-c"        , _clean_up_          },
     {"--quite"    , _set_quiet_        },
     {"-q"        , _set_quiet_         },
+    {"--fix"    , _rebuild_all_        },
+    {"-f"        , _rebuild_all_       },
 };
 
 char** ARGV;
@@ -169,50 +171,108 @@ int main(int argc, char *argv[])
     }
     hm_destroy(hm);
 
-    if((install_queue->count != 0) || (update_queue->count != 0) || (remove_queue->count != 0))
+    if (install_queue->count != 0)
     {
         msg(INFO, "INSTALL QUEUE:");
-        for(int iq = 0; iq < install_queue->count; iq++)
+        for(int iq = 0; install_queue->count > 0; iq++)
         {
-            printf("%d - %s\n", iq, install_queue->buffer[iq].name);
-        }
+            // TODO: we just loose it somewhere…
+            struct package* pkg = pop_pkg(install_queue);
+            printf("%d - %s\n", iq, pkg->name);
+                    
+            int pkg_status = check(pkg);
 
-        msg(INFO, "UPDATE QUEUE:");
-        for(int uq = 0; uq < update_queue->count; uq++)
-        {
-            printf("%d - %s\n", uq, update_queue->buffer[uq].name);
+            if(pkg_status == 0)
+            {
+                printf("package %s is already installed\n", pkg->name);
+            }
+            else
+            {
+                if(pkg_status != 1)
+                {
+                    msg(FATAL, "The package %s is corrupt, manually remove %s/%s and run 'cccp -f'", pkg->name, getenv("SOVIET_SPM_DIR"), pkg->path);
+                }
+                write_package_configuration_file(pkg);
+                if(getenv("EDITOR") != NULL)
+                {
+                    if(get_input("Open package config with $EDITOR", 0))
+                    {
+                        char CMD[MAX_PATH*2];/*just in case*/
+                        sprintf(CMD, "$EDITOR %s/%s", getenv("SOVIET_ENV_DIR"), pkg->name);
+                        system(CMD);
+                    }
+                }
+                else
+                {
+                    printf("$EDITOR variable is not set, moving on…\n");
+                }
+                read_package_configuration_file(pkg);
+                char PATH[MAX_PATH];
+                sprintf(PATH, "%s/%s", getenv("SOVIET_REPOS_DIR"), pkg->path);
+                if(ask_to_preview_pkg(PATH))
+                {
+                    int result = install_package_source(pkg);
+                    if(result != 0)
+                    {
+                        msg(ERROR, "Could not install %s", pkg->name);
+                    }
+                }
+            }
         }
-
-        msg(INFO, "REMOVE QUEUE:");
-        for(int rq = 0; rq < remove_queue->count; rq++)
-        {
-            printf("%d - %s\n", rq, remove_queue->buffer[rq].name);
-        }
-
-        printf("writing changes to the database...\n");
+        printf("writing changes to the database…\n");
         populate_installed_db();
         printf("done.\n");
     }
+    if (update_queue->count != 0) 
+    {
+        // btw this one is untested
+        msg(INFO, "UPDATE QUEUE:");
+        for(int uq = 0; update_queue->count > 0; uq++)
+        {
+            // TODO: we just loose it somewhere…
+            struct package* pkg = pop_pkg(update_queue);
+            printf("%d - %s\n", uq, pkg->name);
 
+            read_package_configuration_file(pkg);
+            int result = install_package_source(pkg);
+            if(result != 0)
+            {
+                msg(ERROR, "Could not update %s", pkg->name);
+            }
+        }
+        printf("writing changes to the database…\n");
+        populate_installed_db();
+        printf("done.\n");
+    }
+    if (remove_queue->count != 0)
+    {
+        msg(INFO, "REMOVE QUEUE:");
+        for(int rq = 0; remove_queue->count > 0; rq++)
+        {
+            // TODO: we just loose it somewhere…
+            struct package* pkg = pop_pkg(remove_queue);
+            int pkg_status = check(pkg);
+
+            if(pkg_status != 0)
+            {
+                msg(FATAL, "The package %s is corrupt, or not installed", pkg->name);
+            }
+            printf("%d - %s\n", rq, pkg->name);
+            uninstall(pkg);
+        }
+        printf("writing changes to the database…\n");
+        populate_installed_db();
+        printf("done.\n");
+    }
     free_pkgs(install_queue);
     free_pkgs(update_queue);
     free_pkgs(remove_queue);
-
 }
 
 // install from source function
 int _install_source_(unsigned int* i) 
 {
-    // Get the name and search it in the database
-    char* path = ARGV[++(*i)];
-
-    char* pkg_path = path;
-    struct package pkg = {0};
-    pkg.path = strdup(path);
-    pkg.name = strdup(path);
-    open_pkg(pkg_path, &pkg);
-    add_to_queue(&pkg, install_queue);
-    return 0;
+    msg(FATAL, "not implemented… ");
 }
 
 // remove a pkg function
@@ -303,6 +363,14 @@ int _install_repo_(unsigned int* i)
                                 break;
                             }
                             add_to_queue(pkg, install_queue);
+                            if(pkg->dependenciesCount > 0)
+                            {
+                                check_dependencies(pkg->dependencies, pkg->dependenciesCount);
+                            }    
+                            if(pkg->optionalCount > 0)
+                            {
+                                check_optional_dependencies(pkg->optional, pkg->optionalCount);
+                            }
                             break;
                         }
                         else
@@ -345,8 +413,6 @@ int _update_(unsigned int* i)
             if(get_input(pkg->name, 1))
             {
                 open_pkg(getenv("SOVIET_REPOS_DIR"), pkg);
-                // In the future, the package should be added to the queue, so cccp can continue parsing flags
-                // The queue can be installed at the end of the main function
                 add_to_queue(pkg, update_queue);
             }
             else
@@ -357,7 +423,11 @@ int _update_(unsigned int* i)
         }
     }
     free_pkgs(need_updating);
+
+    printf("writing changes to the database…\n");
     populate_remote_db();
+    printf("done.\n");
+
     return 0;
 }
 
@@ -392,6 +462,15 @@ int _clean_up_(unsigned int* i)
     return 0;
 }
 
+// rebuild the databases to fix desync after a crash
+int _rebuild_all_(unsigned int* i)
+{
+    printf("rebuilding the database…\n");
+    populate_remote_db();
+    populate_installed_db();
+    printf("done.\n");
+}
+
 // flags
 int _set_debug_level_(unsigned int* i)
 {
@@ -412,7 +491,7 @@ int _set_auto_(unsigned int* i)
 }
 
 // helpful functions
-void ask_to_preview_pkg(char* path) 
+int ask_to_preview_pkg(char* path) 
 {
     if(get_input("View package file ", 0))
     {
@@ -423,7 +502,7 @@ void ask_to_preview_pkg(char* path)
         if (fptr == NULL) 
         { 
             printf("Cannot open file \n"); 
-            exit(0); 
+            return 0;
         } 
     
         // Read contents from file 
@@ -433,26 +512,21 @@ void ask_to_preview_pkg(char* path)
             printf ("%c", c); 
             c = fgetc(fptr); 
         } 
+        printf("\n");
     
         fclose(fptr); 
         
         if(!get_input("Continue", 1))
         {
-            msg(FATAL, "Aborting...");
+            return 0;
         }
+        return 1;
     }
+    return 1;
 }
 
 int add_to_queue(struct package* pkg, struct packages* queue)
 {
-    if(pkg->dependenciesCount > 0)
-    {
-        check_dependencies(pkg->dependencies, pkg->dependenciesCount);
-    }    
-    if(pkg->optionalCount > 0)
-    {
-        check_optional_dependencies(pkg->optional, pkg->optionalCount);
-    }
     dbg(2, "%s added to queue", pkg->name);
     push_pkg(queue, pkg);
     if(queue->count > QUEUE_MAX)
@@ -482,7 +556,7 @@ void populate_remote_db()
 // Function to check if all dependencies of a package are installed
 int check_dependencies(char **dependencies, int dependenciesCount) 
 {
-    dbg(1, "Checking dependencies...");
+    dbg(1, "Checking dependencies…");
 
     for (int i = 0; i < dependenciesCount; i++) 
     {
@@ -558,7 +632,7 @@ int check_dependencies(char **dependencies, int dependenciesCount)
 // Function to check if all optional dependencies of a package are installed
 int check_optional_dependencies(char **dependencies, int dependenciesCount) 
 {
-    dbg(1, "Checking dependencies...");
+    dbg(1, "Checking dependencies…");
 
     for (int i = 0; i < dependenciesCount; i++) 
     {
