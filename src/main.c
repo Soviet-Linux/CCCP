@@ -41,26 +41,29 @@ char* HELP = "\x1b[34m Usage cccp [options/package] (Options are evaluated in or
     "          \x1b[32m -u,   --update\x1b[0m                            Update installed packages    \n"
     "          \x1b[32m -a,   --auto\x1b[0m                              Use defaults and ignore prompts   \n"
     "          \x1b[32m -c,   --clean\x1b[0m                             Clean up the cache directory    \n"
-    "          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Install a package from file    \n"
+  /*"          \x1b[32m -pkg, --package <path/to/package.ecmp>\x1b[0m    Install a package from file    \n"*/
+  /*"          \x1b[32m -ri,  --re-install <path/to/package.ecmp>\x1b[0m Re-install a package    \n"*/
     "          \x1b[32m -dbg, --debug <level 0-4>\x1b[0m                 Print debug info    \n"
-    "          \x1b[32m -f,   --fix\x1b[0m                               Fix database desync after a crash    \n"
+    "          \x1b[32m -f,   --fix\x1b[0m                               Fix a corrupted database after a crash    \n"
     "          \x1b[32m -q,   --quiet           \x1b[0m                  Ignore make output    \n";
 
 int _install_source_(unsigned int* index);
 int _install_repo_(unsigned int* index);
 int _remove_(unsigned int* index);
-int _set_debug_level_(unsigned int* i);     // works
-int _set_auto_(unsigned int* i);            // works
-int _set_quiet_(unsigned int* i);           // works
-int _clean_up_(unsigned int* i);            // works
-int _update_(unsigned int* i);              // works
-int _search_(unsigned int* i);              // works
-int _rebuild_all_(unsigned int* i);         // works
+int _set_debug_level_(unsigned int* i);     
+int _set_auto_(unsigned int* i);            
+int _set_quiet_(unsigned int* i);           
+int _clean_up_(unsigned int* i);            
+int _update_(unsigned int* i);              
+int _search_(unsigned int* i);              
+int _rebuild_all_(unsigned int* i);
+// TODO: add a function to re-install a specific package
+// int _reinstall_pkg_();
 
 int add_to_queue(struct package* pkg, struct packages* queue);
 int ask_to_preview_pkg(char* path);
-void populate_installed_db();               // works
-void populate_remote_db();                  // works
+void populate_installed_db();               
+void populate_remote_db();                  
 int check_optional_dependencies(char **dependencies, int dependenciesCount);
 int check_dependencies(char **dependencies, int dependenciesCount);
 
@@ -531,7 +534,7 @@ int add_to_queue(struct package* pkg, struct packages* queue)
     push_pkg(queue, pkg);
     if(queue->count > QUEUE_MAX)
     {
-        msg(FATAL, "dependency tree too large"); /*or you just decided to update/remove 65k packages*/
+        msg(FATAL, "Dependency tree too large (most likely a circular dependency in one of the packages)"); /*or you just decided to update/remove 65k packages*/
     }
     return 0;
 }
