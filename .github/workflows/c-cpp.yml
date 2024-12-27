@@ -13,7 +13,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install libcurl-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev
+    - name: Install libsqlite3-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsqlite3-dev
+    - name: Install libgit2
+      run: |
+        curl -L https://codeload.github.com/libgit2/libgit2/tar.gz/refs/tags/v1.8.1 --output libgit2-1.8.1.tar.gz
+        tar -xzf libgit2-1.8.1.tar.gz
+        cd libgit2-1.8.1
+        mkdir build && cd build
+        sudo cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+        sudo cmake --build . --target install
     - name: configure spm
-      run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && sudo apt-get install libcurl4-gnutls-dev -y && git submodule init && git submodule update &&make all && make formats && sudo make install 
+      run: git clone https://github.com/Soviet-Linux/libspm && cd libspm && git submodule init && git submodule update && make all && make formats && sudo make install 
     - name: make
       run: make build
